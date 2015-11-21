@@ -1,0 +1,25 @@
+/*http://paletton.com/#uid=c173-2V0b0kt4BcgEJvmTDJBttHEVn9*/
+header{ 
+	background-color: #FFC017;
+}
+#header-nav{
+	margin-bottom: 0px;
+}
+#logo{
+	max-height: 80px;
+}
+#search-form{
+}
+#nav-avatar-a{
+	padding: 0px;
+}
+#nav-avatar-wrapper{
+	padding: 15px;
+}
+.avatar-small{
+	width: 60px;
+	height: 60px;
+}
+.navbar{
+	height: 100px;
+}

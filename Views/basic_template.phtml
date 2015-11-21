@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<base href="../">
+		<meta charset="utf-8">
+		<meta keywords="<?=$keywords?>" description="<?=$description?>">
+		<title><?=$title?></title>
+		<link href="Assets/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="Assets/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="Assets/styles/style.css" rel="stylesheet" type="text/css">
+		<script src="Assets/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+		<script src="Assets/javascript/jquery-2.1.3.js"></script>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<img id="logo"src="Assets/images/starling.svg">
+				<ul>
+					<li><a href="/"></a>Home</li>
+					<li><a href="/sign in">Sign in</a></li>
+					<li><a href="/sign up"></a>Sign up</li>
+				</ul>
+				<form action="/search" method="GET">
+					<input type="text">
+					<button type="submit"><i class="fa fa-search"></i></button>
+				</form>
+			</nav>
+		</header>
+		<section>
+			<?php foreach($flash_messages as $message): ?>
+				<div class="alert alert-<?=$message['type']?>"><?=$message['message']?></div>
+			<?php endforeach ?>
+		</section>
+		<footer>
+		</footer>
+	</body>
+</html>
+<?php
