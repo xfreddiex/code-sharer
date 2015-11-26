@@ -19,18 +19,24 @@ class Router{
 		return $name;
 	}
 
-	public function process($parametres){
-		$path = $this->parseUrl($parametres[0]);
+	public function process($params){
+		$path = $this->parseUrl($params[0]);
 		$controller_class = "";
-		if (empty($path[0]))		
+		if(empty($path[0]))		
 			$controller_class = "Home";
 		else
 			$controller_class = $this->dashToCamelcase(array_shift($path));
-		if (file_exists('Controllers/' . $controller_class . '.php'))
-			$this->controller = "Cotrollers\\" . $controller_class;
+		if(file_exists('Controllers/' . $controller_class . '.php')){
+			$controller_class = "Controllers\\" . $controller_class;
 			$this->controller = new $controller_class();
+		}
 		else
-			$this->controller = new Error("404"));
-		$this->controller->process($path);
+			$this->controller = new Error("404");
+		if($_SERVER["CONTENT_TYPE"] == 'text/javascript' && !empty($path[0])){
+			$method = array_shift($path);
+		}
+		else
+			$method = "index";
+		$this->controller->$method($path);
 	}
 }

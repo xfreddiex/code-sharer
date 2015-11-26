@@ -8,37 +8,43 @@ use Models\Discusion;
  
 abstract class Base{
 	protected $data = array();
-	protected $basic_template = "basic_template.phtml";
-	protected $head = array('title' => '', 'keywords' => '', 'description' => '');
-	protected $flash_messages = array();
-	protected $before = array("prepareFlashMessages");
+	protected $basic_template;
+	protected $controller_view;
+	protected $before = array();
+	protected $after = array();
 
-	public __construct
-
-	public function view(){
-		if($this->view){
-			extract($this->data);
-			require("views/".$this->view).".phtml";
-		}
+	public function __construct(){
+		$this->basic_template = 'Views/basic_template.phtml';
+		$this->controller_view = str_replace('Controllers\\', 'Views/', __CLASS__) . '.phtml';
+		array_push($this->data, array('title' => '', 'keywords' => '', 'description' => '', 'flash_messages' => array()));
+		array_push($this->before, "prepareFlashMessages");
+		array_push($this->after, "view");
 	}
 
-	abstract function process($params){
-		if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'){
-			
-		}
+	public function view(){
+		extract($this->data);
+		require($this->basic_template);
+	}
+
+	public function index($params){
+		$this->before();
+		$this->instructions($params);
+		$this->after();
 	}
 
 	protected function before(){
-		foreach ($before as $method){
-			$method();
+		foreach ($this->before as $method){
+			$this->$method();
 		}
 	}
 
 	protected function after(){
-
+		foreach ($this->after as $method){
+			$this->$method();
+		}
 	}
 
-	protected function sendFlashMessages($message, $type = NULL){
+	protected function sendFlashMessage($message, $type = NULL){
 		$_SESSION["flash_messages"][] = array("message" => $message, "type" => ($type == NULL ? "default" : $type));
 	}
 
@@ -49,9 +55,11 @@ abstract class Base{
 		}
 	}
 
-	public function redirect($url){
+	protected function redirect($url){
 		header("Location: /$url");
 		header("Connection: close");
 		exit;
 	}
+
+	abstract function instructions($params);
 }

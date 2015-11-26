@@ -16,9 +16,9 @@
 			<nav>
 				<img id="logo"src="Assets/images/starling.svg">
 				<ul>
-					<li><a href="/"></a>Home</li>
+					<li><a href="/">Home</a></li>
 					<li><a href="/sign in">Sign in</a></li>
-					<li><a href="/sign up"></a>Sign up</li>
+					<li><a href="/sign up">Sign up</a></li>
 				</ul>
 				<form action="/search" method="GET">
 					<input type="text">
@@ -27,9 +27,8 @@
 			</nav>
 		</header>
 		<section>
-			<?php foreach($flash_messages as $message): ?>
-				<div class="alert alert-<?=$message['type']?>"><?=$message['message']?></div>
-			<?php endforeach ?>
+			<?php require('flash_message.phtml'); ?>
+			<?php require($this->controller_view); ?>
 		</section>
 		<footer>
 		</footer>
