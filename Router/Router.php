@@ -4,39 +4,45 @@ namespace Router;
 class Router{
 	private $controller;
 
-	private function parseUrl($url){
-		$parsed_url = parse_url($url);
-		$parsed_url["path"] = ltrim($parsed_url["path"], "/");
-		$parsed_url["path"] = trim($parsed_url["path"]);
-		$path = explode("/", $parsed_url["path"]);
-		return $path;
+	private function parseUri($uri){
+		$uri = trim($uri);
+		$uri = trim($uri, "/");
+		$uri = explode("/", $uri);
+		return $uri;
 	}
 
-	private function dashToCamelcase($text){
-		$name = str_replace('-', ' ', $text);
-		$name = ucwords($name);
-		$name = str_replace(' ', '', $name);
-		return $name;
+	private function getRoute($uri){
+		$routes = require('Router/Routes.php');
+		$uri = $this->parseUri($uri);
+		
+		foreach($routes as $route){
+			$size = count($route["uri"]);
+			
+			if($route["content_type"] == explode(',', $_SERVER["HTTP_ACCEPT"])[0] || $size == count($uri)){
+				$route["params"] = array();
+				$route["uri"] = $this->parseUri($route["uri"]);
+				
+				for($i = 0; $i < $size; $i++){
+					
+					if(preg_match('/\[.+\]/', $route["uri"][$i])){
+						array_push($route["params"], $route["uri"][$i]);
+					}
+					else if($route["uri"][$i] != $uri[$i])
+						break;
+					
+					if($i + 1 == $size)
+						return $route;
+				}
+			}
+		}
+		
+		return array("aaa");
 	}
 
-	public function process($params){
-		$path = $this->parseUrl($params[0]);
-		$controller_class = "";
-		if(empty($path[0]))		
-			$controller_class = "Home";
-		else
-			$controller_class = $this->dashToCamelcase(array_shift($path));
-		if(file_exists('Controllers/' . $controller_class . '.php')){
-			$controller_class = "Controllers\\" . $controller_class;
-			$this->controller = new $controller_class();
-		}
-		else
-			$this->controller = new Error("404");
-		if($_SERVER["CONTENT_TYPE"] == 'text/javascript' && !empty($path[0])){
-			$method = array_shift($path);
-		}
-		else
-			$method = "index";
-		$this->controller->$method($path);
+	public function process($uri){
+		$route = $this->getRoute($uri);
+		$controller = 'Controllers\\'.$route["controller"];
+		$this->controller = new $controller;
+		$this->controller->$route["method"]($route["params"]);
 	}
 }

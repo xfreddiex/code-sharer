@@ -17,8 +17,8 @@
 				<img id="logo"src="Assets/images/starling.svg">
 				<ul>
 					<li><a href="/">Home</a></li>
-					<li><a href="/sign in">Sign in</a></li>
-					<li><a href="/sign up">Sign up</a></li>
+					<li><a href="/sign-in">Sign in</a></li>
+					<li><a href="/sign-up">Sign up</a></li>
 				</ul>
 				<form action="/search" method="GET">
 					<input type="text">
@@ -27,11 +27,17 @@
 			</nav>
 		</header>
 		<section>
-			<?php require('flash_message.phtml'); ?>
-			<?php require($this->controller_view); ?>
+			<?php $this->view('Views/flash_message.phtml'); ?>
+			<?php $this->view('Views/Home/index.phtml'); ?>
 		</section>
 		<footer>
 		</footer>
+		
+		<script>
+			$("h1").click(function(){
+				$.get("/home/change-color", "", "", "script");
+			});
+		</script>
 	</body>
 </html>
 <?php

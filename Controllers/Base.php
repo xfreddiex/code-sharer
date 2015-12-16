@@ -8,28 +8,33 @@ use Models\Discusion;
  
 abstract class Base{
 	protected $data = array();
-	protected $basic_template;
-	protected $controller_view;
+	protected $template;
+
 	protected $before = array();
 	protected $after = array();
 
 	public function __construct(){
-		$this->basic_template = 'Views/basic_template.phtml';
-		$this->controller_view = str_replace('Controllers\\', 'Views/', __CLASS__) . '.phtml';
+		$this->template = 'Views/basic_template.phtml';
 		array_push($this->data, array('title' => '', 'keywords' => '', 'description' => '', 'flash_messages' => array()));
 		array_push($this->before, "prepareFlashMessages");
-		array_push($this->after, "view");
+		//array_push($this->after);
 	}
 
-	public function view(){
-		extract($this->data);
-		require($this->basic_template);
+	public function __call($method, $params){
+		if(method_exists($this, $method)){
+			$this->before();
+			$this->$method($params);
+			$this->after();
+		}
 	}
 
-	public function index($params){
-		$this->before();
-		$this->instructions($params);
-		$this->after();
+	protected function view($view = NULL){
+		if(!$view)
+			$view = str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml");
+		if(file_exists($view)){
+			extract($this->data);
+			require($view);
+		}
 	}
 
 	protected function before(){
@@ -60,6 +65,4 @@ abstract class Base{
 		header("Connection: close");
 		exit;
 	}
-
-	abstract function instructions($params);
 }

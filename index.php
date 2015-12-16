@@ -15,4 +15,4 @@ spl_autoload_register("autoload");
 session_start();
 
 $router = new Router();
-$router->process(array($_SERVER['REQUEST_URI']));
+$router->process($_SERVER['REQUEST_URI']);
