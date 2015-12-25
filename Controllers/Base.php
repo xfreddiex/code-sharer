@@ -15,7 +15,10 @@ abstract class Base{
 
 	public function __construct(){
 		$this->template = 'Views/basic_template.phtml';
-		array_push($this->data, array('title' => '', 'keywords' => '', 'description' => '', 'flash_messages' => array()));
+		$this->data['title'] = '';
+		$this->data['keywords'] = '';
+		$this->data['description'] = '';
+		$this->data['flash_messages'] = array();
 		array_push($this->before, "prepareFlashMessages");
 		//array_push($this->after);
 	}

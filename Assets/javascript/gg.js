@@ -1,1 +1,1 @@
-$("h1").css("backgroun-color", "red");
+$("h1").toggleClass("red");

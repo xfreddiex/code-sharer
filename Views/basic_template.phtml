@@ -35,7 +35,11 @@
 		
 		<script>
 			$("h1").click(function(){
-				$.get("/home/change-color", "", "", "script");
+				$.ajax({
+					type : "get",
+					url : "/home/change-color",
+					dataType : "script",
+				});
 			});
 		</script>
 	</body>
