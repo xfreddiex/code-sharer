@@ -7,7 +7,7 @@ class Home extends Base{
 
 	protected function index(){
 		$this->data["title"] = "GGG";
-		$this->view($this->template);
+		$this->viewFile($this->template);
 	}
 
 	protected function changeColor(){

@@ -31,12 +31,20 @@ abstract class Base{
 		}
 	}
 
-	protected function view($view = NULL){
-		if(!$view)
-			$view = str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml");
-		if(file_exists($view)){
+	protected function view(){
+		$file = str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml");
+		$this->viewFile($file);
+	}
+
+	protected function viewToTemplate(){
+		$file = str_replace('Controllers\\', 'Views/', debug_backtrace()[3]["class"]."/".debug_backtrace()[3]["function"].".phtml");
+		$this->viewFile($file);
+	}
+
+	protected function viewFile($file){
+		if(file_exists($file)){
 			extract($this->data);
-			require($view);
+			require($file);
 		}
 	}
 

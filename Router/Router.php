@@ -33,8 +33,7 @@ class Router{
 				}
 			}
 		}
-		
-		return array("aaa");
+		return array('controller' => 'Errors', 'method' => 'error404', 'params' => array());
 	}
 
 	public function process($uri){

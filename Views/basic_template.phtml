@@ -13,9 +13,11 @@
 	</head>
 	<body>
 		<header>
-			<nav>
-				<img id="logo"src="Assets/images/starling.svg">
-				<ul>
+			<nav class="navbar navbar-default">
+				<div class="navbar-header">
+      				<a class="navbar-brand" href="#"><img id="logo"src="Assets/images/starling.svg"></a>
+    			</div>
+				<ul class="nav navbar-nav">
 					<li><a href="/">Home</a></li>
 					<li><a href="/sign-in">Sign in</a></li>
 					<li><a href="/sign-up">Sign up</a></li>
@@ -27,8 +29,8 @@
 			</nav>
 		</header>
 		<section>
-			<?php $this->view('Views/flash_message.phtml'); ?>
-			<?php $this->view('Views/Home/index.phtml'); ?>
+			<?php $this->viewFile('Views/flash_message.phtml'); ?>
+			<?php $this->viewToTemplate(); ?>
 		</section>
 		<footer>
 		</footer>
