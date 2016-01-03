@@ -4,31 +4,47 @@
 		<base href="../">
 		<meta charset="utf-8">
 		<meta keywords="<?=$keywords?>" description="<?=$description?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?=$title?></title>
 		<link href="Assets/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="Assets/font-awesome-4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 		<link href="Assets/styles/style.css" rel="stylesheet" type="text/css">
-		<script src="Assets/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 		<script src="Assets/javascript/jquery-2.1.3.js"></script>
+		<script src="Assets/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 	</head>
 	<body>
 		<header>
 			<nav class="navbar navbar-default">
-				<div class="navbar-header">
-      				<a class="navbar-brand" href="#"><img id="logo"src="Assets/images/starling.svg"></a>
-    			</div>
-				<ul class="nav navbar-nav">
-					<li><a href="/">Home</a></li>
-					<li><a href="/sign-in">Sign in</a></li>
-					<li><a href="/sign-up">Sign up</a></li>
-				</ul>
-				<form action="/search" method="GET">
-					<input type="text">
-					<button type="submit"><i class="fa fa-search"></i></button>
-				</form>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle btn" data-toggle="collapse" data-target="#nav-options">
+					        <i class="fa fa-bars"></i>                        
+					    </button>
+	      				<a class="navbar-brand" href="#"><img id="logo"src="Assets/images/starling.svg"></a>
+	    			</div>
+					<div class="collapse navbar-collapse" id="nav-options">
+						<ul class="nav navbar-nav">
+							<li><a href="/">Home</a></li>
+							<li><a href="/sign-in">Sign in</a></li>
+							<li><a href="/sign-up">Sign up</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<form class="navbar-form" action="/search" method="GET">
+								<label for="search" class="sr-only">search</label>
+			  					<div class="input-group">
+			  						<input class="form-control" name="search" type="text">
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+									</span>
+								</div>
+							</form>
+						</ul>
+					</div>
+				</div>
 			</nav>
 		</header>
-		<section>
+
+		<section class="container">
 			<?php $this->viewFile('Views/flash_message.phtml'); ?>
 			<?php $this->viewToTemplate(); ?>
 		</section>

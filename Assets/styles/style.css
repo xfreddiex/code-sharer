@@ -1,5 +1,40 @@
-/*http://paletton.com/#uid=c173-2V0b0kt4BcgEJvmTDJBttHEVn9*/
+/*http://paletton.com/#uid=13+0u0kczcV8Fopbrjoj4bBo78U*/
+@font-face {
+  font-family: "Open Sans";
+  src: url("OpenSans-Regular.ttf"); }
+* {
+  font-family: "Open Sans"; }
+
 #logo {
-  max-height: 60px; }
+  max-height: 100%;
+  max-width: 100%; }
+
+a.navbar-brand {
+  padding: 4px; }
+
+.navbar li a:hover {
+  color: #ffffff !important; }
+
+.navbar {
+  background-color: #121232;
+  border-color: transparent; }
+
+.navbar {
+  color: #696988 !important;
+  font-size: 20px;
+  text-transform: uppercase; }
+
+.navbar-toggle {
+  border: none;
+  margin: 0px;
+  font-size: 20px; }
+
+.navbar-toggle:hover {
+  color: #ffffff;
+  background-color: #121232 !important; }
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+  border: none !important;
+  box-shadow: none !important; }
 
 /*# sourceMappingURL=style.css.map */
