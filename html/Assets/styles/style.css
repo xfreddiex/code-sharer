@@ -10,7 +10,7 @@
   max-width: 100%; }
 
 a.navbar-brand {
-  padding: 4px; }
+  padding: 4px 15px; }
 
 .navbar li a:hover {
   color: #ffffff !important; }
@@ -22,12 +22,15 @@ a.navbar-brand {
 .navbar {
   color: #696988 !important;
   font-size: 20px;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  border-radius: 0px; }
 
 .navbar-toggle {
+  color: #696988 !important;
   border: none;
   margin: 0px;
-  font-size: 20px; }
+  font-size: 20px;
+  background-color: #121232 !important; }
 
 .navbar-toggle:hover {
   color: #ffffff;
@@ -36,5 +39,15 @@ a.navbar-brand {
 .navbar-default .navbar-collapse, .navbar-default .navbar-form {
   border: none !important;
   box-shadow: none !important; }
+
+.red {
+  background: red; }
+
+@media screen and (max-width: 991px) {
+  #nav-search {
+    width: 240px; } }
+@media screen and (max-width: 767px) {
+  #nav-search input {
+    margin-left: 15px; } }
 
 /*# sourceMappingURL=style.css.map */

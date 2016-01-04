@@ -12,6 +12,6 @@ class Home extends Base{
 
 	protected function changeColor(){
 		header('Content-Type: text/javascript');
-		require("Assets/javascript/gg.js");
+		$this->viewFile("Assets/javascript/gg.js");
 	}
 }
