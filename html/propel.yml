@@ -1,0 +1,10 @@
+propel:
+    database:
+        connections:
+            default:
+                adapter: mysql
+                dsn: mysql:host=localhost;port=3306;dbname=code_sharer
+                user: root
+                password: hcpunk1980
+                settings:
+                    charset: utf8

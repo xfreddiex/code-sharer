@@ -43,11 +43,15 @@ a.navbar-brand {
 .red {
   background: red; }
 
-@media screen and (max-width: 991px) {
-  #nav-search {
-    width: 240px; } }
+@media screen and (max-width: 991px) and (min-width: 768px) {
+  a.navbar-brand {
+    width: 160px; }
+
+  .navbar li a {
+    padding: 15px 12px; } }
 @media screen and (max-width: 767px) {
-  #nav-search input {
-    margin-left: 15px; } }
+  #nav-search .input-group {
+    margin-left: 15px;
+    width: 237px; } }
 
 /*# sourceMappingURL=style.css.map */

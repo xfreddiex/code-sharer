@@ -17,8 +17,9 @@ class Router{
 		$uri = $this->parseUri($uri);
 		foreach($routes as $route){
 			$route_uri = $this->parseUri($route["uri"]);
-			if(in_array($route["content_type"], explode(',', $_SERVER["HTTP_ACCEPT"])) && count($route_uri) == count($uri) && $route["request_method"] == $_SERVER["REQUEST_METHOD"]){
+			if(count($route_uri) == count($uri)){
 				$route["params"] = array();
+				$ok = true;
 				
 				for($i = 0; $i < count($route_uri); $i++){
 					
@@ -26,20 +27,24 @@ class Router{
 						array_push($route["params"], $route_uri[$i]);
 					}
 					else if($route_uri[$i] != $uri[$i])
-						break;
-					
-					if($i + 1 == count($route_uri))
-						return $route;
+						$ok = false;
+				}
+				if($ok){
+					if($route["request_method"] != $_SERVER["REQUEST_METHOD"])
+						return $routes["error405"];
+					if(!(in_array($route["content_type"], explode(',', $_SERVER["HTTP_ACCEPT"]))))
+						return $routes["error406"];
+					return $route;
 				}
 			}
 		}
-		return array('controller' => 'Errors', 'method' => 'error404', 'params' => array());
+		return $routes["error404"];
 	}
 
 	public function process($uri){
 		$route = $this->getRoute($uri);
 		$controller = 'Controllers\\'.$route["controller"];
 		$this->controller = new $controller;
-		$this->controller->$route["method"]($route["params"]);
+		$this->controller->$route["method"](isset($route["params"]) ? $route["params"] : NULL);
 	}
 }
