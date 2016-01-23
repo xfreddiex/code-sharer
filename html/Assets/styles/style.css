@@ -1,57 +1,117 @@
-/*http://paletton.com/#uid=13+0u0kczcV8Fopbrjoj4bBo78U*/
+/*basic template*/
 @font-face {
-  font-family: "Open Sans";
-  src: url("OpenSans-Regular.ttf"); }
+  font-family: "Ubuntu";
+  src: url("Ubuntu-R.ttf"); }
 * {
-  font-family: "Open Sans"; }
+  font-family: "Ubuntu"; }
 
-#logo {
+header .logo {
   max-height: 100%;
   max-width: 100%; }
-
-a.navbar-brand {
-  padding: 4px 15px; }
-
-.navbar li a:hover {
-  color: #ffffff !important; }
-
-.navbar {
-  background-color: #121232;
-  border-color: transparent; }
-
-.navbar {
-  color: #696988 !important;
-  font-size: 20px;
-  text-transform: uppercase;
+header .navbar {
+  background-color: black;
+  border: 0px;
   border-radius: 0px; }
-
-.navbar-toggle {
-  color: #696988 !important;
-  border: none;
-  margin: 0px;
-  font-size: 20px;
-  background-color: #121232 !important; }
-
-.navbar-toggle:hover {
-  color: #ffffff;
-  background-color: #121232 !important; }
-
-.navbar-default .navbar-collapse, .navbar-default .navbar-form {
-  border: none !important;
-  box-shadow: none !important; }
-
-.red {
-  background: red; }
-
-@media screen and (max-width: 991px) and (min-width: 768px) {
-  a.navbar-brand {
-    width: 160px; }
-
-  .navbar li a {
-    padding: 15px 12px; } }
+header .navbar-brand {
+  padding: 7px 15px;
+  width: 224px; }
+header .form-control {
+  padding: 5px 10px;
+  font-size: 16px;
+  color: black;
+  box-shadow: none; }
+header .form-control::-moz-placeholder {
+  color: #666666; }
+header .form-control, header .btn {
+  border: 1px solid #666666;
+  border-radius: 4px;
+  height: 32px; }
+header .btn {
+  border: 1px solid #666666;
+  font-size: 18px;
+  padding-top: 2px;
+  color: #666666; }
+header .btn:hover {
+  border: 1px solid #666666;
+  background-color: #e6e6e6; }
+header .input-group {
+  width: 260px; }
+header .navbar-form {
+  margin-top: 9px;
+  margin-bottom: 9px; }
+header .nav a {
+  color: #999999 !important;
+  font-size: 24px; }
+header .nav a:hover {
+  color: white !important; }
 @media screen and (max-width: 767px) {
-  #nav-search .input-group {
-    margin-left: 15px;
-    width: 237px; } }
+  header .navbar-form {
+    margin: 0px;
+    border: 0px;
+    box-shadow: none;
+    padding: 10px 10px;
+    padding-bottom: 15px; }
+  header .navbar-nav {
+    margin: 0px; }
+  header .input-group {
+    width: 100%; } }
+
+section {
+  margin-top: -20px;
+  min-height: 960px;
+  background: url("../images/background.png") center top no-repeat;
+  background-size: cover; }
+
+/*homepage*/
+.homepage-wrapper {
+  color: white;
+  padding-top: 70px; }
+  .homepage-wrapper h2 {
+    font-size: 40px;
+    margin-bottom: 24px; }
+  .homepage-wrapper h1 {
+    font-size: 100px; }
+  .homepage-wrapper .welcome {
+    font-size: 40px; }
+    @media screen and (max-width: 1199px) {
+      .homepage-wrapper .welcome h2 {
+        font-size: 36px; } }
+    @media screen and (max-width: 991px) {
+      .homepage-wrapper .welcome h1 {
+        font-size: 70px; } }
+  .homepage-wrapper .welcome img {
+    display: inline;
+    height: 44px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: -4px; }
+  .homepage-wrapper .homepage-img-wrap {
+    padding-top: 80px; }
+  .homepage-wrapper .sign-in-form {
+    width: 320px; }
+    .homepage-wrapper .sign-in-form .form-control {
+      padding: 5px 10px;
+      font-size: 16px;
+      color: black;
+      box-shadow: none;
+      background-color: #e2e2e2; }
+    .homepage-wrapper .sign-in-form .form-control::-moz-placeholder {
+      color: #666666; }
+    .homepage-wrapper .sign-in-form .form-control {
+      border: 1px solid #666666;
+      border-radius: 4px;
+      height: 35px; }
+    .homepage-wrapper .sign-in-form .btn {
+      border: 0px;
+      background-color: black;
+      color: white;
+      font-size: 22px;
+      height: 35px;
+      line-height: 22px;
+      padding: 7px;
+      padding-top: 5px; }
+    @media screen and (max-width: 767px) {
+      .homepage-wrapper .sign-in-form {
+        width: 100%; } }
 
 /*# sourceMappingURL=style.css.map */

@@ -60,7 +60,7 @@ abstract class Base{
 		}
 	}
 
-	protected function sendFlashMessage($message, $type = "default"){
+	protected function sendFlashMessage($message, $type = "info"){
 		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
 	}
 

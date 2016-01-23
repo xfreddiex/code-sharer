@@ -4,53 +4,26 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
--- book
+-- user
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `book`;
+DROP TABLE IF EXISTS `user`;
 
-CREATE TABLE `book`
+CREATE TABLE `user`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
-    `isbn` VARCHAR(24) NOT NULL,
-    `publisher_id` INTEGER NOT NULL,
-    `author_id` INTEGER NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `book_fi_35872e` (`publisher_id`),
-    INDEX `book_fi_ea464c` (`author_id`),
-    CONSTRAINT `book_fk_35872e`
-        FOREIGN KEY (`publisher_id`)
-        REFERENCES `publisher` (`id`),
-    CONSTRAINT `book_fk_ea464c`
-        FOREIGN KEY (`author_id`)
-        REFERENCES `author` (`id`)
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- author
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `author`;
-
-CREATE TABLE `author`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `first_name` VARCHAR(128) NOT NULL,
-    `last_name` VARCHAR(128) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- publisher
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `publisher`;
-
-CREATE TABLE `publisher`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
+    `nick` VARCHAR(30) NOT NULL,
+    `name` VARCHAR(50),
+    `surname` VARCHAR(50),
+    `password` VARCHAR(50) NOT NULL,
+    `email` VARCHAR(70) NOT NULL,
+    `avatar` VARCHAR(70),
+    `password_token` VARCHAR(64),
+    `email_token` VARCHAR(64),
+    `email_confirmed_at` DATETIME,
+    `created_at` INTEGER NOT NULL,
+    `changed_at` INTEGER NOT NULL,
+    `deleted_at` INTEGER NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
