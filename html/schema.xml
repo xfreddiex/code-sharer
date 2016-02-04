@@ -6,7 +6,7 @@
 
     <table name="user" phpName="User">
     	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="nick" type="varchar" size="30" required="true"/>
+        <column name="username" type="varchar" size="30" required="true"/>
         <column name="name" type="varchar" size="50" required="false"/>
         <column name="surname" type="varchar" size="50" required="false"/>
         <column name="password" type="varchar" size="50" required="true"/>

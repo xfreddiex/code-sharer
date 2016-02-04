@@ -1,9 +1,57 @@
+/*
+http://paletton.com/#uid=51Z1o0kvHqnlHxkrLv7-QlxIagj
+*/
 /*basic template*/
 @font-face {
   font-family: "Ubuntu";
   src: url("Ubuntu-R.ttf"); }
 * {
   font-family: "Ubuntu"; }
+
+.btn-default:not(.search-button) {
+  border: 0px;
+  background-color: black;
+  color: white;
+  font-size: 22px;
+  height: 35px;
+  line-height: 22px;
+  padding: 7px;
+  padding-top: 5px; }
+
+.btn-default:not(.search-button):active {
+  background-color: #dddddd;
+  color: #444444; }
+
+.form-control:not(.search-input) {
+  padding: 4px 10px;
+  font-size: 18px;
+  color: black;
+  box-shadow: none;
+  border: 1px solid #666666;
+  border-radius: 4px;
+  height: 35px; }
+  .form-control:not(.search-input).placeholder {
+    color: #666666; }
+  .form-control:not(.search-input):-moz-placeholder {
+    color: #666666; }
+  .form-control:not(.search-input)::-moz-placeholder {
+    color: #666666; }
+  .form-control:not(.search-input)::-webkit-input-placeholder {
+    color: #666666; }
+
+.form-control:focus {
+  outline: none !important;
+  border: 1px solid #C0CF02 !important;
+  box-shadow: 0px 0px 4px #C0CF02 !important; }
+
+.link {
+  color: #025A6A; }
+
+.link:hover {
+  color: #014450; }
+
+.modal-content .form-control {
+  border: 1px solid #dddddd; }
 
 header .logo {
   max-height: 100%;
@@ -20,8 +68,14 @@ header .form-control {
   font-size: 16px;
   color: black;
   box-shadow: none; }
-header .form-control::-moz-placeholder {
-  color: #666666; }
+  header .form-control.placeholder {
+    color: #666666; }
+  header .form-control:-moz-placeholder {
+    color: #666666; }
+  header .form-control::-moz-placeholder {
+    color: #666666; }
+  header .form-control::-webkit-input-placeholder {
+    color: #666666; }
 header .form-control, header .btn {
   border: 1px solid #666666;
   border-radius: 4px;
@@ -33,7 +87,7 @@ header .btn {
   color: #666666; }
 header .btn:hover {
   border: 1px solid #666666;
-  background-color: #e6e6e6; }
+  background-color: #dddddd; }
 header .input-group {
   width: 260px; }
 header .navbar-form {
@@ -62,6 +116,9 @@ section {
   background: url("../images/background.png") center top no-repeat;
   background-size: cover; }
 
+.modal-content {
+  border-radius: 4px; }
+
 /*homepage*/
 .homepage-wrapper {
   color: white;
@@ -72,7 +129,9 @@ section {
   .homepage-wrapper h1 {
     font-size: 100px; }
   .homepage-wrapper .welcome {
-    font-size: 40px; }
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: middle; }
     @media screen and (max-width: 1199px) {
       .homepage-wrapper .welcome h2 {
         font-size: 36px; } }
@@ -89,29 +148,13 @@ section {
     padding-top: 80px; }
   .homepage-wrapper .sign-in-form {
     width: 320px; }
-    .homepage-wrapper .sign-in-form .form-control {
-      padding: 5px 10px;
-      font-size: 16px;
-      color: black;
-      box-shadow: none;
-      background-color: #e2e2e2; }
-    .homepage-wrapper .sign-in-form .form-control::-moz-placeholder {
-      color: #666666; }
-    .homepage-wrapper .sign-in-form .form-control {
-      border: 1px solid #666666;
-      border-radius: 4px;
-      height: 35px; }
-    .homepage-wrapper .sign-in-form .btn {
-      border: 0px;
-      background-color: black;
-      color: white;
-      font-size: 22px;
-      height: 35px;
-      line-height: 22px;
-      padding: 7px;
-      padding-top: 5px; }
     @media screen and (max-width: 767px) {
       .homepage-wrapper .sign-in-form {
         width: 100%; } }
+    .homepage-wrapper .sign-in-form .form-control {
+      background-color: #dddddd; }
+  @media screen and (max-width: 767px) {
+    .homepage-wrapper {
+      padding-top: 30px; } }
 
 /*# sourceMappingURL=style.css.map */

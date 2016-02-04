@@ -20,7 +20,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildUserQuery orderByNick($order = Criteria::ASC) Order by the nick column
+ * @method     ChildUserQuery orderByUsername($order = Criteria::ASC) Order by the username column
  * @method     ChildUserQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildUserQuery orderBySurname($order = Criteria::ASC) Order by the surname column
  * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  *
  * @method     ChildUserQuery groupById() Group by the id column
- * @method     ChildUserQuery groupByNick() Group by the nick column
+ * @method     ChildUserQuery groupByUsername() Group by the username column
  * @method     ChildUserQuery groupByName() Group by the name column
  * @method     ChildUserQuery groupBySurname() Group by the surname column
  * @method     ChildUserQuery groupByPassword() Group by the password column
@@ -59,7 +59,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
- * @method     ChildUser findOneByNick(string $nick) Return the first ChildUser filtered by the nick column
+ * @method     ChildUser findOneByUsername(string $username) Return the first ChildUser filtered by the username column
  * @method     ChildUser findOneByName(string $name) Return the first ChildUser filtered by the name column
  * @method     ChildUser findOneBySurname(string $surname) Return the first ChildUser filtered by the surname column
  * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
@@ -76,7 +76,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByNick(string $nick) Return the first ChildUser filtered by the nick column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByUsername(string $username) Return the first ChildUser filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByName(string $name) Return the first ChildUser filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneBySurname(string $surname) Return the first ChildUser filtered by the surname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPassword(string $password) Return the first ChildUser filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -91,7 +91,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
- * @method     ChildUser[]|ObjectCollection findByNick(string $nick) Return ChildUser objects filtered by the nick column
+ * @method     ChildUser[]|ObjectCollection findByUsername(string $username) Return ChildUser objects filtered by the username column
  * @method     ChildUser[]|ObjectCollection findByName(string $name) Return ChildUser objects filtered by the name column
  * @method     ChildUser[]|ObjectCollection findBySurname(string $surname) Return ChildUser objects filtered by the surname column
  * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
@@ -195,7 +195,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, nick, name, surname, password, email, avatar, password_token, email_token, email_confirmed_at, created_at, changed_at, deleted_at FROM user WHERE id = :p0';
+        $sql = 'SELECT id, username, name, surname, password, email, avatar, password_token, email_token, email_confirmed_at, created_at, changed_at, deleted_at FROM user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -327,32 +327,32 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the nick column
+     * Filter the query on the username column
      *
      * Example usage:
      * <code>
-     * $query->filterByNick('fooValue');   // WHERE nick = 'fooValue'
-     * $query->filterByNick('%fooValue%'); // WHERE nick LIKE '%fooValue%'
+     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByUsername('%fooValue%'); // WHERE username LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $nick The value to use as filter.
+     * @param     string $username The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByNick($nick = null, $comparison = null)
+    public function filterByUsername($username = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($nick)) {
+            if (is_array($username)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $nick)) {
-                $nick = str_replace('*', '%', $nick);
+            } elseif (preg_match('/[\%\*]/', $username)) {
+                $username = str_replace('*', '%', $username);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_NICK, $nick, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_USERNAME, $username, $comparison);
     }
 
     /**

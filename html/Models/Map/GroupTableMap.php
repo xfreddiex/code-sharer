@@ -2,8 +2,8 @@
 
 namespace Models\Map;
 
-use Models\User;
-use Models\UserQuery;
+use Models\Group;
+use Models\GroupQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'user' table.
+ * This class defines the structure of the 'group' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class UserTableMap extends TableMap
+class GroupTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class UserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.Map.UserTableMap';
+    const CLASS_NAME = 'Models.Map.GroupTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'user';
+    const TABLE_NAME = 'group';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Models\\User';
+    const OM_CLASS = '\\Models\\Group';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Models.User';
+    const CLASS_DEFAULT = 'Models.Group';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -69,72 +69,42 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'user.id';
-
-    /**
-     * the column name for the username field
-     */
-    const COL_USERNAME = 'user.username';
+    const COL_ID = 'group.id';
 
     /**
      * the column name for the name field
      */
-    const COL_NAME = 'user.name';
+    const COL_NAME = 'group.name';
 
     /**
-     * the column name for the surname field
+     * the column name for the description field
      */
-    const COL_SURNAME = 'user.surname';
+    const COL_DESCRIPTION = 'group.description';
 
     /**
-     * the column name for the password field
+     * the column name for the public field
      */
-    const COL_PASSWORD = 'user.password';
-
-    /**
-     * the column name for the email field
-     */
-    const COL_EMAIL = 'user.email';
-
-    /**
-     * the column name for the avatar field
-     */
-    const COL_AVATAR = 'user.avatar';
-
-    /**
-     * the column name for the password_token field
-     */
-    const COL_PASSWORD_TOKEN = 'user.password_token';
-
-    /**
-     * the column name for the email_token field
-     */
-    const COL_EMAIL_TOKEN = 'user.email_token';
-
-    /**
-     * the column name for the email_confirmed_at field
-     */
-    const COL_EMAIL_CONFIRMED_AT = 'user.email_confirmed_at';
+    const COL_PUBLIC = 'group.public';
 
     /**
      * the column name for the created_at field
      */
-    const COL_CREATED_AT = 'user.created_at';
+    const COL_CREATED_AT = 'group.created_at';
 
     /**
      * the column name for the changed_at field
      */
-    const COL_CHANGED_AT = 'user.changed_at';
+    const COL_CHANGED_AT = 'group.changed_at';
 
     /**
      * the column name for the deleted_at field
      */
-    const COL_DELETED_AT = 'user.deleted_at';
+    const COL_DELETED_AT = 'group.deleted_at';
 
     /**
      * The default string format for model objects of the related table
@@ -148,11 +118,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Name', 'Surname', 'Password', 'Email', 'Avatar', 'PasswordToken', 'EmailToken', 'EmailConfirmedAt', 'CreatedAt', 'ChangedAt', 'DeletedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar', 'passwordToken', 'emailToken', 'emailConfirmedAt', 'createdAt', 'changedAt', 'deletedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_NAME, UserTableMap::COL_SURNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_EMAIL, UserTableMap::COL_AVATAR, UserTableMap::COL_PASSWORD_TOKEN, UserTableMap::COL_EMAIL_TOKEN, UserTableMap::COL_EMAIL_CONFIRMED_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_CHANGED_AT, UserTableMap::COL_DELETED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar', 'password_token', 'email_token', 'email_confirmed_at', 'created_at', 'changed_at', 'deleted_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Public', 'CreatedAt', 'ChangedAt', 'DeletedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'public', 'createdAt', 'changedAt', 'deletedAt', ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_PUBLIC, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_CHANGED_AT, GroupTableMap::COL_DELETED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'public', 'created_at', 'changed_at', 'deleted_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -162,11 +132,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Name' => 2, 'Surname' => 3, 'Password' => 4, 'Email' => 5, 'Avatar' => 6, 'PasswordToken' => 7, 'EmailToken' => 8, 'EmailConfirmedAt' => 9, 'CreatedAt' => 10, 'ChangedAt' => 11, 'DeletedAt' => 12, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar' => 6, 'passwordToken' => 7, 'emailToken' => 8, 'emailConfirmedAt' => 9, 'createdAt' => 10, 'changedAt' => 11, 'deletedAt' => 12, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_NAME => 2, UserTableMap::COL_SURNAME => 3, UserTableMap::COL_PASSWORD => 4, UserTableMap::COL_EMAIL => 5, UserTableMap::COL_AVATAR => 6, UserTableMap::COL_PASSWORD_TOKEN => 7, UserTableMap::COL_EMAIL_TOKEN => 8, UserTableMap::COL_EMAIL_CONFIRMED_AT => 9, UserTableMap::COL_CREATED_AT => 10, UserTableMap::COL_CHANGED_AT => 11, UserTableMap::COL_DELETED_AT => 12, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar' => 6, 'password_token' => 7, 'email_token' => 8, 'email_confirmed_at' => 9, 'created_at' => 10, 'changed_at' => 11, 'deleted_at' => 12, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Public' => 3, 'CreatedAt' => 4, 'ChangedAt' => 5, 'DeletedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'createdAt' => 4, 'changedAt' => 5, 'deletedAt' => 6, ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_PUBLIC => 3, GroupTableMap::COL_CREATED_AT => 4, GroupTableMap::COL_CHANGED_AT => 5, GroupTableMap::COL_DELETED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'created_at' => 4, 'changed_at' => 5, 'deleted_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -179,23 +149,17 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('user');
-        $this->setPhpName('User');
+        $this->setName('group');
+        $this->setPhpName('Group');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Models\\User');
+        $this->setClassName('\\Models\\Group');
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('username', 'Username', 'VARCHAR', true, 30, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', false, 50, null);
-        $this->addColumn('surname', 'Surname', 'VARCHAR', false, 50, null);
-        $this->addColumn('password', 'Password', 'VARCHAR', true, 50, null);
-        $this->addColumn('email', 'Email', 'VARCHAR', true, 70, null);
-        $this->addColumn('avatar', 'Avatar', 'VARCHAR', false, 70, null);
-        $this->addColumn('password_token', 'PasswordToken', 'VARCHAR', false, 64, null);
-        $this->addColumn('email_token', 'EmailToken', 'VARCHAR', false, 64, null);
-        $this->addColumn('email_confirmed_at', 'EmailConfirmedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 50, null);
+        $this->addColumn('description', 'Description', 'VARCHAR', false, 250, null);
+        $this->addColumn('public', 'Public', 'BOOLEAN', true, 1, null);
         $this->addColumn('created_at', 'CreatedAt', 'INTEGER', true, null, null);
         $this->addColumn('changed_at', 'ChangedAt', 'INTEGER', false, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'INTEGER', false, null, null);
@@ -265,7 +229,7 @@ class UserTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserTableMap::CLASS_DEFAULT : UserTableMap::OM_CLASS;
+        return $withPrefix ? GroupTableMap::CLASS_DEFAULT : GroupTableMap::OM_CLASS;
     }
 
     /**
@@ -279,22 +243,22 @@ class UserTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (User object, last column rank)
+     * @return array           (Group object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+        $key = GroupTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = GroupTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + GroupTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserTableMap::OM_CLASS;
-            /** @var User $obj */
+            $cls = GroupTableMap::OM_CLASS;
+            /** @var Group $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserTableMap::addInstanceToPool($obj, $key);
+            GroupTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -317,18 +281,18 @@ class UserTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+            $key = GroupTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = GroupTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var User $obj */
+                /** @var Group $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserTableMap::addInstanceToPool($obj, $key);
+                GroupTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -349,30 +313,18 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_SURNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(UserTableMap::COL_AVATAR);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD_TOKEN);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_TOKEN);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_CONFIRMED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_CHANGED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_DELETED_AT);
+            $criteria->addSelectColumn(GroupTableMap::COL_ID);
+            $criteria->addSelectColumn(GroupTableMap::COL_NAME);
+            $criteria->addSelectColumn(GroupTableMap::COL_DESCRIPTION);
+            $criteria->addSelectColumn(GroupTableMap::COL_PUBLIC);
+            $criteria->addSelectColumn(GroupTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(GroupTableMap::COL_CHANGED_AT);
+            $criteria->addSelectColumn(GroupTableMap::COL_DELETED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.username');
             $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.surname');
-            $criteria->addSelectColumn($alias . '.password');
-            $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.avatar');
-            $criteria->addSelectColumn($alias . '.password_token');
-            $criteria->addSelectColumn($alias . '.email_token');
-            $criteria->addSelectColumn($alias . '.email_confirmed_at');
+            $criteria->addSelectColumn($alias . '.description');
+            $criteria->addSelectColumn($alias . '.public');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.changed_at');
             $criteria->addSelectColumn($alias . '.deleted_at');
@@ -388,7 +340,7 @@ class UserTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME)->getTable(UserTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(GroupTableMap::DATABASE_NAME)->getTable(GroupTableMap::TABLE_NAME);
     }
 
     /**
@@ -396,16 +348,16 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(GroupTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(GroupTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new GroupTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a User or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Group or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or User object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Group object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -416,27 +368,27 @@ class UserTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GroupTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Models\User) { // it's a model object
+        } elseif ($values instanceof \Models\Group) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(GroupTableMap::DATABASE_NAME);
+            $criteria->add(GroupTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = GroupQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            UserTableMap::clearInstancePool();
+            GroupTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                UserTableMap::removeInstanceFromPool($singleval);
+                GroupTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -444,20 +396,20 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the user table.
+     * Deletes all rows from the group table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserQuery::create()->doDeleteAll($con);
+        return GroupQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a User or Criteria object.
+     * Performs an INSERT on the database, given a Group or Criteria object.
      *
-     * @param mixed               $criteria Criteria or User object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Group object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -466,22 +418,22 @@ class UserTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(GroupTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from User object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Group object
         }
 
-        if ($criteria->containsKey(UserTableMap::COL_ID) && $criteria->keyContainsValue(UserTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::COL_ID.')');
+        if ($criteria->containsKey(GroupTableMap::COL_ID) && $criteria->keyContainsValue(GroupTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GroupTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = GroupQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -490,7 +442,7 @@ class UserTableMap extends TableMap
         });
     }
 
-} // UserTableMap
+} // GroupTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserTableMap::buildTableMap();
+GroupTableMap::buildTableMap();

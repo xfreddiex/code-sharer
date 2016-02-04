@@ -2,37 +2,39 @@
 
 namespace Models\Base;
 
-use \DateTime;
 use \Exception;
 use \PDO;
-use Models\UserQuery as ChildUserQuery;
-use Models\Map\UserTableMap;
+use Models\File as ChildFile;
+use Models\FileQuery as ChildFileQuery;
+use Models\Pack as ChildPack;
+use Models\PackQuery as ChildPackQuery;
+use Models\Map\PackTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'user' table.
+ * Base class that represents a row from the 'pack' table.
  *
  *
  *
 * @package    propel.generator.Models.Base
 */
-abstract class User implements ActiveRecordInterface
+abstract class Pack implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Models\\Map\\UserTableMap';
+    const TABLE_MAP = '\\Models\\Map\\PackTableMap';
 
 
     /**
@@ -69,13 +71,6 @@ abstract class User implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the username field.
-     *
-     * @var        string
-     */
-    protected $username;
-
-    /**
      * The value for the name field.
      *
      * @var        string
@@ -83,53 +78,18 @@ abstract class User implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the surname field.
+     * The value for the description field.
      *
      * @var        string
      */
-    protected $surname;
+    protected $description;
 
     /**
-     * The value for the password field.
+     * The value for the public field.
      *
-     * @var        string
+     * @var        boolean
      */
-    protected $password;
-
-    /**
-     * The value for the email field.
-     *
-     * @var        string
-     */
-    protected $email;
-
-    /**
-     * The value for the avatar field.
-     *
-     * @var        string
-     */
-    protected $avatar;
-
-    /**
-     * The value for the password_token field.
-     *
-     * @var        string
-     */
-    protected $password_token;
-
-    /**
-     * The value for the email_token field.
-     *
-     * @var        string
-     */
-    protected $email_token;
-
-    /**
-     * The value for the email_confirmed_at field.
-     *
-     * @var        \DateTime
-     */
-    protected $email_confirmed_at;
+    protected $public;
 
     /**
      * The value for the created_at field.
@@ -153,6 +113,19 @@ abstract class User implements ActiveRecordInterface
     protected $deleted_at;
 
     /**
+     * The value for the tags field.
+     *
+     * @var        string
+     */
+    protected $tags;
+
+    /**
+     * @var        ObjectCollection|ChildFile[] Collection to store aggregation of ChildFile objects.
+     */
+    protected $collFiles;
+    protected $collFilesPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -161,7 +134,13 @@ abstract class User implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Models\Base\User object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildFile[]
+     */
+    protected $filesScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of Models\Base\Pack object.
      */
     public function __construct()
     {
@@ -256,9 +235,9 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>User</code> instance.  If
-     * <code>obj</code> is an instance of <code>User</code>, delegates to
-     * <code>equals(User)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Pack</code> instance.  If
+     * <code>obj</code> is an instance of <code>Pack</code>, delegates to
+     * <code>equals(Pack)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -324,7 +303,7 @@ abstract class User implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|User The current object, for fluid interface
+     * @return $this|Pack The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -396,16 +375,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [username] column value.
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
      * Get the [name] column value.
      *
      * @return string
@@ -416,83 +385,33 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [surname] column value.
+     * Get the [description] column value.
      *
      * @return string
      */
-    public function getSurname()
+    public function getDescription()
     {
-        return $this->surname;
+        return $this->description;
     }
 
     /**
-     * Get the [password] column value.
+     * Get the [public] column value.
      *
-     * @return string
+     * @return boolean
      */
-    public function getPassword()
+    public function getPublic()
     {
-        return $this->password;
+        return $this->public;
     }
 
     /**
-     * Get the [email] column value.
+     * Get the [public] column value.
      *
-     * @return string
+     * @return boolean
      */
-    public function getEmail()
+    public function isPublic()
     {
-        return $this->email;
-    }
-
-    /**
-     * Get the [avatar] column value.
-     *
-     * @return string
-     */
-    public function getAvatar()
-    {
-        return $this->avatar;
-    }
-
-    /**
-     * Get the [password_token] column value.
-     *
-     * @return string
-     */
-    public function getPasswordToken()
-    {
-        return $this->password_token;
-    }
-
-    /**
-     * Get the [email_token] column value.
-     *
-     * @return string
-     */
-    public function getEmailToken()
-    {
-        return $this->email_token;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [email_confirmed_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getEmailConfirmedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->email_confirmed_at;
-        } else {
-            return $this->email_confirmed_at instanceof \DateTime ? $this->email_confirmed_at->format($format) : null;
-        }
+        return $this->getPublic();
     }
 
     /**
@@ -526,10 +445,20 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [tags] column value.
+     *
+     * @return string
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -539,37 +468,17 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[UserTableMap::COL_ID] = true;
+            $this->modifiedColumns[PackTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [username] column.
-     *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setUsername($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->username !== $v) {
-            $this->username = $v;
-            $this->modifiedColumns[UserTableMap::COL_USERNAME] = true;
-        }
-
-        return $this;
-    } // setUsername()
-
-    /**
      * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setName($v)
     {
@@ -579,157 +488,65 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->name !== $v) {
             $this->name = $v;
-            $this->modifiedColumns[UserTableMap::COL_NAME] = true;
+            $this->modifiedColumns[PackTableMap::COL_NAME] = true;
         }
 
         return $this;
     } // setName()
 
     /**
-     * Set the value of [surname] column.
+     * Set the value of [description] column.
      *
      * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
-    public function setSurname($v)
+    public function setDescription($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->surname !== $v) {
-            $this->surname = $v;
-            $this->modifiedColumns[UserTableMap::COL_SURNAME] = true;
+        if ($this->description !== $v) {
+            $this->description = $v;
+            $this->modifiedColumns[PackTableMap::COL_DESCRIPTION] = true;
         }
 
         return $this;
-    } // setSurname()
+    } // setDescription()
 
     /**
-     * Set the value of [password] column.
+     * Sets the value of the [public] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
-    public function setPassword($v)
+    public function setPublic($v)
     {
         if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->password !== $v) {
-            $this->password = $v;
-            $this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
-        }
-
-        return $this;
-    } // setPassword()
-
-    /**
-     * Set the value of [email] column.
-     *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setEmail($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->email !== $v) {
-            $this->email = $v;
-            $this->modifiedColumns[UserTableMap::COL_EMAIL] = true;
-        }
-
-        return $this;
-    } // setEmail()
-
-    /**
-     * Set the value of [avatar] column.
-     *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setAvatar($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->avatar !== $v) {
-            $this->avatar = $v;
-            $this->modifiedColumns[UserTableMap::COL_AVATAR] = true;
-        }
-
-        return $this;
-    } // setAvatar()
-
-    /**
-     * Set the value of [password_token] column.
-     *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setPasswordToken($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->password_token !== $v) {
-            $this->password_token = $v;
-            $this->modifiedColumns[UserTableMap::COL_PASSWORD_TOKEN] = true;
-        }
-
-        return $this;
-    } // setPasswordToken()
-
-    /**
-     * Set the value of [email_token] column.
-     *
-     * @param string $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setEmailToken($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->email_token !== $v) {
-            $this->email_token = $v;
-            $this->modifiedColumns[UserTableMap::COL_EMAIL_TOKEN] = true;
-        }
-
-        return $this;
-    } // setEmailToken()
-
-    /**
-     * Sets the value of [email_confirmed_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setEmailConfirmedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->email_confirmed_at !== null || $dt !== null) {
-            if ($this->email_confirmed_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->email_confirmed_at->format("Y-m-d H:i:s")) {
-                $this->email_confirmed_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[UserTableMap::COL_EMAIL_CONFIRMED_AT] = true;
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
             }
-        } // if either are not null
+        }
+
+        if ($this->public !== $v) {
+            $this->public = $v;
+            $this->modifiedColumns[PackTableMap::COL_PUBLIC] = true;
+        }
 
         return $this;
-    } // setEmailConfirmedAt()
+    } // setPublic()
 
     /**
      * Set the value of [created_at] column.
      *
      * @param int $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -739,7 +556,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->created_at !== $v) {
             $this->created_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_CREATED_AT] = true;
+            $this->modifiedColumns[PackTableMap::COL_CREATED_AT] = true;
         }
 
         return $this;
@@ -749,7 +566,7 @@ abstract class User implements ActiveRecordInterface
      * Set the value of [changed_at] column.
      *
      * @param int $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setChangedAt($v)
     {
@@ -759,7 +576,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->changed_at !== $v) {
             $this->changed_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_CHANGED_AT] = true;
+            $this->modifiedColumns[PackTableMap::COL_CHANGED_AT] = true;
         }
 
         return $this;
@@ -769,7 +586,7 @@ abstract class User implements ActiveRecordInterface
      * Set the value of [deleted_at] column.
      *
      * @param int $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
+     * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setDeletedAt($v)
     {
@@ -779,11 +596,31 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->deleted_at !== $v) {
             $this->deleted_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_DELETED_AT] = true;
+            $this->modifiedColumns[PackTableMap::COL_DELETED_AT] = true;
         }
 
         return $this;
     } // setDeletedAt()
+
+    /**
+     * Set the value of [tags] column.
+     *
+     * @param string $v new value
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function setTags($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->tags !== $v) {
+            $this->tags = $v;
+            $this->modifiedColumns[PackTableMap::COL_TAGS] = true;
+        }
+
+        return $this;
+    } // setTags()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -821,47 +658,29 @@ abstract class User implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : PackTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->username = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PackTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Surname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->surname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PackTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PackTableMap::translateFieldName('Public', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->public = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Avatar', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->avatar = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('PasswordToken', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password_token = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('EmailToken', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email_token = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('EmailConfirmedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->email_confirmed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('ChangedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackTableMap::translateFieldName('ChangedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->changed_at = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PackTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->deleted_at = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : PackTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tags = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -870,10 +689,10 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = PackTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Models\\User'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Models\\Pack'), 0, $e);
         }
     }
 
@@ -915,13 +734,13 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(PackTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildPackQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -930,6 +749,8 @@ abstract class User implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collFiles = null;
 
         } // if (deep)
     }
@@ -940,8 +761,8 @@ abstract class User implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see User::setDeleted()
-     * @see User::isDeleted()
+     * @see Pack::setDeleted()
+     * @see Pack::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -950,11 +771,11 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PackTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildUserQuery::create()
+            $deleteQuery = ChildPackQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -985,7 +806,7 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PackTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -1004,7 +825,7 @@ abstract class User implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserTableMap::addInstanceToPool($this);
+                PackTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1041,6 +862,23 @@ abstract class User implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->filesScheduledForDeletion !== null) {
+                if (!$this->filesScheduledForDeletion->isEmpty()) {
+                    \Models\FileQuery::create()
+                        ->filterByPrimaryKeys($this->filesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->filesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collFiles !== null) {
+                foreach ($this->collFiles as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -1061,54 +899,39 @@ abstract class User implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[UserTableMap::COL_ID] = true;
+        $this->modifiedColumns[PackTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PackTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserTableMap::COL_ID)) {
+        if ($this->isColumnModified(PackTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserTableMap::COL_USERNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'username';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_NAME)) {
+        if ($this->isColumnModified(PackTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(UserTableMap::COL_SURNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'surname';
+        if ($this->isColumnModified(PackTableMap::COL_DESCRIPTION)) {
+            $modifiedColumns[':p' . $index++]  = 'description';
         }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
-            $modifiedColumns[':p' . $index++]  = 'password';
+        if ($this->isColumnModified(PackTableMap::COL_PUBLIC)) {
+            $modifiedColumns[':p' . $index++]  = 'public';
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
-            $modifiedColumns[':p' . $index++]  = 'email';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_AVATAR)) {
-            $modifiedColumns[':p' . $index++]  = 'avatar';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_TOKEN)) {
-            $modifiedColumns[':p' . $index++]  = 'password_token';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_TOKEN)) {
-            $modifiedColumns[':p' . $index++]  = 'email_token';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'email_confirmed_at';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
+        if ($this->isColumnModified(PackTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
-        if ($this->isColumnModified(UserTableMap::COL_CHANGED_AT)) {
+        if ($this->isColumnModified(PackTableMap::COL_CHANGED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'changed_at';
         }
-        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
+        if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'deleted_at';
+        }
+        if ($this->isColumnModified(PackTableMap::COL_TAGS)) {
+            $modifiedColumns[':p' . $index++]  = 'tags';
         }
 
         $sql = sprintf(
-            'INSERT INTO user (%s) VALUES (%s)',
+            'INSERT INTO pack (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1120,32 +943,14 @@ abstract class User implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'username':
-                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
-                        break;
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'surname':
-                        $stmt->bindValue($identifier, $this->surname, PDO::PARAM_STR);
+                    case 'description':
+                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
                         break;
-                    case 'password':
-                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
-                        break;
-                    case 'email':
-                        $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
-                        break;
-                    case 'avatar':
-                        $stmt->bindValue($identifier, $this->avatar, PDO::PARAM_STR);
-                        break;
-                    case 'password_token':
-                        $stmt->bindValue($identifier, $this->password_token, PDO::PARAM_STR);
-                        break;
-                    case 'email_token':
-                        $stmt->bindValue($identifier, $this->email_token, PDO::PARAM_STR);
-                        break;
-                    case 'email_confirmed_at':
-                        $stmt->bindValue($identifier, $this->email_confirmed_at ? $this->email_confirmed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'public':
+                        $stmt->bindValue($identifier, (int) $this->public, PDO::PARAM_INT);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_INT);
@@ -1155,6 +960,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case 'deleted_at':
                         $stmt->bindValue($identifier, $this->deleted_at, PDO::PARAM_INT);
+                        break;
+                    case 'tags':
+                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1202,7 +1010,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = PackTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1222,40 +1030,25 @@ abstract class User implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getUsername();
-                break;
-            case 2:
                 return $this->getName();
                 break;
+            case 2:
+                return $this->getDescription();
+                break;
             case 3:
-                return $this->getSurname();
+                return $this->getPublic();
                 break;
             case 4:
-                return $this->getPassword();
-                break;
-            case 5:
-                return $this->getEmail();
-                break;
-            case 6:
-                return $this->getAvatar();
-                break;
-            case 7:
-                return $this->getPasswordToken();
-                break;
-            case 8:
-                return $this->getEmailToken();
-                break;
-            case 9:
-                return $this->getEmailConfirmedAt();
-                break;
-            case 10:
                 return $this->getCreatedAt();
                 break;
-            case 11:
+            case 5:
                 return $this->getChangedAt();
                 break;
-            case 12:
+            case 6:
                 return $this->getDeletedAt();
+                break;
+            case 7:
+                return $this->getTags();
                 break;
             default:
                 return null;
@@ -1274,41 +1067,50 @@ abstract class User implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['User'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Pack'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['User'][$this->hashCode()] = true;
-        $keys = UserTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Pack'][$this->hashCode()] = true;
+        $keys = PackTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getUsername(),
-            $keys[2] => $this->getName(),
-            $keys[3] => $this->getSurname(),
-            $keys[4] => $this->getPassword(),
-            $keys[5] => $this->getEmail(),
-            $keys[6] => $this->getAvatar(),
-            $keys[7] => $this->getPasswordToken(),
-            $keys[8] => $this->getEmailToken(),
-            $keys[9] => $this->getEmailConfirmedAt(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getChangedAt(),
-            $keys[12] => $this->getDeletedAt(),
+            $keys[1] => $this->getName(),
+            $keys[2] => $this->getDescription(),
+            $keys[3] => $this->getPublic(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getChangedAt(),
+            $keys[6] => $this->getDeletedAt(),
+            $keys[7] => $this->getTags(),
         );
-        if ($result[$keys[9]] instanceof \DateTime) {
-            $result[$keys[9]] = $result[$keys[9]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->collFiles) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'files';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'files';
+                        break;
+                    default:
+                        $key = 'Files';
+                }
+
+                $result[$key] = $this->collFiles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -1322,11 +1124,11 @@ abstract class User implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Models\User
+     * @return $this|\Models\Pack
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = PackTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1337,7 +1139,7 @@ abstract class User implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Models\User
+     * @return $this|\Models\Pack
      */
     public function setByPosition($pos, $value)
     {
@@ -1346,40 +1148,25 @@ abstract class User implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setUsername($value);
-                break;
-            case 2:
                 $this->setName($value);
                 break;
+            case 2:
+                $this->setDescription($value);
+                break;
             case 3:
-                $this->setSurname($value);
+                $this->setPublic($value);
                 break;
             case 4:
-                $this->setPassword($value);
-                break;
-            case 5:
-                $this->setEmail($value);
-                break;
-            case 6:
-                $this->setAvatar($value);
-                break;
-            case 7:
-                $this->setPasswordToken($value);
-                break;
-            case 8:
-                $this->setEmailToken($value);
-                break;
-            case 9:
-                $this->setEmailConfirmedAt($value);
-                break;
-            case 10:
                 $this->setCreatedAt($value);
                 break;
-            case 11:
+            case 5:
                 $this->setChangedAt($value);
                 break;
-            case 12:
+            case 6:
                 $this->setDeletedAt($value);
+                break;
+            case 7:
+                $this->setTags($value);
                 break;
         } // switch()
 
@@ -1405,46 +1192,31 @@ abstract class User implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserTableMap::getFieldNames($keyType);
+        $keys = PackTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUsername($arr[$keys[1]]);
+            $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setName($arr[$keys[2]]);
+            $this->setDescription($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setSurname($arr[$keys[3]]);
+            $this->setPublic($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPassword($arr[$keys[4]]);
+            $this->setCreatedAt($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setEmail($arr[$keys[5]]);
+            $this->setChangedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setAvatar($arr[$keys[6]]);
+            $this->setDeletedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPasswordToken($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setEmailToken($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setEmailConfirmedAt($arr[$keys[9]]);
-        }
-        if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
-        }
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setChangedAt($arr[$keys[11]]);
-        }
-        if (array_key_exists($keys[12], $arr)) {
-            $this->setDeletedAt($arr[$keys[12]]);
+            $this->setTags($arr[$keys[7]]);
         }
     }
 
@@ -1465,7 +1237,7 @@ abstract class User implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Models\User The current object, for fluid interface
+     * @return $this|\Models\Pack The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1485,46 +1257,31 @@ abstract class User implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserTableMap::DATABASE_NAME);
+        $criteria = new Criteria(PackTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserTableMap::COL_ID)) {
-            $criteria->add(UserTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(PackTableMap::COL_ID)) {
+            $criteria->add(PackTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserTableMap::COL_USERNAME)) {
-            $criteria->add(UserTableMap::COL_USERNAME, $this->username);
+        if ($this->isColumnModified(PackTableMap::COL_NAME)) {
+            $criteria->add(PackTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(UserTableMap::COL_NAME)) {
-            $criteria->add(UserTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(PackTableMap::COL_DESCRIPTION)) {
+            $criteria->add(PackTableMap::COL_DESCRIPTION, $this->description);
         }
-        if ($this->isColumnModified(UserTableMap::COL_SURNAME)) {
-            $criteria->add(UserTableMap::COL_SURNAME, $this->surname);
+        if ($this->isColumnModified(PackTableMap::COL_PUBLIC)) {
+            $criteria->add(PackTableMap::COL_PUBLIC, $this->public);
         }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
-            $criteria->add(UserTableMap::COL_PASSWORD, $this->password);
+        if ($this->isColumnModified(PackTableMap::COL_CREATED_AT)) {
+            $criteria->add(PackTableMap::COL_CREATED_AT, $this->created_at);
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
-            $criteria->add(UserTableMap::COL_EMAIL, $this->email);
+        if ($this->isColumnModified(PackTableMap::COL_CHANGED_AT)) {
+            $criteria->add(PackTableMap::COL_CHANGED_AT, $this->changed_at);
         }
-        if ($this->isColumnModified(UserTableMap::COL_AVATAR)) {
-            $criteria->add(UserTableMap::COL_AVATAR, $this->avatar);
+        if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
+            $criteria->add(PackTableMap::COL_DELETED_AT, $this->deleted_at);
         }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_TOKEN)) {
-            $criteria->add(UserTableMap::COL_PASSWORD_TOKEN, $this->password_token);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_TOKEN)) {
-            $criteria->add(UserTableMap::COL_EMAIL_TOKEN, $this->email_token);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
-            $criteria->add(UserTableMap::COL_EMAIL_CONFIRMED_AT, $this->email_confirmed_at);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
-            $criteria->add(UserTableMap::COL_CREATED_AT, $this->created_at);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_CHANGED_AT)) {
-            $criteria->add(UserTableMap::COL_CHANGED_AT, $this->changed_at);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
-            $criteria->add(UserTableMap::COL_DELETED_AT, $this->deleted_at);
+        if ($this->isColumnModified(PackTableMap::COL_TAGS)) {
+            $criteria->add(PackTableMap::COL_TAGS, $this->tags);
         }
 
         return $criteria;
@@ -1542,8 +1299,8 @@ abstract class User implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildUserQuery::create();
-        $criteria->add(UserTableMap::COL_ID, $this->id);
+        $criteria = ChildPackQuery::create();
+        $criteria->add(PackTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1605,25 +1362,34 @@ abstract class User implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Models\User (or compatible) type.
+     * @param      object $copyObj An object of \Models\Pack (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUsername($this->getUsername());
         $copyObj->setName($this->getName());
-        $copyObj->setSurname($this->getSurname());
-        $copyObj->setPassword($this->getPassword());
-        $copyObj->setEmail($this->getEmail());
-        $copyObj->setAvatar($this->getAvatar());
-        $copyObj->setPasswordToken($this->getPasswordToken());
-        $copyObj->setEmailToken($this->getEmailToken());
-        $copyObj->setEmailConfirmedAt($this->getEmailConfirmedAt());
+        $copyObj->setDescription($this->getDescription());
+        $copyObj->setPublic($this->getPublic());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setChangedAt($this->getChangedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
+        $copyObj->setTags($this->getTags());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getFiles() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addFile($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1639,7 +1405,7 @@ abstract class User implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Models\User Clone of current object.
+     * @return \Models\Pack Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1652,6 +1418,244 @@ abstract class User implements ActiveRecordInterface
         return $copyObj;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('File' == $relationName) {
+            return $this->initFiles();
+        }
+    }
+
+    /**
+     * Clears out the collFiles collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addFiles()
+     */
+    public function clearFiles()
+    {
+        $this->collFiles = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collFiles collection loaded partially.
+     */
+    public function resetPartialFiles($v = true)
+    {
+        $this->collFilesPartial = $v;
+    }
+
+    /**
+     * Initializes the collFiles collection.
+     *
+     * By default this just sets the collFiles collection to an empty array (like clearcollFiles());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initFiles($overrideExisting = true)
+    {
+        if (null !== $this->collFiles && !$overrideExisting) {
+            return;
+        }
+        $this->collFiles = new ObjectCollection();
+        $this->collFiles->setModel('\Models\File');
+    }
+
+    /**
+     * Gets an array of ChildFile objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildPack is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildFile[] List of ChildFile objects
+     * @throws PropelException
+     */
+    public function getFiles(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFilesPartial && !$this->isNew();
+        if (null === $this->collFiles || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collFiles) {
+                // return empty collection
+                $this->initFiles();
+            } else {
+                $collFiles = ChildFileQuery::create(null, $criteria)
+                    ->filterByPack($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collFilesPartial && count($collFiles)) {
+                        $this->initFiles(false);
+
+                        foreach ($collFiles as $obj) {
+                            if (false == $this->collFiles->contains($obj)) {
+                                $this->collFiles->append($obj);
+                            }
+                        }
+
+                        $this->collFilesPartial = true;
+                    }
+
+                    return $collFiles;
+                }
+
+                if ($partial && $this->collFiles) {
+                    foreach ($this->collFiles as $obj) {
+                        if ($obj->isNew()) {
+                            $collFiles[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collFiles = $collFiles;
+                $this->collFilesPartial = false;
+            }
+        }
+
+        return $this->collFiles;
+    }
+
+    /**
+     * Sets a collection of ChildFile objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $files A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function setFiles(Collection $files, ConnectionInterface $con = null)
+    {
+        /** @var ChildFile[] $filesToDelete */
+        $filesToDelete = $this->getFiles(new Criteria(), $con)->diff($files);
+
+
+        $this->filesScheduledForDeletion = $filesToDelete;
+
+        foreach ($filesToDelete as $fileRemoved) {
+            $fileRemoved->setPack(null);
+        }
+
+        $this->collFiles = null;
+        foreach ($files as $file) {
+            $this->addFile($file);
+        }
+
+        $this->collFiles = $files;
+        $this->collFilesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related File objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related File objects.
+     * @throws PropelException
+     */
+    public function countFiles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collFilesPartial && !$this->isNew();
+        if (null === $this->collFiles || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collFiles) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getFiles());
+            }
+
+            $query = ChildFileQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPack($this)
+                ->count($con);
+        }
+
+        return count($this->collFiles);
+    }
+
+    /**
+     * Method called to associate a ChildFile object to this object
+     * through the ChildFile foreign key attribute.
+     *
+     * @param  ChildFile $l ChildFile
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function addFile(ChildFile $l)
+    {
+        if ($this->collFiles === null) {
+            $this->initFiles();
+            $this->collFilesPartial = true;
+        }
+
+        if (!$this->collFiles->contains($l)) {
+            $this->doAddFile($l);
+
+            if ($this->filesScheduledForDeletion and $this->filesScheduledForDeletion->contains($l)) {
+                $this->filesScheduledForDeletion->remove($this->filesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildFile $file The ChildFile object to add.
+     */
+    protected function doAddFile(ChildFile $file)
+    {
+        $this->collFiles[]= $file;
+        $file->setPack($this);
+    }
+
+    /**
+     * @param  ChildFile $file The ChildFile object to remove.
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function removeFile(ChildFile $file)
+    {
+        if ($this->getFiles()->contains($file)) {
+            $pos = $this->collFiles->search($file);
+            $this->collFiles->remove($pos);
+            if (null === $this->filesScheduledForDeletion) {
+                $this->filesScheduledForDeletion = clone $this->collFiles;
+                $this->filesScheduledForDeletion->clear();
+            }
+            $this->filesScheduledForDeletion[]= clone $file;
+            $file->setPack(null);
+        }
+
+        return $this;
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -1660,18 +1664,13 @@ abstract class User implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->username = null;
         $this->name = null;
-        $this->surname = null;
-        $this->password = null;
-        $this->email = null;
-        $this->avatar = null;
-        $this->password_token = null;
-        $this->email_token = null;
-        $this->email_confirmed_at = null;
+        $this->description = null;
+        $this->public = null;
         $this->created_at = null;
         $this->changed_at = null;
         $this->deleted_at = null;
+        $this->tags = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1690,8 +1689,14 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collFiles) {
+                foreach ($this->collFiles as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collFiles = null;
     }
 
     /**
@@ -1701,7 +1706,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(PackTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**
