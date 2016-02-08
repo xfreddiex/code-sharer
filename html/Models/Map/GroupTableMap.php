@@ -92,19 +92,19 @@ class GroupTableMap extends TableMap
     const COL_PUBLIC = 'group.public';
 
     /**
+     * the column name for the deleted_at field
+     */
+    const COL_DELETED_AT = 'group.deleted_at';
+
+    /**
      * the column name for the created_at field
      */
     const COL_CREATED_AT = 'group.created_at';
 
     /**
-     * the column name for the changed_at field
+     * the column name for the updated_at field
      */
-    const COL_CHANGED_AT = 'group.changed_at';
-
-    /**
-     * the column name for the deleted_at field
-     */
-    const COL_DELETED_AT = 'group.deleted_at';
+    const COL_UPDATED_AT = 'group.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -118,10 +118,10 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Public', 'CreatedAt', 'ChangedAt', 'DeletedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'public', 'createdAt', 'changedAt', 'deletedAt', ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_PUBLIC, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_CHANGED_AT, GroupTableMap::COL_DELETED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'public', 'created_at', 'changed_at', 'deleted_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Public', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'public', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_PUBLIC, GroupTableMap::COL_DELETED_AT, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'public', 'deleted_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -132,10 +132,10 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Public' => 3, 'CreatedAt' => 4, 'ChangedAt' => 5, 'DeletedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'createdAt' => 4, 'changedAt' => 5, 'deletedAt' => 6, ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_PUBLIC => 3, GroupTableMap::COL_CREATED_AT => 4, GroupTableMap::COL_CHANGED_AT => 5, GroupTableMap::COL_DELETED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'created_at' => 4, 'changed_at' => 5, 'deleted_at' => 6, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Public' => 3, 'DeletedAt' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'deletedAt' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_PUBLIC => 3, GroupTableMap::COL_DELETED_AT => 4, GroupTableMap::COL_CREATED_AT => 5, GroupTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'deleted_at' => 4, 'created_at' => 5, 'updated_at' => 6, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -160,9 +160,9 @@ class GroupTableMap extends TableMap
         $this->addColumn('name', 'Name', 'VARCHAR', true, 50, null);
         $this->addColumn('description', 'Description', 'VARCHAR', false, 250, null);
         $this->addColumn('public', 'Public', 'BOOLEAN', true, 1, null);
-        $this->addColumn('created_at', 'CreatedAt', 'INTEGER', true, null, null);
-        $this->addColumn('changed_at', 'ChangedAt', 'INTEGER', false, null, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'INTEGER', false, null, null);
+        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -171,6 +171,19 @@ class GroupTableMap extends TableMap
     public function buildRelations()
     {
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -317,17 +330,17 @@ class GroupTableMap extends TableMap
             $criteria->addSelectColumn(GroupTableMap::COL_NAME);
             $criteria->addSelectColumn(GroupTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(GroupTableMap::COL_PUBLIC);
-            $criteria->addSelectColumn(GroupTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(GroupTableMap::COL_CHANGED_AT);
             $criteria->addSelectColumn(GroupTableMap::COL_DELETED_AT);
+            $criteria->addSelectColumn(GroupTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(GroupTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.public');
-            $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.changed_at');
             $criteria->addSelectColumn($alias . '.deleted_at');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 

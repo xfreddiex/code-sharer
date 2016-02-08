@@ -1,5 +1,5 @@
 /*
-http://paletton.com/#uid=51Z1o0kvHqnlHxkrLv7-QlxIagj
+http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 */
 /*basic template*/
 @font-face {
@@ -49,6 +49,19 @@ http://paletton.com/#uid=51Z1o0kvHqnlHxkrLv7-QlxIagj
 
 .link:hover {
   color: #014450; }
+
+.has-error * {
+  border: 1px solid #D23702 !important;
+  box-shadow: 0px 0px 4px #D23702 !important; }
+
+.has-error *:focus {
+  border: 1px solid #D23702 !important;
+  box-shadow: 0px 0px 4px #D23702 !important; }
+
+.alert-danger {
+  color: white;
+  background-color: #AB2C00;
+  border: 1px solid #822100; }
 
 .modal-content .form-control {
   border: 1px solid #dddddd; }
@@ -146,12 +159,12 @@ section {
     margin-top: -4px; }
   .homepage-wrapper .homepage-img-wrap {
     padding-top: 80px; }
-  .homepage-wrapper .sign-in-form {
+  .homepage-wrapper #sign-up-form {
     width: 320px; }
     @media screen and (max-width: 767px) {
-      .homepage-wrapper .sign-in-form {
+      .homepage-wrapper #sign-up-form {
         width: 100%; } }
-    .homepage-wrapper .sign-in-form .form-control {
+    .homepage-wrapper #sign-up-form .form-control {
       background-color: #dddddd; }
   @media screen and (max-width: 767px) {
     .homepage-wrapper {

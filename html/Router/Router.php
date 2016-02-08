@@ -43,7 +43,7 @@ class Router{
 
 	public function process($uri){
 		$route = $this->getRoute($uri);
-		$controller = 'Controllers\\'.$route["controller"];
+		$controller = 'Controllers\\'.$route["controller"].'Controller';
 		$this->controller = new $controller;
 		$this->controller->$route["method"](isset($route["params"]) ? $route["params"] : NULL);
 	}

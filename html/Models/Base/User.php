@@ -5,6 +5,7 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
 use Models\Map\UserTableMap;
 use Propel\Runtime\Propel;
@@ -132,25 +133,25 @@ abstract class User implements ActiveRecordInterface
     protected $email_confirmed_at;
 
     /**
+     * The value for the deleted_at field.
+     *
+     * @var        \DateTime
+     */
+    protected $deleted_at;
+
+    /**
      * The value for the created_at field.
      *
-     * @var        int
+     * @var        \DateTime
      */
     protected $created_at;
 
     /**
-     * The value for the changed_at field.
+     * The value for the updated_at field.
      *
-     * @var        int
+     * @var        \DateTime
      */
-    protected $changed_at;
-
-    /**
-     * The value for the deleted_at field.
-     *
-     * @var        int
-     */
-    protected $deleted_at;
+    protected $updated_at;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -496,33 +497,63 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [created_at] column value.
+     * Get the [optionally formatted] temporal [deleted_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedAt()
+    public function getDeletedAt($format = NULL)
     {
-        return $this->created_at;
+        if ($format === null) {
+            return $this->deleted_at;
+        } else {
+            return $this->deleted_at instanceof \DateTime ? $this->deleted_at->format($format) : null;
+        }
     }
 
     /**
-     * Get the [changed_at] column value.
+     * Get the [optionally formatted] temporal [created_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getChangedAt()
+    public function getCreatedAt($format = NULL)
     {
-        return $this->changed_at;
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+        }
     }
 
     /**
-     * Get the [deleted_at] column value.
+     * Get the [optionally formatted] temporal [updated_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDeletedAt()
+    public function getUpdatedAt($format = NULL)
     {
-        return $this->deleted_at;
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
+        }
     }
 
     /**
@@ -726,64 +757,64 @@ abstract class User implements ActiveRecordInterface
     } // setEmailConfirmedAt()
 
     /**
-     * Set the value of [created_at] column.
+     * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function setDeletedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->deleted_at !== null || $dt !== null) {
+            if ($this->deleted_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->deleted_at->format("Y-m-d H:i:s")) {
+                $this->deleted_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserTableMap::COL_DELETED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setDeletedAt()
+
+    /**
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
      * @return $this|\Models\User The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->created_at !== $v) {
-            $this->created_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_CREATED_AT] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+                $this->created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserTableMap::COL_CREATED_AT] = true;
+            }
+        } // if either are not null
 
         return $this;
     } // setCreatedAt()
 
     /**
-     * Set the value of [changed_at] column.
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function setChangedAt($v)
+    public function setUpdatedAt($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->changed_at !== $v) {
-            $this->changed_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_CHANGED_AT] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserTableMap::COL_UPDATED_AT] = true;
+            }
+        } // if either are not null
 
         return $this;
-    } // setChangedAt()
-
-    /**
-     * Set the value of [deleted_at] column.
-     *
-     * @param int $v new value
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function setDeletedAt($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->deleted_at !== $v) {
-            $this->deleted_at = $v;
-            $this->modifiedColumns[UserTableMap::COL_DELETED_AT] = true;
-        }
-
-        return $this;
-    } // setDeletedAt()
+    } // setUpdatedAt()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -854,14 +885,23 @@ abstract class User implements ActiveRecordInterface
             }
             $this->email_confirmed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->created_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('ChangedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->changed_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->deleted_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -993,8 +1033,20 @@ abstract class User implements ActiveRecordInterface
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1097,14 +1149,14 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'email_confirmed_at';
         }
+        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'deleted_at';
+        }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
-        if ($this->isColumnModified(UserTableMap::COL_CHANGED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'changed_at';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'deleted_at';
+        if ($this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
 
         $sql = sprintf(
@@ -1147,14 +1199,14 @@ abstract class User implements ActiveRecordInterface
                     case 'email_confirmed_at':
                         $stmt->bindValue($identifier, $this->email_confirmed_at ? $this->email_confirmed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_INT);
-                        break;
-                    case 'changed_at':
-                        $stmt->bindValue($identifier, $this->changed_at, PDO::PARAM_INT);
-                        break;
                     case 'deleted_at':
-                        $stmt->bindValue($identifier, $this->deleted_at, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'created_at':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'updated_at':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1249,13 +1301,13 @@ abstract class User implements ActiveRecordInterface
                 return $this->getEmailConfirmedAt();
                 break;
             case 10:
-                return $this->getCreatedAt();
+                return $this->getDeletedAt();
                 break;
             case 11:
-                return $this->getChangedAt();
+                return $this->getCreatedAt();
                 break;
             case 12:
-                return $this->getDeletedAt();
+                return $this->getUpdatedAt();
                 break;
             default:
                 return null;
@@ -1296,12 +1348,24 @@ abstract class User implements ActiveRecordInterface
             $keys[7] => $this->getPasswordToken(),
             $keys[8] => $this->getEmailToken(),
             $keys[9] => $this->getEmailConfirmedAt(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getChangedAt(),
-            $keys[12] => $this->getDeletedAt(),
+            $keys[10] => $this->getDeletedAt(),
+            $keys[11] => $this->getCreatedAt(),
+            $keys[12] => $this->getUpdatedAt(),
         );
         if ($result[$keys[9]] instanceof \DateTime) {
             $result[$keys[9]] = $result[$keys[9]]->format('c');
+        }
+
+        if ($result[$keys[10]] instanceof \DateTime) {
+            $result[$keys[10]] = $result[$keys[10]]->format('c');
+        }
+
+        if ($result[$keys[11]] instanceof \DateTime) {
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
+        }
+
+        if ($result[$keys[12]] instanceof \DateTime) {
+            $result[$keys[12]] = $result[$keys[12]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1373,13 +1437,13 @@ abstract class User implements ActiveRecordInterface
                 $this->setEmailConfirmedAt($value);
                 break;
             case 10:
-                $this->setCreatedAt($value);
+                $this->setDeletedAt($value);
                 break;
             case 11:
-                $this->setChangedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 12:
-                $this->setDeletedAt($value);
+                $this->setUpdatedAt($value);
                 break;
         } // switch()
 
@@ -1438,13 +1502,13 @@ abstract class User implements ActiveRecordInterface
             $this->setEmailConfirmedAt($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
+            $this->setDeletedAt($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setChangedAt($arr[$keys[11]]);
+            $this->setCreatedAt($arr[$keys[11]]);
         }
         if (array_key_exists($keys[12], $arr)) {
-            $this->setDeletedAt($arr[$keys[12]]);
+            $this->setUpdatedAt($arr[$keys[12]]);
         }
     }
 
@@ -1517,14 +1581,14 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
             $criteria->add(UserTableMap::COL_EMAIL_CONFIRMED_AT, $this->email_confirmed_at);
         }
+        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
+            $criteria->add(UserTableMap::COL_DELETED_AT, $this->deleted_at);
+        }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $criteria->add(UserTableMap::COL_CREATED_AT, $this->created_at);
         }
-        if ($this->isColumnModified(UserTableMap::COL_CHANGED_AT)) {
-            $criteria->add(UserTableMap::COL_CHANGED_AT, $this->changed_at);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
-            $criteria->add(UserTableMap::COL_DELETED_AT, $this->deleted_at);
+        if ($this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
+            $criteria->add(UserTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1621,9 +1685,9 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setPasswordToken($this->getPasswordToken());
         $copyObj->setEmailToken($this->getEmailToken());
         $copyObj->setEmailConfirmedAt($this->getEmailConfirmedAt());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setChangedAt($this->getChangedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1669,9 +1733,9 @@ abstract class User implements ActiveRecordInterface
         $this->password_token = null;
         $this->email_token = null;
         $this->email_confirmed_at = null;
-        $this->created_at = null;
-        $this->changed_at = null;
         $this->deleted_at = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1702,6 +1766,20 @@ abstract class User implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(UserTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildUser The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[UserTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**

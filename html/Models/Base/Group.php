@@ -2,8 +2,10 @@
 
 namespace Models\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
+use Models\Group as ChildGroup;
 use Models\GroupQuery as ChildGroupQuery;
 use Models\Map\GroupTableMap;
 use Propel\Runtime\Propel;
@@ -17,6 +19,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'group' table.
@@ -88,25 +91,25 @@ abstract class Group implements ActiveRecordInterface
     protected $public;
 
     /**
+     * The value for the deleted_at field.
+     *
+     * @var        \DateTime
+     */
+    protected $deleted_at;
+
+    /**
      * The value for the created_at field.
      *
-     * @var        int
+     * @var        \DateTime
      */
     protected $created_at;
 
     /**
-     * The value for the changed_at field.
+     * The value for the updated_at field.
      *
-     * @var        int
+     * @var        \DateTime
      */
-    protected $changed_at;
-
-    /**
-     * The value for the deleted_at field.
-     *
-     * @var        int
-     */
-    protected $deleted_at;
+    protected $updated_at;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -392,33 +395,63 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
-     * Get the [created_at] column value.
+     * Get the [optionally formatted] temporal [deleted_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedAt()
+    public function getDeletedAt($format = NULL)
     {
-        return $this->created_at;
+        if ($format === null) {
+            return $this->deleted_at;
+        } else {
+            return $this->deleted_at instanceof \DateTime ? $this->deleted_at->format($format) : null;
+        }
     }
 
     /**
-     * Get the [changed_at] column value.
+     * Get the [optionally formatted] temporal [created_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getChangedAt()
+    public function getCreatedAt($format = NULL)
     {
-        return $this->changed_at;
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+        }
     }
 
     /**
-     * Get the [deleted_at] column value.
+     * Get the [optionally formatted] temporal [updated_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDeletedAt()
+    public function getUpdatedAt($format = NULL)
     {
-        return $this->deleted_at;
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
+        }
     }
 
     /**
@@ -510,64 +543,64 @@ abstract class Group implements ActiveRecordInterface
     } // setPublic()
 
     /**
-     * Set the value of [created_at] column.
+     * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Models\Group The current object (for fluent API support)
+     */
+    public function setDeletedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->deleted_at !== null || $dt !== null) {
+            if ($this->deleted_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->deleted_at->format("Y-m-d H:i:s")) {
+                $this->deleted_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[GroupTableMap::COL_DELETED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setDeletedAt()
+
+    /**
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
      * @return $this|\Models\Group The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->created_at !== $v) {
-            $this->created_at = $v;
-            $this->modifiedColumns[GroupTableMap::COL_CREATED_AT] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+                $this->created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[GroupTableMap::COL_CREATED_AT] = true;
+            }
+        } // if either are not null
 
         return $this;
     } // setCreatedAt()
 
     /**
-     * Set the value of [changed_at] column.
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
      * @return $this|\Models\Group The current object (for fluent API support)
      */
-    public function setChangedAt($v)
+    public function setUpdatedAt($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->changed_at !== $v) {
-            $this->changed_at = $v;
-            $this->modifiedColumns[GroupTableMap::COL_CHANGED_AT] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[GroupTableMap::COL_UPDATED_AT] = true;
+            }
+        } // if either are not null
 
         return $this;
-    } // setChangedAt()
-
-    /**
-     * Set the value of [deleted_at] column.
-     *
-     * @param int $v new value
-     * @return $this|\Models\Group The current object (for fluent API support)
-     */
-    public function setDeletedAt($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->deleted_at !== $v) {
-            $this->deleted_at = $v;
-            $this->modifiedColumns[GroupTableMap::COL_DELETED_AT] = true;
-        }
-
-        return $this;
-    } // setDeletedAt()
+    } // setUpdatedAt()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -617,14 +650,23 @@ abstract class Group implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GroupTableMap::translateFieldName('Public', TableMap::TYPE_PHPNAME, $indexType)];
             $this->public = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->created_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GroupTableMap::translateFieldName('ChangedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->changed_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GroupTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : GroupTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->deleted_at = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : GroupTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -756,8 +798,20 @@ abstract class Group implements ActiveRecordInterface
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(GroupTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(GroupTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(GroupTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -842,14 +896,14 @@ abstract class Group implements ActiveRecordInterface
         if ($this->isColumnModified(GroupTableMap::COL_PUBLIC)) {
             $modifiedColumns[':p' . $index++]  = 'public';
         }
+        if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'deleted_at';
+        }
         if ($this->isColumnModified(GroupTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
-        if ($this->isColumnModified(GroupTableMap::COL_CHANGED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'changed_at';
-        }
-        if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'deleted_at';
+        if ($this->isColumnModified(GroupTableMap::COL_UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
 
         $sql = sprintf(
@@ -874,14 +928,14 @@ abstract class Group implements ActiveRecordInterface
                     case 'public':
                         $stmt->bindValue($identifier, (int) $this->public, PDO::PARAM_INT);
                         break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_INT);
-                        break;
-                    case 'changed_at':
-                        $stmt->bindValue($identifier, $this->changed_at, PDO::PARAM_INT);
-                        break;
                     case 'deleted_at':
-                        $stmt->bindValue($identifier, $this->deleted_at, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'created_at':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'updated_at':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -958,13 +1012,13 @@ abstract class Group implements ActiveRecordInterface
                 return $this->getPublic();
                 break;
             case 4:
-                return $this->getCreatedAt();
+                return $this->getDeletedAt();
                 break;
             case 5:
-                return $this->getChangedAt();
+                return $this->getCreatedAt();
                 break;
             case 6:
-                return $this->getDeletedAt();
+                return $this->getUpdatedAt();
                 break;
             default:
                 return null;
@@ -999,10 +1053,22 @@ abstract class Group implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getDescription(),
             $keys[3] => $this->getPublic(),
-            $keys[4] => $this->getCreatedAt(),
-            $keys[5] => $this->getChangedAt(),
-            $keys[6] => $this->getDeletedAt(),
+            $keys[4] => $this->getDeletedAt(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        }
+
+        if ($result[$keys[6]] instanceof \DateTime) {
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -1054,13 +1120,13 @@ abstract class Group implements ActiveRecordInterface
                 $this->setPublic($value);
                 break;
             case 4:
-                $this->setCreatedAt($value);
+                $this->setDeletedAt($value);
                 break;
             case 5:
-                $this->setChangedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 6:
-                $this->setDeletedAt($value);
+                $this->setUpdatedAt($value);
                 break;
         } // switch()
 
@@ -1101,13 +1167,13 @@ abstract class Group implements ActiveRecordInterface
             $this->setPublic($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setCreatedAt($arr[$keys[4]]);
+            $this->setDeletedAt($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setChangedAt($arr[$keys[5]]);
+            $this->setCreatedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setDeletedAt($arr[$keys[6]]);
+            $this->setUpdatedAt($arr[$keys[6]]);
         }
     }
 
@@ -1162,14 +1228,14 @@ abstract class Group implements ActiveRecordInterface
         if ($this->isColumnModified(GroupTableMap::COL_PUBLIC)) {
             $criteria->add(GroupTableMap::COL_PUBLIC, $this->public);
         }
+        if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
+            $criteria->add(GroupTableMap::COL_DELETED_AT, $this->deleted_at);
+        }
         if ($this->isColumnModified(GroupTableMap::COL_CREATED_AT)) {
             $criteria->add(GroupTableMap::COL_CREATED_AT, $this->created_at);
         }
-        if ($this->isColumnModified(GroupTableMap::COL_CHANGED_AT)) {
-            $criteria->add(GroupTableMap::COL_CHANGED_AT, $this->changed_at);
-        }
-        if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
-            $criteria->add(GroupTableMap::COL_DELETED_AT, $this->deleted_at);
+        if ($this->isColumnModified(GroupTableMap::COL_UPDATED_AT)) {
+            $criteria->add(GroupTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1260,9 +1326,9 @@ abstract class Group implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setPublic($this->getPublic());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setChangedAt($this->getChangedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1302,9 +1368,9 @@ abstract class Group implements ActiveRecordInterface
         $this->name = null;
         $this->description = null;
         $this->public = null;
-        $this->created_at = null;
-        $this->changed_at = null;
         $this->deleted_at = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1335,6 +1401,20 @@ abstract class Group implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(GroupTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildGroup The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[GroupTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**

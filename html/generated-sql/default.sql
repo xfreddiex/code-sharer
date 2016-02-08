@@ -21,9 +21,9 @@ CREATE TABLE `user`
     `password_token` VARCHAR(64),
     `email_token` VARCHAR(64),
     `email_confirmed_at` DATETIME,
-    `created_at` INTEGER NOT NULL,
-    `changed_at` INTEGER,
-    `deleted_at` INTEGER,
+    `deleted_at` DATETIME,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -39,9 +39,9 @@ CREATE TABLE `group`
     `name` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250),
     `public` TINYINT(1) NOT NULL,
-    `created_at` INTEGER NOT NULL,
-    `changed_at` INTEGER,
-    `deleted_at` INTEGER,
+    `deleted_at` DATETIME,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -57,10 +57,10 @@ CREATE TABLE `pack`
     `name` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250),
     `public` TINYINT(1) NOT NULL,
-    `created_at` INTEGER NOT NULL,
-    `changed_at` INTEGER,
-    `deleted_at` INTEGER,
+    `deleted_at` DATETIME,
     `tags` VARCHAR(200),
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -76,11 +76,11 @@ CREATE TABLE `file`
     `name` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250),
     `type` VARCHAR(10) NOT NULL,
-    `created_at` INTEGER NOT NULL,
-    `changed_at` INTEGER,
-    `deleted_at` INTEGER,
+    `deleted_at` DATETIME,
     `code` VARCHAR(200) NOT NULL,
     `pack_id` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `file_fi_c61110` (`pack_id`),
     CONSTRAINT `file_fk_c61110`

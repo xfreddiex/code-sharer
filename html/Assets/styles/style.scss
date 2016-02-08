@@ -1,5 +1,5 @@
 /*
-http://paletton.com/#uid=51Z1o0kvHqnlHxkrLv7-QlxIagj
+http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 */
 
 /*basic template*/
@@ -52,6 +52,19 @@ http://paletton.com/#uid=51Z1o0kvHqnlHxkrLv7-QlxIagj
 }
 .link:hover{
 	color: #014450;
+}
+.has-error *{
+	border: 1px solid #D23702 !important;
+	box-shadow: 0px 0px 4px #D23702 !important;
+}
+.has-error *:focus{
+	border: 1px solid #D23702 !important;
+	box-shadow: 0px 0px 4px #D23702 !important;
+}
+.alert-danger{
+	color: white;
+	background-color: #AB2C00;
+	border: 1px solid #822100;
 }
 
 
@@ -174,7 +187,7 @@ section{
 	.homepage-img-wrap{
 		padding-top: 80px;
 	}
-	.sign-in-form{
+	#sign-up-form{
 		width: 320px;
 		@media screen and (max-width: 767px){
 				width: 100%;

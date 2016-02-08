@@ -15,9 +15,8 @@
         <column name="password_token" type="varchar" size="64" required="false"/>
         <column name="email_token" type="varchar" size="64" required="false"/>
         <column name="email_confirmed_at" type="timestamp" required="false"/>
-        <column name="created_at" type="integer" required="true"/>
-        <column name="changed_at" type="integer" required="false"/>
-        <column name="deleted_at" type="integer" required="false"/>
+        <column name="deleted_at" type="timestamp" required="false"/>
+        <behavior name="timestampable" />
     </table>
 
     <table name="group" phpName="Group">
@@ -25,9 +24,8 @@
         <column name="name" type="varchar" size="50" required="true"/>
         <column name="description" type="varchar" size="250" required="false"/>
         <column name="public" type="boolean" required="true"/>
-        <column name="created_at" type="integer" required="true"/>
-        <column name="changed_at" type="integer" required="false"/>
-        <column name="deleted_at" type="integer" required="false"/>
+        <column name="deleted_at" type="timestamp" required="false"/>
+        <behavior name="timestampable" />
     </table>
 
     <table name="pack" phpName="Pack">
@@ -35,10 +33,9 @@
         <column name="name" type="varchar" size="50" required="true"/>
         <column name="description" type="varchar" size="250" required="false"/>
         <column name="public" type="boolean" required="true"/>
-        <column name="created_at" type="integer" required="true"/>
-        <column name="changed_at" type="integer" required="false"/>
-        <column name="deleted_at" type="integer" required="false"/>
+        <column name="deleted_at" type="timestamp" required="false"/>
         <column name="tags" type="varchar" size="200" required="false"/>
+        <behavior name="timestampable" />
     </table>
 
     <table name="file" phpName="File">
@@ -46,14 +43,13 @@
         <column name="name" type="varchar" size="50" required="true"/>
         <column name="description" type="varchar" size="250" required="false"/>
         <column name="type" type="varchar" size="10" required="true"/>
-        <column name="created_at" type="integer" required="true"/>
-        <column name="changed_at" type="integer" required="false"/>
-        <column name="deleted_at" type="integer" required="false"/>
+        <column name="deleted_at" type="timestamp" required="false"/>
         <column name="code" type="varchar" size="200" required="true"/>
         <column name="pack_id" type="integer" required="true"/>
         <foreign-key foreignTable="pack" phpName="Pack" refPhpName="File">
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
+        <behavior name="timestampable" />
     </table>
 
 </database>

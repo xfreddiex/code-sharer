@@ -23,17 +23,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildGroupQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildGroupQuery orderByPublic($order = Criteria::ASC) Order by the public column
- * @method     ChildGroupQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method     ChildGroupQuery orderByChangedAt($order = Criteria::ASC) Order by the changed_at column
  * @method     ChildGroupQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
+ * @method     ChildGroupQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildGroupQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildGroupQuery groupById() Group by the id column
  * @method     ChildGroupQuery groupByName() Group by the name column
  * @method     ChildGroupQuery groupByDescription() Group by the description column
  * @method     ChildGroupQuery groupByPublic() Group by the public column
- * @method     ChildGroupQuery groupByCreatedAt() Group by the created_at column
- * @method     ChildGroupQuery groupByChangedAt() Group by the changed_at column
  * @method     ChildGroupQuery groupByDeletedAt() Group by the deleted_at column
+ * @method     ChildGroupQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildGroupQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildGroupQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildGroupQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -50,9 +50,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup findOneByName(string $name) Return the first ChildGroup filtered by the name column
  * @method     ChildGroup findOneByDescription(string $description) Return the first ChildGroup filtered by the description column
  * @method     ChildGroup findOneByPublic(boolean $public) Return the first ChildGroup filtered by the public column
- * @method     ChildGroup findOneByCreatedAt(int $created_at) Return the first ChildGroup filtered by the created_at column
- * @method     ChildGroup findOneByChangedAt(int $changed_at) Return the first ChildGroup filtered by the changed_at column
- * @method     ChildGroup findOneByDeletedAt(int $deleted_at) Return the first ChildGroup filtered by the deleted_at column *
+ * @method     ChildGroup findOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column
+ * @method     ChildGroup findOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column
+ * @method     ChildGroup findOneByUpdatedAt(string $updated_at) Return the first ChildGroup filtered by the updated_at column *
 
  * @method     ChildGroup requirePk($key, ConnectionInterface $con = null) Return the ChildGroup by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOne(ConnectionInterface $con = null) Return the first ChildGroup matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -61,18 +61,18 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup requireOneByName(string $name) Return the first ChildGroup filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByDescription(string $description) Return the first ChildGroup filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByPublic(boolean $public) Return the first ChildGroup filtered by the public column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroup requireOneByCreatedAt(int $created_at) Return the first ChildGroup filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroup requireOneByChangedAt(int $changed_at) Return the first ChildGroup filtered by the changed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroup requireOneByDeletedAt(int $deleted_at) Return the first ChildGroup filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGroup requireOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGroup requireOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGroup requireOneByUpdatedAt(string $updated_at) Return the first ChildGroup filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildGroup[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildGroup objects based on current ModelCriteria
  * @method     ChildGroup[]|ObjectCollection findById(int $id) Return ChildGroup objects filtered by the id column
  * @method     ChildGroup[]|ObjectCollection findByName(string $name) Return ChildGroup objects filtered by the name column
  * @method     ChildGroup[]|ObjectCollection findByDescription(string $description) Return ChildGroup objects filtered by the description column
  * @method     ChildGroup[]|ObjectCollection findByPublic(boolean $public) Return ChildGroup objects filtered by the public column
- * @method     ChildGroup[]|ObjectCollection findByCreatedAt(int $created_at) Return ChildGroup objects filtered by the created_at column
- * @method     ChildGroup[]|ObjectCollection findByChangedAt(int $changed_at) Return ChildGroup objects filtered by the changed_at column
- * @method     ChildGroup[]|ObjectCollection findByDeletedAt(int $deleted_at) Return ChildGroup objects filtered by the deleted_at column
+ * @method     ChildGroup[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildGroup objects filtered by the deleted_at column
+ * @method     ChildGroup[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildGroup objects filtered by the created_at column
+ * @method     ChildGroup[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildGroup objects filtered by the updated_at column
  * @method     ChildGroup[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -165,7 +165,7 @@ abstract class GroupQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, public, created_at, changed_at, deleted_at FROM group WHERE id = :p0';
+        $sql = 'SELECT id, name, description, public, deleted_at, created_at, updated_at FROM group WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -382,16 +382,61 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the deleted_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
+     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
+     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $deletedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function filterByDeletedAt($deletedAt = null, $comparison = null)
+    {
+        if (is_array($deletedAt)) {
+            $useMinMax = false;
+            if (isset($deletedAt['min'])) {
+                $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($deletedAt['max'])) {
+                $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt, $comparison);
+    }
+
+    /**
      * Filter the query on the created_at column
      *
      * Example usage:
      * <code>
-     * $query->filterByCreatedAt(1234); // WHERE created_at = 1234
-     * $query->filterByCreatedAt(array(12, 34)); // WHERE created_at IN (12, 34)
-     * $query->filterByCreatedAt(array('min' => 12)); // WHERE created_at > 12
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
      * </code>
      *
      * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -423,16 +468,18 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the changed_at column
+     * Filter the query on the updated_at column
      *
      * Example usage:
      * <code>
-     * $query->filterByChangedAt(1234); // WHERE changed_at = 1234
-     * $query->filterByChangedAt(array(12, 34)); // WHERE changed_at IN (12, 34)
-     * $query->filterByChangedAt(array('min' => 12)); // WHERE changed_at > 12
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
      * </code>
      *
-     * @param     mixed $changedAt The value to use as filter.
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -440,16 +487,16 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return $this|ChildGroupQuery The current query, for fluid interface
      */
-    public function filterByChangedAt($changedAt = null, $comparison = null)
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
     {
-        if (is_array($changedAt)) {
+        if (is_array($updatedAt)) {
             $useMinMax = false;
-            if (isset($changedAt['min'])) {
-                $this->addUsingAlias(GroupTableMap::COL_CHANGED_AT, $changedAt['min'], Criteria::GREATER_EQUAL);
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(GroupTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($changedAt['max'])) {
-                $this->addUsingAlias(GroupTableMap::COL_CHANGED_AT, $changedAt['max'], Criteria::LESS_EQUAL);
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(GroupTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -460,48 +507,7 @@ abstract class GroupQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(GroupTableMap::COL_CHANGED_AT, $changedAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt(1234); // WHERE deleted_at = 1234
-     * $query->filterByDeletedAt(array(12, 34)); // WHERE deleted_at IN (12, 34)
-     * $query->filterByDeletedAt(array('min' => 12)); // WHERE deleted_at > 12
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildGroupQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(GroupTableMap::COL_DELETED_AT, $deletedAt, $comparison);
+        return $this->addUsingAlias(GroupTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -579,6 +585,72 @@ abstract class GroupQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(GroupTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(GroupTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(GroupTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(GroupTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(GroupTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildGroupQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(GroupTableMap::COL_CREATED_AT);
     }
 
 } // GroupQuery
