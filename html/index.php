@@ -3,6 +3,8 @@ mb_internal_encoding("UTF-8");
 
 require('../vendor/autoload.php');
 
+require('generated-conf/config.php');
+
 use Router\Router;
 
 function autoload($class){

@@ -61,10 +61,19 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 	border: 1px solid #D23702 !important;
 	box-shadow: 0px 0px 4px #D23702 !important;
 }
+.alert{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
 .alert-danger{
 	color: white;
 	background-color: #AB2C00;
 	border: 1px solid #822100;
+}
+.alert-success{
+	color: white;
+	background-color: #9DA900;
+	border: 1px solid #778000;
 }
 
 
@@ -144,7 +153,7 @@ header{
 section{
 	margin-top: -20px; 
 	min-height: 960px;
-	background: url('../images/background.png') center top no-repeat;
+	background: black url('../images/background.png') center top no-repeat;
 	background-size: cover;
 }
 .modal-content{
@@ -194,6 +203,9 @@ section{
 		}
 		.form-control{
 			background-color: #dddddd;
+		}
+		.alert{
+			display: none;
 		}
 	}
 	@media screen and (max-width: 767px){

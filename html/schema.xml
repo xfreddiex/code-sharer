@@ -11,12 +11,19 @@
         <column name="surname" type="varchar" size="50" required="false"/>
         <column name="password" type="varchar" size="50" required="true"/>
         <column name="email" type="varchar" size="70" required="true"/>
-        <column name="avatar" type="varchar" size="70" required="false"/>
-        <column name="password_token" type="varchar" size="64" required="false"/>
-        <column name="email_token" type="varchar" size="64" required="false"/>
+        <column name="avatar_path" type="varchar" size="70" required="false"/>
+        <column name="password_reset_token" type="varchar" size="64" required="false"/>
+        <column name="email_confirm_token" type="varchar" size="64" required="false"/>
         <column name="email_confirmed_at" type="timestamp" required="false"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         <behavior name="timestampable" />
+        <unique name="unique_username">
+            <unique-column name="username" />
+        </unique>
+        <unique name="unique_email">
+            <unique-column name="email" />
+        </unique>
+
     </table>
 
     <table name="group" phpName="Group">

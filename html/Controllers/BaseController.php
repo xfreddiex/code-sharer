@@ -11,6 +11,9 @@ abstract class BaseController{
 	protected $before = array();
 	protected $after = array();
 
+	protected $HTTPStatusCodes = array();
+	protected $contentTypes = array();
+
 	public function __construct(){
 		$this->template = 'Views/basic_template.phtml';
 		$this->data['title'] = '';
@@ -18,6 +21,18 @@ abstract class BaseController{
 		$this->data['description'] = '';
 		$this->data['flash_messages'] = array();
 		array_push($this->before, "prepareFlashMessages");
+		$this->HTTPStatusCodes = array(
+			"400" => "400 Bad Request",
+			"404" => "404 Not Found",
+			"405" => "405 Method Not Allowed",
+			"406" => "406 Not Acceptable"
+		);
+		$this->contentTypes = array(
+			"json" => "application/json",
+			"html" => "text/html",
+			"javascript" => "application/javascript",
+			"css" => "text/css"
+		);
 		//array_push($this->after);
 	}
 
@@ -44,6 +59,10 @@ abstract class BaseController{
 			extract($this->data);
 			require($file);
 		}
+	}
+
+	protected function viewString($string){
+		echo $string;
 	}
 
 	protected function before(){
@@ -73,5 +92,20 @@ abstract class BaseController{
 		header("Location: /" + trim($url, "/"));
 		header("Connection: close");
 		exit;
+	}
+
+	protected function redirectJS($url){
+		$this->setContentType("javascript");
+		$this->viewString('window.location.href = "/' . trim($url, "/"). '";');
+		header("Connection: close");
+		exit;
+	}
+
+	protected function setHTTPStatusCode($code){
+		header("HTTP/1.0 " . $this->HTTPStatusCodes[$code]);
+	}
+
+	protected function setContentType($type){
+		header("Content-Type: " . $this->contentTypes[$type]);
 	}
 }

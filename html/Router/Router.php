@@ -32,7 +32,7 @@ class Router{
 				if($ok){
 					if($route["request_method"] != $_SERVER["REQUEST_METHOD"])
 						return $routes["error405"];
-					if(!(in_array($route["content_type"], explode(',', $_SERVER["HTTP_ACCEPT"]))))
+					if(!(in_array($route["content_type"], array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))))
 						return $routes["error406"];
 					return $route;
 				}

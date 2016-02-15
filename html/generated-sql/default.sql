@@ -24,7 +24,8 @@ CREATE TABLE `user`
     `deleted_at` DATETIME,
     `created_at` DATETIME,
     `updated_at` DATETIME,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `user_u_f86ef3` (`username`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

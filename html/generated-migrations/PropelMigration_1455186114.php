@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1454575221.
- * Generated on 2016-02-04 09:40:21 by xfreddiex
+ * up to version 1455186114.
+ * Generated on 2016-02-11 11:21:54 by xfreddiex
  */
-class PropelMigration_1454575221
+class PropelMigration_1455186114
 {
     public $comment = '';
 
@@ -43,11 +43,47 @@ class PropelMigration_1454575221
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
+ALTER TABLE `file`
+
+  CHANGE `created_at` `created_at` DATETIME,
+
+  CHANGE `deleted_at` `deleted_at` DATETIME,
+
+  ADD `updated_at` DATETIME AFTER `created_at`,
+
+  DROP `changed_at`;
+
+ALTER TABLE `group`
+
+  CHANGE `created_at` `created_at` DATETIME,
+
+  CHANGE `deleted_at` `deleted_at` DATETIME,
+
+  ADD `updated_at` DATETIME AFTER `created_at`,
+
+  DROP `changed_at`;
+
+ALTER TABLE `pack`
+
+  CHANGE `created_at` `created_at` DATETIME,
+
+  CHANGE `deleted_at` `deleted_at` DATETIME,
+
+  ADD `updated_at` DATETIME AFTER `created_at`,
+
+  DROP `changed_at`;
+
 ALTER TABLE `user`
+
+  CHANGE `created_at` `created_at` DATETIME,
+
+  CHANGE `deleted_at` `deleted_at` DATETIME,
 
   ADD `username` VARCHAR(30) NOT NULL AFTER `id`,
 
-  DROP `nick`;
+  ADD `updated_at` DATETIME AFTER `created_at`,
+
+  DROP `changed_at`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -69,11 +105,47 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
+ALTER TABLE `file`
+
+  CHANGE `created_at` `created_at` INTEGER NOT NULL,
+
+  CHANGE `deleted_at` `deleted_at` INTEGER,
+
+  ADD `changed_at` INTEGER AFTER `created_at`,
+
+  DROP `updated_at`;
+
+ALTER TABLE `group`
+
+  CHANGE `created_at` `created_at` INTEGER NOT NULL,
+
+  CHANGE `deleted_at` `deleted_at` INTEGER,
+
+  ADD `changed_at` INTEGER AFTER `created_at`,
+
+  DROP `updated_at`;
+
+ALTER TABLE `pack`
+
+  CHANGE `created_at` `created_at` INTEGER NOT NULL,
+
+  CHANGE `deleted_at` `deleted_at` INTEGER,
+
+  ADD `changed_at` INTEGER AFTER `created_at`,
+
+  DROP `updated_at`;
+
 ALTER TABLE `user`
 
-  ADD `nick` VARCHAR(30) NOT NULL AFTER `id`,
+  CHANGE `created_at` `created_at` INTEGER NOT NULL,
 
-  DROP `username`;
+  CHANGE `deleted_at` `deleted_at` INTEGER,
+
+  ADD `changed_at` INTEGER AFTER `created_at`,
+
+  DROP `username`,
+
+  DROP `updated_at`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

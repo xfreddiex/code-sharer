@@ -102,19 +102,19 @@ class UserTableMap extends TableMap
     const COL_EMAIL = 'user.email';
 
     /**
-     * the column name for the avatar field
+     * the column name for the avatar_path field
      */
-    const COL_AVATAR = 'user.avatar';
+    const COL_AVATAR_PATH = 'user.avatar_path';
 
     /**
-     * the column name for the password_token field
+     * the column name for the password_reset_token field
      */
-    const COL_PASSWORD_TOKEN = 'user.password_token';
+    const COL_PASSWORD_RESET_TOKEN = 'user.password_reset_token';
 
     /**
-     * the column name for the email_token field
+     * the column name for the email_confirm_token field
      */
-    const COL_EMAIL_TOKEN = 'user.email_token';
+    const COL_EMAIL_CONFIRM_TOKEN = 'user.email_confirm_token';
 
     /**
      * the column name for the email_confirmed_at field
@@ -148,10 +148,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Name', 'Surname', 'Password', 'Email', 'Avatar', 'PasswordToken', 'EmailToken', 'EmailConfirmedAt', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar', 'passwordToken', 'emailToken', 'emailConfirmedAt', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_NAME, UserTableMap::COL_SURNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_EMAIL, UserTableMap::COL_AVATAR, UserTableMap::COL_PASSWORD_TOKEN, UserTableMap::COL_EMAIL_TOKEN, UserTableMap::COL_EMAIL_CONFIRMED_AT, UserTableMap::COL_DELETED_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar', 'password_token', 'email_token', 'email_confirmed_at', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Username', 'Name', 'Surname', 'Password', 'Email', 'AvatarPath', 'PasswordResetToken', 'EmailConfirmToken', 'EmailConfirmedAt', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatarPath', 'passwordResetToken', 'emailConfirmToken', 'emailConfirmedAt', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_NAME, UserTableMap::COL_SURNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_EMAIL, UserTableMap::COL_AVATAR_PATH, UserTableMap::COL_PASSWORD_RESET_TOKEN, UserTableMap::COL_EMAIL_CONFIRM_TOKEN, UserTableMap::COL_EMAIL_CONFIRMED_AT, UserTableMap::COL_DELETED_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar_path', 'password_reset_token', 'email_confirm_token', 'email_confirmed_at', 'deleted_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
@@ -162,10 +162,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Name' => 2, 'Surname' => 3, 'Password' => 4, 'Email' => 5, 'Avatar' => 6, 'PasswordToken' => 7, 'EmailToken' => 8, 'EmailConfirmedAt' => 9, 'DeletedAt' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar' => 6, 'passwordToken' => 7, 'emailToken' => 8, 'emailConfirmedAt' => 9, 'deletedAt' => 10, 'createdAt' => 11, 'updatedAt' => 12, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_NAME => 2, UserTableMap::COL_SURNAME => 3, UserTableMap::COL_PASSWORD => 4, UserTableMap::COL_EMAIL => 5, UserTableMap::COL_AVATAR => 6, UserTableMap::COL_PASSWORD_TOKEN => 7, UserTableMap::COL_EMAIL_TOKEN => 8, UserTableMap::COL_EMAIL_CONFIRMED_AT => 9, UserTableMap::COL_DELETED_AT => 10, UserTableMap::COL_CREATED_AT => 11, UserTableMap::COL_UPDATED_AT => 12, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar' => 6, 'password_token' => 7, 'email_token' => 8, 'email_confirmed_at' => 9, 'deleted_at' => 10, 'created_at' => 11, 'updated_at' => 12, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Name' => 2, 'Surname' => 3, 'Password' => 4, 'Email' => 5, 'AvatarPath' => 6, 'PasswordResetToken' => 7, 'EmailConfirmToken' => 8, 'EmailConfirmedAt' => 9, 'DeletedAt' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatarPath' => 6, 'passwordResetToken' => 7, 'emailConfirmToken' => 8, 'emailConfirmedAt' => 9, 'deletedAt' => 10, 'createdAt' => 11, 'updatedAt' => 12, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_NAME => 2, UserTableMap::COL_SURNAME => 3, UserTableMap::COL_PASSWORD => 4, UserTableMap::COL_EMAIL => 5, UserTableMap::COL_AVATAR_PATH => 6, UserTableMap::COL_PASSWORD_RESET_TOKEN => 7, UserTableMap::COL_EMAIL_CONFIRM_TOKEN => 8, UserTableMap::COL_EMAIL_CONFIRMED_AT => 9, UserTableMap::COL_DELETED_AT => 10, UserTableMap::COL_CREATED_AT => 11, UserTableMap::COL_UPDATED_AT => 12, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar_path' => 6, 'password_reset_token' => 7, 'email_confirm_token' => 8, 'email_confirmed_at' => 9, 'deleted_at' => 10, 'created_at' => 11, 'updated_at' => 12, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
@@ -192,9 +192,9 @@ class UserTableMap extends TableMap
         $this->addColumn('surname', 'Surname', 'VARCHAR', false, 50, null);
         $this->addColumn('password', 'Password', 'VARCHAR', true, 50, null);
         $this->addColumn('email', 'Email', 'VARCHAR', true, 70, null);
-        $this->addColumn('avatar', 'Avatar', 'VARCHAR', false, 70, null);
-        $this->addColumn('password_token', 'PasswordToken', 'VARCHAR', false, 64, null);
-        $this->addColumn('email_token', 'EmailToken', 'VARCHAR', false, 64, null);
+        $this->addColumn('avatar_path', 'AvatarPath', 'VARCHAR', false, 70, null);
+        $this->addColumn('password_reset_token', 'PasswordResetToken', 'VARCHAR', false, 64, null);
+        $this->addColumn('email_confirm_token', 'EmailConfirmToken', 'VARCHAR', false, 64, null);
         $this->addColumn('email_confirmed_at', 'EmailConfirmedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -368,9 +368,9 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn(UserTableMap::COL_SURNAME);
             $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
             $criteria->addSelectColumn(UserTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(UserTableMap::COL_AVATAR);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD_TOKEN);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_TOKEN);
+            $criteria->addSelectColumn(UserTableMap::COL_AVATAR_PATH);
+            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD_RESET_TOKEN);
+            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_CONFIRM_TOKEN);
             $criteria->addSelectColumn(UserTableMap::COL_EMAIL_CONFIRMED_AT);
             $criteria->addSelectColumn(UserTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(UserTableMap::COL_CREATED_AT);
@@ -382,9 +382,9 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.surname');
             $criteria->addSelectColumn($alias . '.password');
             $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.avatar');
-            $criteria->addSelectColumn($alias . '.password_token');
-            $criteria->addSelectColumn($alias . '.email_token');
+            $criteria->addSelectColumn($alias . '.avatar_path');
+            $criteria->addSelectColumn($alias . '.password_reset_token');
+            $criteria->addSelectColumn($alias . '.email_confirm_token');
             $criteria->addSelectColumn($alias . '.email_confirmed_at');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');

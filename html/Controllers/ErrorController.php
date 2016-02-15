@@ -6,19 +6,19 @@ use Controllers\BaseController;
 class ErrorController extends BaseController{
 
 	protected function error404(){
-		header("HTTP/1.0 404 Not Found");
+		$this->setHTTPStatusCode("404");
 		$this->data["title"] = "Error404";
 		$this->viewFile($this->template);
 	}
 
 	protected function error405(){
-		header("HTTP/1.0 405 Method Not Allowed");
+		$this->setHTTPStatusCode("405");
 		$this->data["title"] = "Error405";
 		$this->viewFile($this->template);
 	}
 
 	protected function error406(){
-		header("HTTP/1.0 406 Not Acceptable");
+		$this->setHTTPStatusCode("406");
 		$this->data["title"] = "Error406";
 		$this->viewFile($this->template);
 	}

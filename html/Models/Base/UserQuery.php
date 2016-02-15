@@ -25,9 +25,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderBySurname($order = Criteria::ASC) Order by the surname column
  * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
  * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
- * @method     ChildUserQuery orderByAvatar($order = Criteria::ASC) Order by the avatar column
- * @method     ChildUserQuery orderByPasswordToken($order = Criteria::ASC) Order by the password_token column
- * @method     ChildUserQuery orderByEmailToken($order = Criteria::ASC) Order by the email_token column
+ * @method     ChildUserQuery orderByAvatarPath($order = Criteria::ASC) Order by the avatar_path column
+ * @method     ChildUserQuery orderByPasswordResetToken($order = Criteria::ASC) Order by the password_reset_token column
+ * @method     ChildUserQuery orderByEmailConfirmToken($order = Criteria::ASC) Order by the email_confirm_token column
  * @method     ChildUserQuery orderByEmailConfirmedAt($order = Criteria::ASC) Order by the email_confirmed_at column
  * @method     ChildUserQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildUserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -39,9 +39,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupBySurname() Group by the surname column
  * @method     ChildUserQuery groupByPassword() Group by the password column
  * @method     ChildUserQuery groupByEmail() Group by the email column
- * @method     ChildUserQuery groupByAvatar() Group by the avatar column
- * @method     ChildUserQuery groupByPasswordToken() Group by the password_token column
- * @method     ChildUserQuery groupByEmailToken() Group by the email_token column
+ * @method     ChildUserQuery groupByAvatarPath() Group by the avatar_path column
+ * @method     ChildUserQuery groupByPasswordResetToken() Group by the password_reset_token column
+ * @method     ChildUserQuery groupByEmailConfirmToken() Group by the email_confirm_token column
  * @method     ChildUserQuery groupByEmailConfirmedAt() Group by the email_confirmed_at column
  * @method     ChildUserQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildUserQuery groupByCreatedAt() Group by the created_at column
@@ -64,9 +64,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneBySurname(string $surname) Return the first ChildUser filtered by the surname column
  * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
  * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
- * @method     ChildUser findOneByAvatar(string $avatar) Return the first ChildUser filtered by the avatar column
- * @method     ChildUser findOneByPasswordToken(string $password_token) Return the first ChildUser filtered by the password_token column
- * @method     ChildUser findOneByEmailToken(string $email_token) Return the first ChildUser filtered by the email_token column
+ * @method     ChildUser findOneByAvatarPath(string $avatar_path) Return the first ChildUser filtered by the avatar_path column
+ * @method     ChildUser findOneByPasswordResetToken(string $password_reset_token) Return the first ChildUser filtered by the password_reset_token column
+ * @method     ChildUser findOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column
  * @method     ChildUser findOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column
  * @method     ChildUser findOneByDeletedAt(string $deleted_at) Return the first ChildUser filtered by the deleted_at column
  * @method     ChildUser findOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column
@@ -81,9 +81,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneBySurname(string $surname) Return the first ChildUser filtered by the surname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPassword(string $password) Return the first ChildUser filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmail(string $email) Return the first ChildUser filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByAvatar(string $avatar) Return the first ChildUser filtered by the avatar column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByPasswordToken(string $password_token) Return the first ChildUser filtered by the password_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByEmailToken(string $email_token) Return the first ChildUser filtered by the email_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByAvatarPath(string $avatar_path) Return the first ChildUser filtered by the avatar_path column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByPasswordResetToken(string $password_reset_token) Return the first ChildUser filtered by the password_reset_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByDeletedAt(string $deleted_at) Return the first ChildUser filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -96,9 +96,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findBySurname(string $surname) Return ChildUser objects filtered by the surname column
  * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
  * @method     ChildUser[]|ObjectCollection findByEmail(string $email) Return ChildUser objects filtered by the email column
- * @method     ChildUser[]|ObjectCollection findByAvatar(string $avatar) Return ChildUser objects filtered by the avatar column
- * @method     ChildUser[]|ObjectCollection findByPasswordToken(string $password_token) Return ChildUser objects filtered by the password_token column
- * @method     ChildUser[]|ObjectCollection findByEmailToken(string $email_token) Return ChildUser objects filtered by the email_token column
+ * @method     ChildUser[]|ObjectCollection findByAvatarPath(string $avatar_path) Return ChildUser objects filtered by the avatar_path column
+ * @method     ChildUser[]|ObjectCollection findByPasswordResetToken(string $password_reset_token) Return ChildUser objects filtered by the password_reset_token column
+ * @method     ChildUser[]|ObjectCollection findByEmailConfirmToken(string $email_confirm_token) Return ChildUser objects filtered by the email_confirm_token column
  * @method     ChildUser[]|ObjectCollection findByEmailConfirmedAt(string $email_confirmed_at) Return ChildUser objects filtered by the email_confirmed_at column
  * @method     ChildUser[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildUser objects filtered by the deleted_at column
  * @method     ChildUser[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildUser objects filtered by the created_at column
@@ -195,7 +195,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, username, name, surname, password, email, avatar, password_token, email_token, email_confirmed_at, deleted_at, created_at, updated_at FROM user WHERE id = :p0';
+        $sql = 'SELECT id, username, name, surname, password, email, avatar_path, password_reset_token, email_confirm_token, email_confirmed_at, deleted_at, created_at, updated_at FROM user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -472,90 +472,90 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the avatar column
+     * Filter the query on the avatar_path column
      *
      * Example usage:
      * <code>
-     * $query->filterByAvatar('fooValue');   // WHERE avatar = 'fooValue'
-     * $query->filterByAvatar('%fooValue%'); // WHERE avatar LIKE '%fooValue%'
+     * $query->filterByAvatarPath('fooValue');   // WHERE avatar_path = 'fooValue'
+     * $query->filterByAvatarPath('%fooValue%'); // WHERE avatar_path LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $avatar The value to use as filter.
+     * @param     string $avatarPath The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByAvatar($avatar = null, $comparison = null)
+    public function filterByAvatarPath($avatarPath = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($avatar)) {
+            if (is_array($avatarPath)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $avatar)) {
-                $avatar = str_replace('*', '%', $avatar);
+            } elseif (preg_match('/[\%\*]/', $avatarPath)) {
+                $avatarPath = str_replace('*', '%', $avatarPath);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_AVATAR, $avatar, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_AVATAR_PATH, $avatarPath, $comparison);
     }
 
     /**
-     * Filter the query on the password_token column
+     * Filter the query on the password_reset_token column
      *
      * Example usage:
      * <code>
-     * $query->filterByPasswordToken('fooValue');   // WHERE password_token = 'fooValue'
-     * $query->filterByPasswordToken('%fooValue%'); // WHERE password_token LIKE '%fooValue%'
+     * $query->filterByPasswordResetToken('fooValue');   // WHERE password_reset_token = 'fooValue'
+     * $query->filterByPasswordResetToken('%fooValue%'); // WHERE password_reset_token LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $passwordToken The value to use as filter.
+     * @param     string $passwordResetToken The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByPasswordToken($passwordToken = null, $comparison = null)
+    public function filterByPasswordResetToken($passwordResetToken = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($passwordToken)) {
+            if (is_array($passwordResetToken)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $passwordToken)) {
-                $passwordToken = str_replace('*', '%', $passwordToken);
+            } elseif (preg_match('/[\%\*]/', $passwordResetToken)) {
+                $passwordResetToken = str_replace('*', '%', $passwordResetToken);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_PASSWORD_TOKEN, $passwordToken, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_PASSWORD_RESET_TOKEN, $passwordResetToken, $comparison);
     }
 
     /**
-     * Filter the query on the email_token column
+     * Filter the query on the email_confirm_token column
      *
      * Example usage:
      * <code>
-     * $query->filterByEmailToken('fooValue');   // WHERE email_token = 'fooValue'
-     * $query->filterByEmailToken('%fooValue%'); // WHERE email_token LIKE '%fooValue%'
+     * $query->filterByEmailConfirmToken('fooValue');   // WHERE email_confirm_token = 'fooValue'
+     * $query->filterByEmailConfirmToken('%fooValue%'); // WHERE email_confirm_token LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $emailToken The value to use as filter.
+     * @param     string $emailConfirmToken The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByEmailToken($emailToken = null, $comparison = null)
+    public function filterByEmailConfirmToken($emailConfirmToken = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($emailToken)) {
+            if (is_array($emailConfirmToken)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $emailToken)) {
-                $emailToken = str_replace('*', '%', $emailToken);
+            } elseif (preg_match('/[\%\*]/', $emailConfirmToken)) {
+                $emailConfirmToken = str_replace('*', '%', $emailConfirmToken);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_EMAIL_TOKEN, $emailToken, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_EMAIL_CONFIRM_TOKEN, $emailConfirmToken, $comparison);
     }
 
     /**

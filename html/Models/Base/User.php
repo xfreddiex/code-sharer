@@ -105,25 +105,25 @@ abstract class User implements ActiveRecordInterface
     protected $email;
 
     /**
-     * The value for the avatar field.
+     * The value for the avatar_path field.
      *
      * @var        string
      */
-    protected $avatar;
+    protected $avatar_path;
 
     /**
-     * The value for the password_token field.
+     * The value for the password_reset_token field.
      *
      * @var        string
      */
-    protected $password_token;
+    protected $password_reset_token;
 
     /**
-     * The value for the email_token field.
+     * The value for the email_confirm_token field.
      *
      * @var        string
      */
-    protected $email_token;
+    protected $email_confirm_token;
 
     /**
      * The value for the email_confirmed_at field.
@@ -447,33 +447,33 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [avatar] column value.
+     * Get the [avatar_path] column value.
      *
      * @return string
      */
-    public function getAvatar()
+    public function getAvatarPath()
     {
-        return $this->avatar;
+        return $this->avatar_path;
     }
 
     /**
-     * Get the [password_token] column value.
+     * Get the [password_reset_token] column value.
      *
      * @return string
      */
-    public function getPasswordToken()
+    public function getPasswordResetToken()
     {
-        return $this->password_token;
+        return $this->password_reset_token;
     }
 
     /**
-     * Get the [email_token] column value.
+     * Get the [email_confirm_token] column value.
      *
      * @return string
      */
-    public function getEmailToken()
+    public function getEmailConfirmToken()
     {
-        return $this->email_token;
+        return $this->email_confirm_token;
     }
 
     /**
@@ -677,64 +677,64 @@ abstract class User implements ActiveRecordInterface
     } // setEmail()
 
     /**
-     * Set the value of [avatar] column.
+     * Set the value of [avatar_path] column.
      *
      * @param string $v new value
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function setAvatar($v)
+    public function setAvatarPath($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->avatar !== $v) {
-            $this->avatar = $v;
-            $this->modifiedColumns[UserTableMap::COL_AVATAR] = true;
+        if ($this->avatar_path !== $v) {
+            $this->avatar_path = $v;
+            $this->modifiedColumns[UserTableMap::COL_AVATAR_PATH] = true;
         }
 
         return $this;
-    } // setAvatar()
+    } // setAvatarPath()
 
     /**
-     * Set the value of [password_token] column.
+     * Set the value of [password_reset_token] column.
      *
      * @param string $v new value
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function setPasswordToken($v)
+    public function setPasswordResetToken($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->password_token !== $v) {
-            $this->password_token = $v;
-            $this->modifiedColumns[UserTableMap::COL_PASSWORD_TOKEN] = true;
+        if ($this->password_reset_token !== $v) {
+            $this->password_reset_token = $v;
+            $this->modifiedColumns[UserTableMap::COL_PASSWORD_RESET_TOKEN] = true;
         }
 
         return $this;
-    } // setPasswordToken()
+    } // setPasswordResetToken()
 
     /**
-     * Set the value of [email_token] column.
+     * Set the value of [email_confirm_token] column.
      *
      * @param string $v new value
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function setEmailToken($v)
+    public function setEmailConfirmToken($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->email_token !== $v) {
-            $this->email_token = $v;
-            $this->modifiedColumns[UserTableMap::COL_EMAIL_TOKEN] = true;
+        if ($this->email_confirm_token !== $v) {
+            $this->email_confirm_token = $v;
+            $this->modifiedColumns[UserTableMap::COL_EMAIL_CONFIRM_TOKEN] = true;
         }
 
         return $this;
-    } // setEmailToken()
+    } // setEmailConfirmToken()
 
     /**
      * Sets the value of [email_confirmed_at] column to a normalized version of the date/time value specified.
@@ -870,14 +870,14 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Avatar', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->avatar = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('AvatarPath', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->avatar_path = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('PasswordToken', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password_token = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('PasswordResetToken', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->password_reset_token = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('EmailToken', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email_token = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('EmailConfirmToken', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->email_confirm_token = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('EmailConfirmedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
@@ -1137,14 +1137,14 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = 'email';
         }
-        if ($this->isColumnModified(UserTableMap::COL_AVATAR)) {
-            $modifiedColumns[':p' . $index++]  = 'avatar';
+        if ($this->isColumnModified(UserTableMap::COL_AVATAR_PATH)) {
+            $modifiedColumns[':p' . $index++]  = 'avatar_path';
         }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_TOKEN)) {
-            $modifiedColumns[':p' . $index++]  = 'password_token';
+        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_RESET_TOKEN)) {
+            $modifiedColumns[':p' . $index++]  = 'password_reset_token';
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_TOKEN)) {
-            $modifiedColumns[':p' . $index++]  = 'email_token';
+        if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRM_TOKEN)) {
+            $modifiedColumns[':p' . $index++]  = 'email_confirm_token';
         }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'email_confirmed_at';
@@ -1187,14 +1187,14 @@ abstract class User implements ActiveRecordInterface
                     case 'email':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
-                    case 'avatar':
-                        $stmt->bindValue($identifier, $this->avatar, PDO::PARAM_STR);
+                    case 'avatar_path':
+                        $stmt->bindValue($identifier, $this->avatar_path, PDO::PARAM_STR);
                         break;
-                    case 'password_token':
-                        $stmt->bindValue($identifier, $this->password_token, PDO::PARAM_STR);
+                    case 'password_reset_token':
+                        $stmt->bindValue($identifier, $this->password_reset_token, PDO::PARAM_STR);
                         break;
-                    case 'email_token':
-                        $stmt->bindValue($identifier, $this->email_token, PDO::PARAM_STR);
+                    case 'email_confirm_token':
+                        $stmt->bindValue($identifier, $this->email_confirm_token, PDO::PARAM_STR);
                         break;
                     case 'email_confirmed_at':
                         $stmt->bindValue($identifier, $this->email_confirmed_at ? $this->email_confirmed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1289,13 +1289,13 @@ abstract class User implements ActiveRecordInterface
                 return $this->getEmail();
                 break;
             case 6:
-                return $this->getAvatar();
+                return $this->getAvatarPath();
                 break;
             case 7:
-                return $this->getPasswordToken();
+                return $this->getPasswordResetToken();
                 break;
             case 8:
-                return $this->getEmailToken();
+                return $this->getEmailConfirmToken();
                 break;
             case 9:
                 return $this->getEmailConfirmedAt();
@@ -1344,9 +1344,9 @@ abstract class User implements ActiveRecordInterface
             $keys[3] => $this->getSurname(),
             $keys[4] => $this->getPassword(),
             $keys[5] => $this->getEmail(),
-            $keys[6] => $this->getAvatar(),
-            $keys[7] => $this->getPasswordToken(),
-            $keys[8] => $this->getEmailToken(),
+            $keys[6] => $this->getAvatarPath(),
+            $keys[7] => $this->getPasswordResetToken(),
+            $keys[8] => $this->getEmailConfirmToken(),
             $keys[9] => $this->getEmailConfirmedAt(),
             $keys[10] => $this->getDeletedAt(),
             $keys[11] => $this->getCreatedAt(),
@@ -1425,13 +1425,13 @@ abstract class User implements ActiveRecordInterface
                 $this->setEmail($value);
                 break;
             case 6:
-                $this->setAvatar($value);
+                $this->setAvatarPath($value);
                 break;
             case 7:
-                $this->setPasswordToken($value);
+                $this->setPasswordResetToken($value);
                 break;
             case 8:
-                $this->setEmailToken($value);
+                $this->setEmailConfirmToken($value);
                 break;
             case 9:
                 $this->setEmailConfirmedAt($value);
@@ -1490,13 +1490,13 @@ abstract class User implements ActiveRecordInterface
             $this->setEmail($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setAvatar($arr[$keys[6]]);
+            $this->setAvatarPath($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPasswordToken($arr[$keys[7]]);
+            $this->setPasswordResetToken($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setEmailToken($arr[$keys[8]]);
+            $this->setEmailConfirmToken($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
             $this->setEmailConfirmedAt($arr[$keys[9]]);
@@ -1569,14 +1569,14 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
             $criteria->add(UserTableMap::COL_EMAIL, $this->email);
         }
-        if ($this->isColumnModified(UserTableMap::COL_AVATAR)) {
-            $criteria->add(UserTableMap::COL_AVATAR, $this->avatar);
+        if ($this->isColumnModified(UserTableMap::COL_AVATAR_PATH)) {
+            $criteria->add(UserTableMap::COL_AVATAR_PATH, $this->avatar_path);
         }
-        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_TOKEN)) {
-            $criteria->add(UserTableMap::COL_PASSWORD_TOKEN, $this->password_token);
+        if ($this->isColumnModified(UserTableMap::COL_PASSWORD_RESET_TOKEN)) {
+            $criteria->add(UserTableMap::COL_PASSWORD_RESET_TOKEN, $this->password_reset_token);
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL_TOKEN)) {
-            $criteria->add(UserTableMap::COL_EMAIL_TOKEN, $this->email_token);
+        if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRM_TOKEN)) {
+            $criteria->add(UserTableMap::COL_EMAIL_CONFIRM_TOKEN, $this->email_confirm_token);
         }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_CONFIRMED_AT)) {
             $criteria->add(UserTableMap::COL_EMAIL_CONFIRMED_AT, $this->email_confirmed_at);
@@ -1681,9 +1681,9 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setSurname($this->getSurname());
         $copyObj->setPassword($this->getPassword());
         $copyObj->setEmail($this->getEmail());
-        $copyObj->setAvatar($this->getAvatar());
-        $copyObj->setPasswordToken($this->getPasswordToken());
-        $copyObj->setEmailToken($this->getEmailToken());
+        $copyObj->setAvatarPath($this->getAvatarPath());
+        $copyObj->setPasswordResetToken($this->getPasswordResetToken());
+        $copyObj->setEmailConfirmToken($this->getEmailConfirmToken());
         $copyObj->setEmailConfirmedAt($this->getEmailConfirmedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -1729,9 +1729,9 @@ abstract class User implements ActiveRecordInterface
         $this->surname = null;
         $this->password = null;
         $this->email = null;
-        $this->avatar = null;
-        $this->password_token = null;
-        $this->email_token = null;
+        $this->avatar_path = null;
+        $this->password_reset_token = null;
+        $this->email_confirm_token = null;
         $this->email_confirmed_at = null;
         $this->deleted_at = null;
         $this->created_at = null;

@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1452167826.
- * Generated on 2016-01-07 12:57:06 by xfreddiex
+ * up to version 1455187855.
+ * Generated on 2016-02-11 11:50:55 by xfreddiex
  */
-class PropelMigration_1452167826
+class PropelMigration_1455187855
 {
     public $comment = '';
 
@@ -43,38 +43,7 @@ class PropelMigration_1452167826
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE `book`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
-    `isbn` VARCHAR(24) NOT NULL,
-    `publisher_id` INTEGER NOT NULL,
-    `author_id` INTEGER NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `book_fi_35872e` (`publisher_id`),
-    INDEX `book_fi_ea464c` (`author_id`),
-    CONSTRAINT `book_fk_35872e`
-        FOREIGN KEY (`publisher_id`)
-        REFERENCES `publisher` (`id`),
-    CONSTRAINT `book_fk_ea464c`
-        FOREIGN KEY (`author_id`)
-        REFERENCES `author` (`id`)
-) ENGINE=InnoDB;
-
-CREATE TABLE `author`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `first_name` VARCHAR(128) NOT NULL,
-    `last_name` VARCHAR(128) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-CREATE TABLE `publisher`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+CREATE UNIQUE INDEX `user_u_f86ef3` ON `user` (`username`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -96,11 +65,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `book`;
-
-DROP TABLE IF EXISTS `author`;
-
-DROP TABLE IF EXISTS `publisher`;
+DROP INDEX `user_u_f86ef3` ON `user`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
