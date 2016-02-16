@@ -27,17 +27,18 @@ class UserController extends BaseController{
 			else{
 				$this->sendFlashMessage("Something has gone wrong. You have not been signed up.", "danger");
 			}
-			$this->redirectJS("/home");
+			$this->redirect("/");
 		}
-		$this->setHTTPStatusCode("400");
+		else
+			$this->setHTTPStatusCode("400");
 	}
 
 	protected function addUser($email, $username, $password){
-		if(strlen($password) >= 6 && !$this->usernameExists($username) && !$this->emailExists($email)){
+		if(strlen($password) >= 6 && strlen($email) <= 70 && !$this->usernameExists($username) && !$this->emailExists($email)){
 			$user = new User();
 			$user->setEmail($email);
 			$user->setUsername($username);
-			$user->setPassword($password);
+			$user->setPassword(sha1($password));
 			$user->save();
 			return $user;
 		}

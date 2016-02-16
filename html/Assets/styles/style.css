@@ -175,7 +175,11 @@ section {
         width: 100%; } }
     .homepage-wrapper #sign-up-form .form-control {
       background-color: #dddddd; }
+    .homepage-wrapper #sign-up-form .row {
+      height: 54px; }
     .homepage-wrapper #sign-up-form .alert {
+      padding: 6px 10px;
+      margin: 0px;
       display: none; }
   @media screen and (max-width: 767px) {
     .homepage-wrapper {

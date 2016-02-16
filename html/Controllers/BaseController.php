@@ -89,14 +89,8 @@ abstract class BaseController{
 	}
 
 	protected function redirect($url){
-		header("Location: /" + trim($url, "/"));
-		header("Connection: close");
-		exit;
-	}
-
-	protected function redirectJS($url){
-		$this->setContentType("javascript");
-		$this->viewString('window.location.href = "/' . trim($url, "/"). '";');
+		$url = trim($url, "/");
+		header("Location: /$url");
 		header("Connection: close");
 		exit;
 	}

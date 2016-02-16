@@ -204,7 +204,12 @@ section{
 		.form-control{
 			background-color: #dddddd;
 		}
+		.row{
+			height: 54px;
+		}
 		.alert{
+			padding: 6px 10px;
+			margin: 0px;
 			display: none;
 		}
 	}
