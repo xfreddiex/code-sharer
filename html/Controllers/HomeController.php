@@ -9,9 +9,4 @@ class HomeController extends BaseController{
 		$this->data["title"] = "GGG";
 		$this->viewFile($this->template);
 	}
-
-	protected function changeColor(){
-		header('Content-Type: text/javascript');
-		$this->viewFile("Assets/javascript/gg.js");
-	}
 }
