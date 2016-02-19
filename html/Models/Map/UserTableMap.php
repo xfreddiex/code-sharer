@@ -187,10 +187,10 @@ class UserTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('username', 'Username', 'VARCHAR', true, 30, null);
+        $this->addColumn('username', 'Username', 'VARCHAR', true, 32, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 50, null);
         $this->addColumn('surname', 'Surname', 'VARCHAR', false, 50, null);
-        $this->addColumn('password', 'Password', 'VARCHAR', true, 50, null);
+        $this->addColumn('password', 'Password', 'VARCHAR', true, 60, null);
         $this->addColumn('email', 'Email', 'VARCHAR', true, 70, null);
         $this->addColumn('avatar_path', 'AvatarPath', 'VARCHAR', false, 70, null);
         $this->addColumn('password_reset_token', 'PasswordResetToken', 'VARCHAR', false, 64, null);
@@ -218,6 +218,7 @@ class UserTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'validate' => array('rule1' => array ('column' => 'username','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal username length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'username','validator' => 'NotBlank','options' => array ('message' => 'Username should not be blank.',),), 'rule3' => array ('column' => 'username','validator' => 'Unique','options' => array ('message' => 'Username already exists.',),), 'rule4' => array ('column' => 'email','validator' => 'Length','options' => array ('max' => 70,'maxMessage' => 'Maximal email address length is {{ limit }} characters.',),), 'rule5' => array ('column' => 'email','validator' => 'NotBlank','options' => array ('message' => 'Email address should not be blank.',),), 'rule6' => array ('column' => 'email','validator' => 'Unique','options' => array ('message' => 'Email address is already used.',),), 'rule7' => array ('column' => 'email','validator' => 'Email','options' => array ('message' => 'Entered email address must be valid.',),), 'rule8' => array ('column' => 'password','validator' => 'Length','options' => array ('min' => 6,'max' => 60,'minMessage' => 'Password must contain at least {{ limit }} characters.','maxMessage' => 'Maximal password length is {{ limit }} characters.',),), 'rule9' => array ('column' => 'password','validator' => 'NotBlank','options' => array ('message' => 'Password should not be blank.',),), 'rule10' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal name length is {{ limit }} characters.',),), 'rule11' => array ('column' => 'surname','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal surname length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
 

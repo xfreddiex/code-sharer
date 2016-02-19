@@ -9,6 +9,7 @@ use Models\File as ChildFile;
 use Models\FileQuery as ChildFileQuery;
 use Models\Pack as ChildPack;
 use Models\PackQuery as ChildPackQuery;
+use Models\Map\FileTableMap;
 use Models\Map\PackTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -1538,7 +1539,10 @@ abstract class Pack implements ActiveRecordInterface
         if (null !== $this->collFiles && !$overrideExisting) {
             return;
         }
-        $this->collFiles = new ObjectCollection();
+
+        $collectionClassName = FileTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collFiles = new $collectionClassName;
         $this->collFiles->setModel('\Models\File');
     }
 
