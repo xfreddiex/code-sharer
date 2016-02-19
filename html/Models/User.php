@@ -3,6 +3,8 @@
 namespace Models;
 
 use Models\Base\User as BaseUser;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Models\Map\UserTableMap;
 
 /**
  * Skeleton subclass for representing a row from the 'user' table.
@@ -16,5 +18,23 @@ use Models\Base\User as BaseUser;
  */
 class User extends BaseUser
 {
+	public function preSave(ConnectionInterface $con = null)
+	{
+		return $this->validate();
+	}
+
+	public function setPassword($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if (!password_verify($v, $this->password)) {
+			$this->password = password_hash($v, PASSWORD_DEFAULT);
+			$this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
+		}
+
+		return $this;
+	}
 
 }

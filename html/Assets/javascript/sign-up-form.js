@@ -87,7 +87,7 @@ function checkUsername(){
 }
 
 function checkUsernameLength(){
-	if($('#sign-up-form input[name="username"]').val().length > 30){
+	if($('#sign-up-form input[name="username"]').val().length > 32){
 		$('#username-wrapper').addClass("has-error");
 		displayAlert("username_long");
 		return false;

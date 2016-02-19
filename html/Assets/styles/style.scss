@@ -69,7 +69,7 @@ p{
 	background-color: #778000;
 }
 .btn-success:not(.search-button):hover{
-	background-color: #9da900;
+	background-color: #9DA900;
 }
 .btn-info:not(.search-button){
 	background-color: #014450;
@@ -83,15 +83,14 @@ p{
 /*alerts*/
 
 .alert{
-	margin-top: 20px;
-	margin-bottom: 10px;
+	margin: 15px 0px;
 	border: 0px;
 	color: white;
 }
 .alert-danger{
 	background-color: #AB2C00;
 	.close{
-		color: #d23702 !important;
+		color: #d23702;
 		opacity: 1;
 		text-shadow: none;
 	}
@@ -125,9 +124,7 @@ p{
 /*----*/
 
 /*inputs*/
-section > .container{
-	background-color: white;
-}
+
 .form-control:not(.search-input){
 	padding: 4px 10px;
 	font-size: 18px;
@@ -239,25 +236,35 @@ header{
 	}
 }
 section{
-	margin-top: -20px; 
-	min-height: 960px;
-	background: black url('../images/background.png') center top no-repeat;
-	background-size: cover;
+	margin-top: -20px;
 }
 .modal-content{
 	border-radius: 4px;
 }
+footer{
+	background-color: black;
+	height: 120px;
+}
 
 /*homepage*/
 .homepage-wrapper{
-	color: white;
-	padding-top: 70px;
+	padding-top: 20px;
+	background: black url('../images/background.png') center top no-repeat;
+	background-size: cover;
 	h2{
+		color: white;
 		font-size: 40px;
 		margin-bottom: 24px; 
 	}
 	h1{
+		color: white;
 		font-size: 100px;
+	}
+	p{
+		color: white;
+	}
+	div{
+		color: white;
 	}
 	.welcome{
 		font-size: 40px;
@@ -282,7 +289,7 @@ section{
 		margin-top: -4px;
 	}
 	.homepage-img-wrap{
-		padding-top: 80px;
+		padding: 40px 15px;
 	}
 	#sign-up-form{
 		width: 320px;

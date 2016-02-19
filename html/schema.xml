@@ -6,10 +6,10 @@
 
     <table name="user" phpName="User">
     	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="username" type="varchar" size="30" required="true"/>
+        <column name="username" type="varchar" size="32" required="true"/>
         <column name="name" type="varchar" size="50" required="false"/>
         <column name="surname" type="varchar" size="50" required="false"/>
-        <column name="password" type="varchar" size="50" required="true"/>
+        <column name="password" type="varchar" size="60" required="true"/>
         <column name="email" type="varchar" size="70" required="true"/>
         <column name="avatar_path" type="varchar" size="70" required="false"/>
         <column name="password_reset_token" type="varchar" size="64" required="false"/>
@@ -23,6 +23,19 @@
         <unique name="unique_email">
             <unique-column name="email" />
         </unique>
+        <behavior name="validate">
+            <parameter name="rule1" value='{column: username, validator: Length, options: {max : 32, maxMessage: "Maximal username length is {{ limit }} characters."}}' />
+            <parameter name="rule2" value='{column: username, validator: NotBlank, options: {message: "Username should not be blank."}}' />
+            <parameter name="rule3" value='{column: username, validator: Unique, options: {message: "Username already exists."}}' />
+            <parameter name="rule4" value='{column: email, validator: Length, options: {max : 70, maxMessage: "Maximal email address length is {{ limit }} characters."}}' />
+            <parameter name="rule5" value='{column: email, validator: NotBlank, options: {message: "Email address should not be blank."}}' />
+            <parameter name="rule6" value='{column: email, validator: Unique, options: {message: "Email address is already used."}}' />
+            <parameter name="rule7" value='{column: email, validator: Email, options: {message: "Entered email address must be valid."}}' />
+            <parameter name="rule8" value='{column: password, validator: Length, options: {min : 6, max : 60, minMessage: "Password must contain at least {{ limit }} characters.", maxMessage : "Maximal password length is {{ limit }} characters."}}' />
+            <parameter name="rule9" value='{column: password, validator: NotBlank, options: {message: "Password should not be blank."}}' />
+            <parameter name="rule10" value='{column: name, validator: Length, options: {max : 50, maxMessage: "Maximal name length is {{ limit }} characters."}}' />
+            <parameter name="rule11" value='{column: surname, validator: Length, options: {max : 50, maxMessage: "Maximal surname length is {{ limit }} characters."}}' />
+        </behavior>
 
     </table>
 
