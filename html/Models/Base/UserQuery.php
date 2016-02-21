@@ -27,7 +27,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
  * @method     ChildUserQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildUserQuery orderByAvatarPath($order = Criteria::ASC) Order by the avatar_path column
- * @method     ChildUserQuery orderByLoginSession($order = Criteria::ASC) Order by the login_session column
  * @method     ChildUserQuery orderByPasswordResetToken($order = Criteria::ASC) Order by the password_reset_token column
  * @method     ChildUserQuery orderByEmailConfirmToken($order = Criteria::ASC) Order by the email_confirm_token column
  * @method     ChildUserQuery orderByEmailConfirmedAt($order = Criteria::ASC) Order by the email_confirmed_at column
@@ -42,7 +41,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupByPassword() Group by the password column
  * @method     ChildUserQuery groupByEmail() Group by the email column
  * @method     ChildUserQuery groupByAvatarPath() Group by the avatar_path column
- * @method     ChildUserQuery groupByLoginSession() Group by the login_session column
  * @method     ChildUserQuery groupByPasswordResetToken() Group by the password_reset_token column
  * @method     ChildUserQuery groupByEmailConfirmToken() Group by the email_confirm_token column
  * @method     ChildUserQuery groupByEmailConfirmedAt() Group by the email_confirmed_at column
@@ -80,7 +78,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
  * @method     ChildUser findOneByEmail(string $email) Return the first ChildUser filtered by the email column
  * @method     ChildUser findOneByAvatarPath(string $avatar_path) Return the first ChildUser filtered by the avatar_path column
- * @method     ChildUser findOneByLoginSession(string $login_session) Return the first ChildUser filtered by the login_session column
  * @method     ChildUser findOneByPasswordResetToken(string $password_reset_token) Return the first ChildUser filtered by the password_reset_token column
  * @method     ChildUser findOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column
  * @method     ChildUser findOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column
@@ -98,7 +95,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByPassword(string $password) Return the first ChildUser filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmail(string $email) Return the first ChildUser filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByAvatarPath(string $avatar_path) Return the first ChildUser filtered by the avatar_path column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByLoginSession(string $login_session) Return the first ChildUser filtered by the login_session column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPasswordResetToken(string $password_reset_token) Return the first ChildUser filtered by the password_reset_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -114,7 +110,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
  * @method     ChildUser[]|ObjectCollection findByEmail(string $email) Return ChildUser objects filtered by the email column
  * @method     ChildUser[]|ObjectCollection findByAvatarPath(string $avatar_path) Return ChildUser objects filtered by the avatar_path column
- * @method     ChildUser[]|ObjectCollection findByLoginSession(string $login_session) Return ChildUser objects filtered by the login_session column
  * @method     ChildUser[]|ObjectCollection findByPasswordResetToken(string $password_reset_token) Return ChildUser objects filtered by the password_reset_token column
  * @method     ChildUser[]|ObjectCollection findByEmailConfirmToken(string $email_confirm_token) Return ChildUser objects filtered by the email_confirm_token column
  * @method     ChildUser[]|ObjectCollection findByEmailConfirmedAt(string $email_confirmed_at) Return ChildUser objects filtered by the email_confirmed_at column
@@ -213,7 +208,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, username, name, surname, password, email, avatar_path, login_session, password_reset_token, email_confirm_token, email_confirmed_at, deleted_at, created_at, updated_at FROM user WHERE id = :p0';
+        $sql = 'SELECT id, username, name, surname, password, email, avatar_path, password_reset_token, email_confirm_token, email_confirmed_at, deleted_at, created_at, updated_at FROM user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -516,35 +511,6 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_AVATAR_PATH, $avatarPath, $comparison);
-    }
-
-    /**
-     * Filter the query on the login_session column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByLoginSession('fooValue');   // WHERE login_session = 'fooValue'
-     * $query->filterByLoginSession('%fooValue%'); // WHERE login_session LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $loginSession The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByLoginSession($loginSession = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($loginSession)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $loginSession)) {
-                $loginSession = str_replace('*', '%', $loginSession);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(UserTableMap::COL_LOGIN_SESSION, $loginSession, $comparison);
     }
 
     /**

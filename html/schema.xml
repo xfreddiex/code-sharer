@@ -12,7 +12,6 @@
         <column name="password" type="varchar" size="60" required="true"/>
         <column name="email" type="varchar" size="70" required="true"/>
         <column name="avatar_path" type="varchar" size="70" required="false"/>
-        <column name="login_session" type="varchar" size="60"/>
         <column name="password_reset_token" type="varchar" size="64" required="false"/>
         <column name="email_confirm_token" type="varchar" size="64" required="false"/>
         <column name="email_confirmed_at" type="timestamp" required="false"/>

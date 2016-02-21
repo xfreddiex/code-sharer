@@ -31,7 +31,8 @@ p {
   color: #025A6A; }
 
 .link:hover {
-  color: #014450; }
+  color: #014450;
+  text-decoration: none; }
 
 /*----*/
 /*buttons*/
@@ -51,22 +52,22 @@ p {
   background-color: black; }
 
 .btn-danger:not(.search-button) {
-  background-color: #822100; }
-
-.btn-danger:not(.search-button):hover {
   background-color: #ab2c00; }
 
-.btn-success:not(.search-button) {
-  background-color: #778000; }
+.btn-danger:not(.search-button):hover {
+  background-color: #822100; }
 
-.btn-success:not(.search-button):hover {
+.btn-success:not(.search-button) {
   background-color: #9DA900; }
 
+.btn-success:not(.search-button):hover {
+  background-color: #778000; }
+
 .btn-info:not(.search-button) {
-  background-color: #014450; }
+  background-color: #025a6a; }
 
 .btn-info:not(.search-button):hover {
-  background-color: #025a6a; }
+  background-color: #014450; }
 
 /*----*/
 /*alerts*/
@@ -105,8 +106,6 @@ p {
 /*----*/
 /*inputs*/
 .form-control:not(.search-input) {
-  padding: 4px 10px;
-  font-size: 18px;
   color: black;
   box-shadow: none;
   border: 1px solid #dddddd;
@@ -138,10 +137,32 @@ p {
   /*box-shadow: 0px 0px 4px #c0cf02 !important;*/ }
 
 /*----*/
+/*checkbox*/
+.checkbox input[type="checkbox"] {
+  display: none; }
+.checkbox label {
+  padding: 0px 5px;
+  vertical-align: top; }
+.checkbox .checkbox-button {
+  font-size: 18px;
+  vertical-align: bottom; }
+.checkbox .checkbox-button:before {
+  content: '\f096';
+  letter-spacing: 3px; }
+.checkbox input[type="checkbox"]:checked + .checkbox-button:before {
+  content: '\f046';
+  letter-spacing: 0px; }
+
+/*----*/
 /*pagination*/
 .pagination a {
   border-radius: 0px !important;
   border: 0px !important; }
+
+/*----*/
+/*modal*/
+.modal-content {
+  border-radius: 4px; }
 
 /*----*/
 .modal-content .form-control {
@@ -209,20 +230,30 @@ header .nav a:hover {
     margin-right: -5px !important; } }
 
 section {
-  margin-top: -20px; }
-
-.modal-content {
-  border-radius: 4px; }
+  margin-top: -20px;
+  min-height: 846px; }
 
 footer {
   background-color: black;
-  height: 120px; }
+  height: 183px; }
 
+/*sign-in-modal*/
+#sign-in-modal .link {
+  margin-bottom: 0px;
+  line-height: 20px; }
+#sign-in-modal .checkbox {
+  margin: 0px; }
+#sign-in-modal .form-control {
+  padding: 4px 10px;
+  font-size: 18px; }
+
+/*----*/
 /*homepage*/
 .homepage-wrapper {
   padding-top: 20px;
   background: black url("../images/background.png") center top no-repeat;
-  background-size: auto 846px; }
+  background-size: auto 846px;
+  min-height: 846px; }
   .homepage-wrapper h2 {
     color: white;
     font-size: 40px;
@@ -258,7 +289,9 @@ footer {
       .homepage-wrapper #sign-up-form {
         width: 100%; } }
     .homepage-wrapper #sign-up-form .form-control {
-      background-color: #dddddd; }
+      background-color: #dddddd;
+      padding: 4px 10px;
+      font-size: 18px; }
     .homepage-wrapper #sign-up-form .row {
       height: 54px; }
     .homepage-wrapper #sign-up-form .alert {
