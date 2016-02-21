@@ -83,6 +83,7 @@ function checkUsername(){
 	else{
 		usernameExists = true;
 		hideAlert("username_occupied");
+		$('#username-wrapper').removeClass("has-error");
 	}
 }
 
@@ -126,6 +127,7 @@ function checkEmail(){
 	else{
 		emailExists = true;
 		hideAlert("email_occupied");
+		$('#email-wrapper').removeClass("has-error");
 	}
 }
 

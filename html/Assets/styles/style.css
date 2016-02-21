@@ -5,6 +5,9 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 @font-face {
   font-family: "Ubuntu";
   src: url("Ubuntu-R.ttf"); }
+html {
+  min-width: 320px; }
+
 /*text*/
 * {
   font-family: "Ubuntu"; }
@@ -57,7 +60,7 @@ p {
   background-color: #778000; }
 
 .btn-success:not(.search-button):hover {
-  background-color: #9da900; }
+  background-color: #9DA900; }
 
 .btn-info:not(.search-button) {
   background-color: #014450; }
@@ -68,15 +71,14 @@ p {
 /*----*/
 /*alerts*/
 .alert {
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 15px 0px;
   border: 0px;
   color: white; }
 
 .alert-danger {
   background-color: #AB2C00; }
   .alert-danger .close {
-    color: #d23702 !important;
+    color: #d23702;
     opacity: 1;
     text-shadow: none; }
   .alert-danger .close:hover {
@@ -102,9 +104,6 @@ p {
 
 /*----*/
 /*inputs*/
-section > .container {
-  background-color: white; }
-
 .form-control:not(.search-input) {
   padding: 4px 10px;
   font-size: 18px;
@@ -137,6 +136,12 @@ section > .container {
   border: 1px solid #c0cf02 !important;
   box-shadow: none !important;
   /*box-shadow: 0px 0px 4px #c0cf02 !important;*/ }
+
+/*----*/
+/*pagination*/
+.pagination a {
+  border-radius: 0px !important;
+  border: 0px !important; }
 
 /*----*/
 .modal-content .form-control {
@@ -204,23 +209,31 @@ header .nav a:hover {
     margin-right: -5px !important; } }
 
 section {
-  margin-top: -20px;
-  min-height: 960px;
-  background: black url("../images/background.png") center top no-repeat;
-  background-size: cover; }
+  margin-top: -20px; }
 
 .modal-content {
   border-radius: 4px; }
 
+footer {
+  background-color: black;
+  height: 120px; }
+
 /*homepage*/
 .homepage-wrapper {
-  color: white;
-  padding-top: 70px; }
+  padding-top: 20px;
+  background: black url("../images/background.png") center top no-repeat;
+  background-size: auto 846px; }
   .homepage-wrapper h2 {
+    color: white;
     font-size: 40px;
     margin-bottom: 24px; }
   .homepage-wrapper h1 {
+    color: white;
     font-size: 100px; }
+  .homepage-wrapper p {
+    color: white; }
+  .homepage-wrapper div {
+    color: white; }
   .homepage-wrapper .welcome {
     font-size: 40px;
     display: inline-block;
@@ -238,7 +251,7 @@ section {
     margin-right: 6px;
     margin-top: -4px; }
   .homepage-wrapper .homepage-img-wrap {
-    padding-top: 80px; }
+    padding: 40px 15px; }
   .homepage-wrapper #sign-up-form {
     width: 320px; }
     @media screen and (max-width: 767px) {
@@ -254,6 +267,7 @@ section {
       display: none; }
   @media screen and (max-width: 767px) {
     .homepage-wrapper {
-      padding-top: 30px; } }
+      padding-top: 30px;
+      background-size: cover; } }
 
 /*# sourceMappingURL=style.css.map */

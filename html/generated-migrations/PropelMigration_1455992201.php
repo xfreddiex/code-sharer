@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1455187855.
- * Generated on 2016-02-11 11:50:55 by xfreddiex
+ * up to version 1455992201.
+ * Generated on 2016-02-20 19:16:41 by xfreddiex
  */
-class PropelMigration_1455187855
+class PropelMigration_1455992201
 {
     public $comment = '';
 
@@ -43,7 +43,19 @@ class PropelMigration_1455187855
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE UNIQUE INDEX `user_u_f86ef3` ON `user` (`username`);
+CREATE TABLE `authentication`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(60) NOT NULL,
+    `user_id` INTEGER NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    INDEX `authentication_fi_29554a` (`user_id`),
+    CONSTRAINT `authentication_fk_29554a`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `user` (`id`)
+) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -65,7 +77,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP INDEX `user_u_f86ef3` ON `user`;
+DROP TABLE IF EXISTS `authentication`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

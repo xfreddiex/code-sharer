@@ -5,14 +5,18 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Models\Authentication as ChildAuthentication;
+use Models\AuthenticationQuery as ChildAuthenticationQuery;
 use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
+use Models\Map\AuthenticationTableMap;
 use Models\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -125,6 +129,13 @@ abstract class User implements ActiveRecordInterface
     protected $avatar_path;
 
     /**
+     * The value for the login_session field.
+     *
+     * @var        string
+     */
+    protected $login_session;
+
+    /**
      * The value for the password_reset_token field.
      *
      * @var        string
@@ -167,6 +178,12 @@ abstract class User implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * @var        ObjectCollection|ChildAuthentication[] Collection to store aggregation of ChildAuthentication objects.
+     */
+    protected $collAuthentications;
+    protected $collAuthenticationsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -190,6 +207,12 @@ abstract class User implements ActiveRecordInterface
      * @var     ConstraintViolationList
      */
     protected $validationFailures;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildAuthentication[]
+     */
+    protected $authenticationsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\User object.
@@ -487,6 +510,16 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [login_session] column value.
+     *
+     * @return string
+     */
+    public function getLoginSession()
+    {
+        return $this->login_session;
+    }
+
+    /**
      * Get the [password_reset_token] column value.
      *
      * @return string
@@ -727,6 +760,26 @@ abstract class User implements ActiveRecordInterface
     } // setAvatarPath()
 
     /**
+     * Set the value of [login_session] column.
+     *
+     * @param string $v new value
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function setLoginSession($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->login_session !== $v) {
+            $this->login_session = $v;
+            $this->modifiedColumns[UserTableMap::COL_LOGIN_SESSION] = true;
+        }
+
+        return $this;
+    } // setLoginSession()
+
+    /**
      * Set the value of [password_reset_token] column.
      *
      * @param string $v new value
@@ -903,31 +956,34 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('AvatarPath', TableMap::TYPE_PHPNAME, $indexType)];
             $this->avatar_path = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('PasswordResetToken', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('LoginSession', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->login_session = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('PasswordResetToken', TableMap::TYPE_PHPNAME, $indexType)];
             $this->password_reset_token = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('EmailConfirmToken', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('EmailConfirmToken', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email_confirm_token = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('EmailConfirmedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('EmailConfirmedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->email_confirmed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -940,7 +996,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 14; // 14 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\User'), 0, $e);
@@ -1000,6 +1056,8 @@ abstract class User implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collAuthentications = null;
 
         } // if (deep)
     }
@@ -1123,6 +1181,23 @@ abstract class User implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->authenticationsScheduledForDeletion !== null) {
+                if (!$this->authenticationsScheduledForDeletion->isEmpty()) {
+                    \Models\AuthenticationQuery::create()
+                        ->filterByPrimaryKeys($this->authenticationsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->authenticationsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collAuthentications !== null) {
+                foreach ($this->collAuthentications as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -1169,6 +1244,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_AVATAR_PATH)) {
             $modifiedColumns[':p' . $index++]  = 'avatar_path';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_LOGIN_SESSION)) {
+            $modifiedColumns[':p' . $index++]  = 'login_session';
         }
         if ($this->isColumnModified(UserTableMap::COL_PASSWORD_RESET_TOKEN)) {
             $modifiedColumns[':p' . $index++]  = 'password_reset_token';
@@ -1219,6 +1297,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case 'avatar_path':
                         $stmt->bindValue($identifier, $this->avatar_path, PDO::PARAM_STR);
+                        break;
+                    case 'login_session':
+                        $stmt->bindValue($identifier, $this->login_session, PDO::PARAM_STR);
                         break;
                     case 'password_reset_token':
                         $stmt->bindValue($identifier, $this->password_reset_token, PDO::PARAM_STR);
@@ -1322,21 +1403,24 @@ abstract class User implements ActiveRecordInterface
                 return $this->getAvatarPath();
                 break;
             case 7:
-                return $this->getPasswordResetToken();
+                return $this->getLoginSession();
                 break;
             case 8:
-                return $this->getEmailConfirmToken();
+                return $this->getPasswordResetToken();
                 break;
             case 9:
-                return $this->getEmailConfirmedAt();
+                return $this->getEmailConfirmToken();
                 break;
             case 10:
-                return $this->getDeletedAt();
+                return $this->getEmailConfirmedAt();
                 break;
             case 11:
-                return $this->getCreatedAt();
+                return $this->getDeletedAt();
                 break;
             case 12:
+                return $this->getCreatedAt();
+                break;
+            case 13:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1356,10 +1440,11 @@ abstract class User implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['User'][$this->hashCode()])) {
@@ -1375,17 +1460,14 @@ abstract class User implements ActiveRecordInterface
             $keys[4] => $this->getPassword(),
             $keys[5] => $this->getEmail(),
             $keys[6] => $this->getAvatarPath(),
-            $keys[7] => $this->getPasswordResetToken(),
-            $keys[8] => $this->getEmailConfirmToken(),
-            $keys[9] => $this->getEmailConfirmedAt(),
-            $keys[10] => $this->getDeletedAt(),
-            $keys[11] => $this->getCreatedAt(),
-            $keys[12] => $this->getUpdatedAt(),
+            $keys[7] => $this->getLoginSession(),
+            $keys[8] => $this->getPasswordResetToken(),
+            $keys[9] => $this->getEmailConfirmToken(),
+            $keys[10] => $this->getEmailConfirmedAt(),
+            $keys[11] => $this->getDeletedAt(),
+            $keys[12] => $this->getCreatedAt(),
+            $keys[13] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[9]] instanceof \DateTime) {
-            $result[$keys[9]] = $result[$keys[9]]->format('c');
-        }
-
         if ($result[$keys[10]] instanceof \DateTime) {
             $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
@@ -1398,11 +1480,32 @@ abstract class User implements ActiveRecordInterface
             $result[$keys[12]] = $result[$keys[12]]->format('c');
         }
 
+        if ($result[$keys[13]] instanceof \DateTime) {
+            $result[$keys[13]] = $result[$keys[13]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->collAuthentications) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'authentications';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'authentications';
+                        break;
+                    default:
+                        $key = 'Authentications';
+                }
+
+                $result[$key] = $this->collAuthentications->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -1458,21 +1561,24 @@ abstract class User implements ActiveRecordInterface
                 $this->setAvatarPath($value);
                 break;
             case 7:
-                $this->setPasswordResetToken($value);
+                $this->setLoginSession($value);
                 break;
             case 8:
-                $this->setEmailConfirmToken($value);
+                $this->setPasswordResetToken($value);
                 break;
             case 9:
-                $this->setEmailConfirmedAt($value);
+                $this->setEmailConfirmToken($value);
                 break;
             case 10:
-                $this->setDeletedAt($value);
+                $this->setEmailConfirmedAt($value);
                 break;
             case 11:
-                $this->setCreatedAt($value);
+                $this->setDeletedAt($value);
                 break;
             case 12:
+                $this->setCreatedAt($value);
+                break;
+            case 13:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1523,22 +1629,25 @@ abstract class User implements ActiveRecordInterface
             $this->setAvatarPath($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPasswordResetToken($arr[$keys[7]]);
+            $this->setLoginSession($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setEmailConfirmToken($arr[$keys[8]]);
+            $this->setPasswordResetToken($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setEmailConfirmedAt($arr[$keys[9]]);
+            $this->setEmailConfirmToken($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setDeletedAt($arr[$keys[10]]);
+            $this->setEmailConfirmedAt($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setCreatedAt($arr[$keys[11]]);
+            $this->setDeletedAt($arr[$keys[11]]);
         }
         if (array_key_exists($keys[12], $arr)) {
-            $this->setUpdatedAt($arr[$keys[12]]);
+            $this->setCreatedAt($arr[$keys[12]]);
+        }
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setUpdatedAt($arr[$keys[13]]);
         }
     }
 
@@ -1601,6 +1710,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_AVATAR_PATH)) {
             $criteria->add(UserTableMap::COL_AVATAR_PATH, $this->avatar_path);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_LOGIN_SESSION)) {
+            $criteria->add(UserTableMap::COL_LOGIN_SESSION, $this->login_session);
         }
         if ($this->isColumnModified(UserTableMap::COL_PASSWORD_RESET_TOKEN)) {
             $criteria->add(UserTableMap::COL_PASSWORD_RESET_TOKEN, $this->password_reset_token);
@@ -1712,12 +1824,27 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setPassword($this->getPassword());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setAvatarPath($this->getAvatarPath());
+        $copyObj->setLoginSession($this->getLoginSession());
         $copyObj->setPasswordResetToken($this->getPasswordResetToken());
         $copyObj->setEmailConfirmToken($this->getEmailConfirmToken());
         $copyObj->setEmailConfirmedAt($this->getEmailConfirmedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getAuthentications() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addAuthentication($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1746,6 +1873,247 @@ abstract class User implements ActiveRecordInterface
         return $copyObj;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Authentication' == $relationName) {
+            return $this->initAuthentications();
+        }
+    }
+
+    /**
+     * Clears out the collAuthentications collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addAuthentications()
+     */
+    public function clearAuthentications()
+    {
+        $this->collAuthentications = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collAuthentications collection loaded partially.
+     */
+    public function resetPartialAuthentications($v = true)
+    {
+        $this->collAuthenticationsPartial = $v;
+    }
+
+    /**
+     * Initializes the collAuthentications collection.
+     *
+     * By default this just sets the collAuthentications collection to an empty array (like clearcollAuthentications());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initAuthentications($overrideExisting = true)
+    {
+        if (null !== $this->collAuthentications && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = AuthenticationTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collAuthentications = new $collectionClassName;
+        $this->collAuthentications->setModel('\Models\Authentication');
+    }
+
+    /**
+     * Gets an array of ChildAuthentication objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildAuthentication[] List of ChildAuthentication objects
+     * @throws PropelException
+     */
+    public function getAuthentications(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collAuthenticationsPartial && !$this->isNew();
+        if (null === $this->collAuthentications || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collAuthentications) {
+                // return empty collection
+                $this->initAuthentications();
+            } else {
+                $collAuthentications = ChildAuthenticationQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collAuthenticationsPartial && count($collAuthentications)) {
+                        $this->initAuthentications(false);
+
+                        foreach ($collAuthentications as $obj) {
+                            if (false == $this->collAuthentications->contains($obj)) {
+                                $this->collAuthentications->append($obj);
+                            }
+                        }
+
+                        $this->collAuthenticationsPartial = true;
+                    }
+
+                    return $collAuthentications;
+                }
+
+                if ($partial && $this->collAuthentications) {
+                    foreach ($this->collAuthentications as $obj) {
+                        if ($obj->isNew()) {
+                            $collAuthentications[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collAuthentications = $collAuthentications;
+                $this->collAuthenticationsPartial = false;
+            }
+        }
+
+        return $this->collAuthentications;
+    }
+
+    /**
+     * Sets a collection of ChildAuthentication objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $authentications A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setAuthentications(Collection $authentications, ConnectionInterface $con = null)
+    {
+        /** @var ChildAuthentication[] $authenticationsToDelete */
+        $authenticationsToDelete = $this->getAuthentications(new Criteria(), $con)->diff($authentications);
+
+
+        $this->authenticationsScheduledForDeletion = $authenticationsToDelete;
+
+        foreach ($authenticationsToDelete as $authenticationRemoved) {
+            $authenticationRemoved->setUser(null);
+        }
+
+        $this->collAuthentications = null;
+        foreach ($authentications as $authentication) {
+            $this->addAuthentication($authentication);
+        }
+
+        $this->collAuthentications = $authentications;
+        $this->collAuthenticationsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Authentication objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Authentication objects.
+     * @throws PropelException
+     */
+    public function countAuthentications(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collAuthenticationsPartial && !$this->isNew();
+        if (null === $this->collAuthentications || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collAuthentications) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getAuthentications());
+            }
+
+            $query = ChildAuthenticationQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collAuthentications);
+    }
+
+    /**
+     * Method called to associate a ChildAuthentication object to this object
+     * through the ChildAuthentication foreign key attribute.
+     *
+     * @param  ChildAuthentication $l ChildAuthentication
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addAuthentication(ChildAuthentication $l)
+    {
+        if ($this->collAuthentications === null) {
+            $this->initAuthentications();
+            $this->collAuthenticationsPartial = true;
+        }
+
+        if (!$this->collAuthentications->contains($l)) {
+            $this->doAddAuthentication($l);
+
+            if ($this->authenticationsScheduledForDeletion and $this->authenticationsScheduledForDeletion->contains($l)) {
+                $this->authenticationsScheduledForDeletion->remove($this->authenticationsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildAuthentication $authentication The ChildAuthentication object to add.
+     */
+    protected function doAddAuthentication(ChildAuthentication $authentication)
+    {
+        $this->collAuthentications[]= $authentication;
+        $authentication->setUser($this);
+    }
+
+    /**
+     * @param  ChildAuthentication $authentication The ChildAuthentication object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeAuthentication(ChildAuthentication $authentication)
+    {
+        if ($this->getAuthentications()->contains($authentication)) {
+            $pos = $this->collAuthentications->search($authentication);
+            $this->collAuthentications->remove($pos);
+            if (null === $this->authenticationsScheduledForDeletion) {
+                $this->authenticationsScheduledForDeletion = clone $this->collAuthentications;
+                $this->authenticationsScheduledForDeletion->clear();
+            }
+            $this->authenticationsScheduledForDeletion[]= clone $authentication;
+            $authentication->setUser(null);
+        }
+
+        return $this;
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -1760,6 +2128,7 @@ abstract class User implements ActiveRecordInterface
         $this->password = null;
         $this->email = null;
         $this->avatar_path = null;
+        $this->login_session = null;
         $this->password_reset_token = null;
         $this->email_confirm_token = null;
         $this->email_confirmed_at = null;
@@ -1784,8 +2153,14 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collAuthentications) {
+                foreach ($this->collAuthentications as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collAuthentications = null;
     }
 
     /**
@@ -1864,6 +2239,15 @@ abstract class User implements ActiveRecordInterface
                 $failureMap->addAll($retval);
             }
 
+            if (null !== $this->collAuthentications) {
+                foreach ($this->collAuthentications as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
 
             $this->alreadyInValidation = false;
         }

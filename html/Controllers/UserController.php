@@ -10,7 +10,11 @@ class UserController extends BaseController{
 	protected function signUp(){
 		if(isset($_POST["email"]) && isset($_POST["username"]) && isset($_POST["password"])){
 			$user = new User();
-			$user->fromArray(array("Email" => $_POST["email"], "Username" => $_POST["username"], "Password" => $_POST["password"]));
+			$user->fromArray(array(
+				"Email" => $_POST["email"], 
+				"Username" => $_POST["username"], 
+				"Password" => $_POST["password"]
+			));
 			if($user->save() <= 0){
     			$failures = $user->getValidationFailures();
 				if(count($failures) > 0){
@@ -22,6 +26,24 @@ class UserController extends BaseController{
 			else
 				$this->sendFlashMessage("You have been successfuly signed up.", "success");
 			$this->redirect("/");
+		}
+		else
+			$this->setHTTPStatusCode("400");
+	}
+
+	protected function signIn(){	
+		if(isset($_POST["username"]) && isset($_POST["password"])){
+			$user = UserQuery::create()
+				->findOneByUsername($_POST["username"]);
+			if(!$user){
+				$this->sendFlashMessage("You have not been signed in. User does not exist.", "danger");
+			}
+			else if($user->checkPassword($_POST["password"])){
+				$_SESSION["userId"] = $user->getId();
+			}
+			else
+				$this->sendFlashMessage("You have not been signed in. You entered wrong password.", "danger");
+			$this->redirect($this->refererURI);
 		}
 		else
 			$this->setHTTPStatusCode("400");
@@ -46,10 +68,14 @@ class UserController extends BaseController{
 	}
 
 	protected function usernameExists($username){
-		return UserQuery::create()->filterByUsername($username)->count() != 0;
+		return UserQuery::create()
+			->filterByUsername($username)
+			->count() != 0;
 	}
 
 	protected function emailExists($email){
-		return UserQuery::create()->filterByEmail($email)->count() != 0;
+		return UserQuery::create()
+			->filterByEmail($email)
+			->count() != 0;
 	}
 }

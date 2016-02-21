@@ -1,23 +1,27 @@
-<h1>Heading 1</h1>
-<h2>Heading 2</h2>
-<h3>Heading 3</h3>
-<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Vestibulum</strong> fringilla rhoncus lorem, et maximus risus egestas in. Nam maximus lectus eget enim tincidunt semper. Vivamus faucibus auctor ipsum, sit amet tincidunt leo fringilla eu. Nullam rutrum, tortor ut laoreet pellentesque, augue erat placerat justo, non faucibus purus eros sit amet magna. Maecenas placerat magna a nisi tincidunt mollis. Morbi finibus ante purus, ut ultrices massa suscipit id. Ut finibus tristique mauris eu porttitor. Fusce non aliquam mi. Ut vel dignissim ex, a vulputate tortor. In tincidunt lobortis nisl vel vehicula. </p>
-<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum fringilla rhoncus lorem, et maximus risus egestas in. Nam maximus lectus eget enim tincidunt semper. <span class="link">Vivamus faucibus auctor</span> ipsum, sit amet tincidunt leo fringilla eu. Nullam rutrum, tortor ut laoreet pellentesque, augue erat placerat justo, non faucibus purus eros sit amet magna. Maecenas placerat magna a nisi tincidunt mollis. Morbi finibus ante purus, ut ultrices massa suscipit id. Ut finibus tristique mauris eu porttitor. Fusce non aliquam mi. Ut vel dignissim ex, a vulputate tortor. In tincidunt lobortis nisl vel vehicula. </p>
-<div class="alert alert-success alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
-<div class="alert alert-danger alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
-<div class="alert alert-info alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
-<form>
-	<div class="form-group">
-		<input type="text" class="form-control" placeholder="placeholder" />
-	</div>
-	<div class="form-group has-error">
-		<input type="text" class="form-control" placeholder="placeholder" />
-	</div>
-	<div class="form-group has-success">
-		<input type="text" class="form-control" placeholder="placeholder" />
-	</div>
-</form>
-<button class="btn btn-default">Button</button>
-<button class="btn btn-danger">Button</button>
-<button class="btn btn-success">Button</button>
-<button class="btn btn-info">Button</button>
+<div class="container">
+	<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+	<h1>Heading 1</h1>
+	<h2>Heading 2</h2>
+	<h3>Heading 3</h3>
+	<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Vestibulum</strong> fringilla rhoncus lorem, et maximus risus egestas in. Nam maximus lectus eget enim tincidunt semper. Vivamus faucibus auctor ipsum, sit amet tincidunt leo fringilla eu. Nullam rutrum, tortor ut laoreet pellentesque, augue erat placerat justo, non faucibus purus eros sit amet magna. Maecenas placerat magna a nisi tincidunt mollis. Morbi finibus ante purus, ut ultrices massa suscipit id. Ut finibus tristique mauris eu porttitor. Fusce non aliquam mi. Ut vel dignissim ex, a vulputate tortor. In tincidunt lobortis nisl vel vehicula. </p>
+	<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum fringilla rhoncus lorem, et maximus risus egestas in. Nam maximus lectus eget enim tincidunt semper. <span class="link">Vivamus faucibus auctor</span> ipsum, sit amet tincidunt leo fringilla eu. Nullam rutrum, tortor ut laoreet pellentesque, augue erat placerat justo, non faucibus purus eros sit amet magna. Maecenas placerat magna a nisi tincidunt mollis. Morbi finibus ante purus, ut ultrices massa suscipit id. Ut finibus tristique mauris eu porttitor. Fusce non aliquam mi. Ut vel dignissim ex, a vulputate tortor. In tincidunt lobortis nisl vel vehicula. </p>
+	<div class="alert alert-success alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
+	<div class="alert alert-danger alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
+	<div class="alert alert-info alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
+	<form>
+		<div class="form-group">
+			<input type="text" class="form-control" placeholder="placeholder" />
+		</div>
+		<div class="form-group has-error">
+			<input type="text" class="form-control" placeholder="placeholder" />
+		</div>
+		<div class="form-group has-success">
+			<input type="text" class="form-control" placeholder="placeholder" />
+		</div>
+	</form>
+	<button class="btn btn-default">Button</button>
+	<button class="btn btn-danger">Button</button>
+	<button class="btn btn-success">Button</button>
+	<button class="btn btn-info">Button</button>
+	<h2><?php echo $this->refererURI;?></h2>
+</div>

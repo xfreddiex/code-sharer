@@ -8,25 +8,35 @@ abstract class BaseController{
 	protected $data = array();
 	protected $template;
 
+	protected $beforeAll = array();
+	protected $afterAll = array();
 	protected $before = array();
 	protected $after = array();
 
 	protected $HTTPStatusCodes = array();
 	protected $contentTypes = array();
 
+	protected $refererURI;
+
 	public function __construct(){
 		$this->template = 'Views/basic_template.phtml';
+		$this->setRefererURI();
+
 		$this->data['title'] = '';
 		$this->data['keywords'] = '';
 		$this->data['description'] = '';
+
 		$this->data['flash_messages'] = array();
-		array_push($this->before, "prepareFlashMessages");
+
+		$this->addBeforeAll("prepareFlashMessages");
+
 		$this->HTTPStatusCodes = array(
 			"400" => "400 Bad Request",
 			"404" => "404 Not Found",
 			"405" => "405 Method Not Allowed",
 			"406" => "406 Not Acceptable"
 		);
+
 		$this->contentTypes = array(
 			"json" => "application/json",
 			"html" => "text/html",
@@ -38,10 +48,19 @@ abstract class BaseController{
 
 	public function __call($method, $params){
 		if(method_exists($this, $method)){
-			$this->before();
+			$this->before($method);
 			$this->$method($params);
-			$this->after();
+			$this->after($method);
 		}
+	}
+
+	protected function setRefererURI(){
+		if(isset($_SERVER['HTTP_REFERER'])){
+			$uri = parse_url($_SERVER['HTTP_REFERER']);
+			$this->refererURI = $uri["path"].(isset($uri["query"]) ? "?".$uri["query"] : "").(isset($uri["fragment"]) ? "#".$uri["fragment"] : "");
+		}
+		else
+			$this->refererURI = "/";
 	}
 
 	protected function view(){
@@ -65,20 +84,36 @@ abstract class BaseController{
 		echo $string;
 	}
 
-	protected function before(){
-		foreach ($this->before as $method){
-			$this->$method();
+	protected function before($method){
+		foreach($this->beforeAll as $beforeAllMethod){
+			$this->$beforeAllMethod();
+		}
+		if(isset($this->before[$method])){
+			foreach($this->before[$method] as $beforeMethod){
+				$this->$beforeMethod();
+			}
 		}
 	}
 
-	protected function after(){
-		foreach ($this->after as $method){
-			$this->$method();
+	protected function after($method){
+		foreach($this->afterAll as $afterAllMethod){
+			$this->$afterAllMethod();
+		}
+		if(isset($this->after[$method])){
+			foreach($this->after[$method] as $afterMethod){
+				$this->$afterMethod();
+			}
 		}
 	}
 
 	protected function sendFlashMessage($message, $type = "info"){
+		$type = $type == "error" ? "danger" : $type;
 		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
+	}
+
+	protected function sendFlashMessageNow($message, $type = "info"){
+		$type = $type == "error" ? "danger" : $type;
+		$this->data["flash_messages"] = array("message" => $message, "type" => $type);
 	}
 
 	protected function prepareFlashMessages(){
@@ -102,4 +137,30 @@ abstract class BaseController{
 	protected function setContentType($type){
 		header("Content-Type: " . $this->contentTypes[$type]);
 	}
+
+	protected function addBefore($beforeMethod, $methods = array()){
+		foreach($methods as $method){
+			if(isset($this->before[$beforeMethod]) && !in_array($method, $this->before[$beforeMethod]))
+				array_push($this->before[$beforeMethod], $method);
+			else
+				$this->before[$beforeMethod] = array($method);
+		}
+	}
+
+	protected function addAfter($afterMethod, $methods = array()){
+		foreach($methods as $method){
+			if(isset($this->after[$afterMethod]) && !in_array($method, $this->after[$afterMethod]))
+				array_push($this->after[$afterMethod], $method);
+			else
+				$this->after[$afterMethod] = array($method);
+		}
+	}
+
+	protected function addBeforeAll($beforeAllMethod){
+		$this->beforeAll[] = $beforeAllMethod;
+	}
+
+	protected function addAfterAll($afterAllMethod){
+		$this->afterAll[] = $afterAllMethod;
+	}		
 }

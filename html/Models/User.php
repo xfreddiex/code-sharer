@@ -18,13 +18,11 @@ use Models\Map\UserTableMap;
  */
 class User extends BaseUser
 {
-	public function preSave(ConnectionInterface $con = null)
-	{
+	public function preSave(ConnectionInterface $con = null){
 		return $this->validate();
 	}
 
-	public function setPassword($v)
-	{
+	public function setPassword($v){
 		if ($v !== null) {
 			$v = (string) $v;
 		}
@@ -35,6 +33,10 @@ class User extends BaseUser
 		}
 
 		return $this;
+	}
+
+	public function checkPassword($password){
+		return password_verify($password, $this->password);
 	}
 
 }
