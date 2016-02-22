@@ -40,14 +40,36 @@ class UserController extends BaseController{
 			}
 			else if($user->checkPassword($_POST["password"])){
 				$_SESSION["userId"] = $user->getId();
+				if(isset($_POST["rememberMe"])){
+					if(isset($_COOCKIE["identityId"])){
+						$identity = Identity::create()
+							->findPK($_COOCKIE["identityId"])
+							->delete();
+						setcookie("identityId", null, time() - 3600);
+						setcookie("identityToken", null, time() - 3600);
+					}
+					$token = generateRandomString(32);
+					$identity = new Identity();
+					$identity->setToken($token)
+						->save();
+					$user->addIdentity($identity)
+						->save();
+					setcookie("identityId", $identity->getId, time() + (86400 * 15), "/");
+					setcookie("identityToken", $token, time() + (86400 * 15), "/");
+				}
 			}
 			else
 				$this->sendFlashMessage("You have not been signed in. You entered wrong password.", "danger");
-			$this->redirect($this->refererURI);
+			$this->redirect(getEndURI($_SERVER["HTTP_REFERER"]));
 		}
 		else
 			$this->setHTTPStatusCode("400");
 	}
+
+	protocted function signOut(){
+		
+	}
+
 
 	protected function usernameExistsJSON(){
 		$this->setContentType("json");

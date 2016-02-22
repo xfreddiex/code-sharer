@@ -206,13 +206,13 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Authentication', '\\Models\\Authentication', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Identity', '\\Models\\Identity', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, 'Authentications', false);
+), null, null, 'Identities', false);
     } // buildRelations()
 
     /**

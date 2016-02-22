@@ -4,9 +4,9 @@ namespace Models\Base;
 
 use \Exception;
 use \PDO;
-use Models\Authentication as ChildAuthentication;
-use Models\AuthenticationQuery as ChildAuthenticationQuery;
-use Models\Map\AuthenticationTableMap;
+use Models\Identity as ChildIdentity;
+use Models\IdentityQuery as ChildIdentityQuery;
+use Models\Map\IdentityTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,99 +16,99 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'authentication' table.
+ * Base class that represents a query for the 'identity' table.
  *
  *
  *
- * @method     ChildAuthenticationQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildAuthenticationQuery orderByToken($order = Criteria::ASC) Order by the token column
- * @method     ChildAuthenticationQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildAuthenticationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method     ChildAuthenticationQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildIdentityQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildIdentityQuery orderByToken($order = Criteria::ASC) Order by the token column
+ * @method     ChildIdentityQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildIdentityQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildIdentityQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
- * @method     ChildAuthenticationQuery groupById() Group by the id column
- * @method     ChildAuthenticationQuery groupByToken() Group by the token column
- * @method     ChildAuthenticationQuery groupByUserId() Group by the user_id column
- * @method     ChildAuthenticationQuery groupByCreatedAt() Group by the created_at column
- * @method     ChildAuthenticationQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildIdentityQuery groupById() Group by the id column
+ * @method     ChildIdentityQuery groupByToken() Group by the token column
+ * @method     ChildIdentityQuery groupByUserId() Group by the user_id column
+ * @method     ChildIdentityQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildIdentityQuery groupByUpdatedAt() Group by the updated_at column
  *
- * @method     ChildAuthenticationQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildAuthenticationQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildAuthenticationQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildIdentityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildIdentityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildIdentityQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildAuthenticationQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
- * @method     ChildAuthenticationQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
- * @method     ChildAuthenticationQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ * @method     ChildIdentityQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildIdentityQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildIdentityQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildAuthenticationQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method     ChildAuthenticationQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method     ChildAuthenticationQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method     ChildIdentityQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildIdentityQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildIdentityQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method     ChildAuthenticationQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ * @method     ChildIdentityQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
  *
- * @method     ChildAuthenticationQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
- * @method     ChildAuthenticationQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
- * @method     ChildAuthenticationQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ * @method     ChildIdentityQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildIdentityQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildIdentityQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
  * @method     \Models\UserQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildAuthentication findOne(ConnectionInterface $con = null) Return the first ChildAuthentication matching the query
- * @method     ChildAuthentication findOneOrCreate(ConnectionInterface $con = null) Return the first ChildAuthentication matching the query, or a new ChildAuthentication object populated from the query conditions when no match is found
+ * @method     ChildIdentity findOne(ConnectionInterface $con = null) Return the first ChildIdentity matching the query
+ * @method     ChildIdentity findOneOrCreate(ConnectionInterface $con = null) Return the first ChildIdentity matching the query, or a new ChildIdentity object populated from the query conditions when no match is found
  *
- * @method     ChildAuthentication findOneById(int $id) Return the first ChildAuthentication filtered by the id column
- * @method     ChildAuthentication findOneByToken(string $token) Return the first ChildAuthentication filtered by the token column
- * @method     ChildAuthentication findOneByUserId(int $user_id) Return the first ChildAuthentication filtered by the user_id column
- * @method     ChildAuthentication findOneByCreatedAt(string $created_at) Return the first ChildAuthentication filtered by the created_at column
- * @method     ChildAuthentication findOneByUpdatedAt(string $updated_at) Return the first ChildAuthentication filtered by the updated_at column *
+ * @method     ChildIdentity findOneById(int $id) Return the first ChildIdentity filtered by the id column
+ * @method     ChildIdentity findOneByToken(string $token) Return the first ChildIdentity filtered by the token column
+ * @method     ChildIdentity findOneByUserId(int $user_id) Return the first ChildIdentity filtered by the user_id column
+ * @method     ChildIdentity findOneByCreatedAt(string $created_at) Return the first ChildIdentity filtered by the created_at column
+ * @method     ChildIdentity findOneByUpdatedAt(string $updated_at) Return the first ChildIdentity filtered by the updated_at column *
 
- * @method     ChildAuthentication requirePk($key, ConnectionInterface $con = null) Return the ChildAuthentication by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAuthentication requireOne(ConnectionInterface $con = null) Return the first ChildAuthentication matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requirePk($key, ConnectionInterface $con = null) Return the ChildIdentity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOne(ConnectionInterface $con = null) Return the first ChildIdentity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildAuthentication requireOneById(int $id) Return the first ChildAuthentication filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAuthentication requireOneByToken(string $token) Return the first ChildAuthentication filtered by the token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAuthentication requireOneByUserId(int $user_id) Return the first ChildAuthentication filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAuthentication requireOneByCreatedAt(string $created_at) Return the first ChildAuthentication filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAuthentication requireOneByUpdatedAt(string $updated_at) Return the first ChildAuthentication filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOneById(int $id) Return the first ChildIdentity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOneByToken(string $token) Return the first ChildIdentity filtered by the token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOneByUserId(int $user_id) Return the first ChildIdentity filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOneByCreatedAt(string $created_at) Return the first ChildIdentity filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildIdentity requireOneByUpdatedAt(string $updated_at) Return the first ChildIdentity filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildAuthentication[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildAuthentication objects based on current ModelCriteria
- * @method     ChildAuthentication[]|ObjectCollection findById(int $id) Return ChildAuthentication objects filtered by the id column
- * @method     ChildAuthentication[]|ObjectCollection findByToken(string $token) Return ChildAuthentication objects filtered by the token column
- * @method     ChildAuthentication[]|ObjectCollection findByUserId(int $user_id) Return ChildAuthentication objects filtered by the user_id column
- * @method     ChildAuthentication[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildAuthentication objects filtered by the created_at column
- * @method     ChildAuthentication[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildAuthentication objects filtered by the updated_at column
- * @method     ChildAuthentication[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildIdentity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildIdentity objects based on current ModelCriteria
+ * @method     ChildIdentity[]|ObjectCollection findById(int $id) Return ChildIdentity objects filtered by the id column
+ * @method     ChildIdentity[]|ObjectCollection findByToken(string $token) Return ChildIdentity objects filtered by the token column
+ * @method     ChildIdentity[]|ObjectCollection findByUserId(int $user_id) Return ChildIdentity objects filtered by the user_id column
+ * @method     ChildIdentity[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildIdentity objects filtered by the created_at column
+ * @method     ChildIdentity[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildIdentity objects filtered by the updated_at column
+ * @method     ChildIdentity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class AuthenticationQuery extends ModelCriteria
+abstract class IdentityQuery extends ModelCriteria
 {
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \Models\Base\AuthenticationQuery object.
+     * Initializes internal state of \Models\Base\IdentityQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'default', $modelName = '\\Models\\Authentication', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\Models\\Identity', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildAuthenticationQuery object.
+     * Returns a new ChildIdentityQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildAuthenticationQuery
+     * @return ChildIdentityQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildAuthenticationQuery) {
+        if ($criteria instanceof ChildIdentityQuery) {
             return $criteria;
         }
-        $query = new ChildAuthenticationQuery();
+        $query = new ChildIdentityQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -131,19 +131,19 @@ abstract class AuthenticationQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildAuthentication|array|mixed the result, formatted by the current formatter
+     * @return ChildIdentity|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = AuthenticationTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
+        if ((null !== ($obj = IdentityTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(IdentityTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -164,11 +164,11 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildAuthentication A model object, or null if the key is not found
+     * @return ChildIdentity A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, token, user_id, created_at, updated_at FROM authentication WHERE id = :p0';
+        $sql = 'SELECT id, token, user_id, created_at, updated_at FROM identity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -179,10 +179,10 @@ abstract class AuthenticationQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildAuthentication $obj */
-            $obj = new ChildAuthentication();
+            /** @var ChildIdentity $obj */
+            $obj = new ChildIdentity();
             $obj->hydrate($row);
-            AuthenticationTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            IdentityTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -195,7 +195,7 @@ abstract class AuthenticationQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildAuthentication|array|mixed the result, formatted by the current formatter
+     * @return ChildIdentity|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -237,12 +237,12 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(IdentityTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -250,12 +250,12 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(IdentityTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -274,18 +274,18 @@ abstract class AuthenticationQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterById($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -296,7 +296,7 @@ abstract class AuthenticationQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(IdentityTableMap::COL_ID, $id, $comparison);
     }
 
     /**
@@ -312,7 +312,7 @@ abstract class AuthenticationQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByToken($token = null, $comparison = null)
     {
@@ -325,7 +325,7 @@ abstract class AuthenticationQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_TOKEN, $token, $comparison);
+        return $this->addUsingAlias(IdentityTableMap::COL_TOKEN, $token, $comparison);
     }
 
     /**
@@ -346,18 +346,18 @@ abstract class AuthenticationQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByUserId($userId = null, $comparison = null)
     {
         if (is_array($userId)) {
             $useMinMax = false;
             if (isset($userId['min'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($userId['max'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -368,7 +368,7 @@ abstract class AuthenticationQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_USER_ID, $userId, $comparison);
+        return $this->addUsingAlias(IdentityTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
@@ -389,18 +389,18 @@ abstract class AuthenticationQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByCreatedAt($createdAt = null, $comparison = null)
     {
         if (is_array($createdAt)) {
             $useMinMax = false;
             if (isset($createdAt['min'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($createdAt['max'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -411,7 +411,7 @@ abstract class AuthenticationQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_CREATED_AT, $createdAt, $comparison);
+        return $this->addUsingAlias(IdentityTableMap::COL_CREATED_AT, $createdAt, $comparison);
     }
 
     /**
@@ -432,18 +432,18 @@ abstract class AuthenticationQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByUpdatedAt($updatedAt = null, $comparison = null)
     {
         if (is_array($updatedAt)) {
             $useMinMax = false;
             if (isset($updatedAt['min'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($updatedAt['max'])) {
-                $this->addUsingAlias(AuthenticationTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(IdentityTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -454,7 +454,7 @@ abstract class AuthenticationQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AuthenticationTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+        return $this->addUsingAlias(IdentityTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -465,20 +465,20 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildAuthenticationQuery The current query, for fluid interface
+     * @return ChildIdentityQuery The current query, for fluid interface
      */
     public function filterByUser($user, $comparison = null)
     {
         if ($user instanceof \Models\User) {
             return $this
-                ->addUsingAlias(AuthenticationTableMap::COL_USER_ID, $user->getId(), $comparison);
+                ->addUsingAlias(IdentityTableMap::COL_USER_ID, $user->getId(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(AuthenticationTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(IdentityTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type \Models\User or Collection');
         }
@@ -490,7 +490,7 @@ abstract class AuthenticationQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -537,21 +537,21 @@ abstract class AuthenticationQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   ChildAuthentication $authentication Object to remove from the list of results
+     * @param   ChildIdentity $identity Object to remove from the list of results
      *
-     * @return $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return $this|ChildIdentityQuery The current query, for fluid interface
      */
-    public function prune($authentication = null)
+    public function prune($identity = null)
     {
-        if ($authentication) {
-            $this->addUsingAlias(AuthenticationTableMap::COL_ID, $authentication->getId(), Criteria::NOT_EQUAL);
+        if ($identity) {
+            $this->addUsingAlias(IdentityTableMap::COL_ID, $identity->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the authentication table.
+     * Deletes all rows from the identity table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -559,7 +559,7 @@ abstract class AuthenticationQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -570,8 +570,8 @@ abstract class AuthenticationQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            AuthenticationTableMap::clearInstancePool();
-            AuthenticationTableMap::clearRelatedInstancePool();
+            IdentityTableMap::clearInstancePool();
+            IdentityTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -589,23 +589,23 @@ abstract class AuthenticationQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(AuthenticationTableMap::DATABASE_NAME);
+        $criteria->setDbName(IdentityTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            AuthenticationTableMap::removeInstanceFromPool($criteria);
+            IdentityTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            AuthenticationTableMap::clearRelatedInstancePool();
+            IdentityTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -618,41 +618,41 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @param      int $nbDays Maximum age of the latest update in days
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function recentlyUpdated($nbDays = 7)
     {
-        return $this->addUsingAlias(AuthenticationTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+        return $this->addUsingAlias(IdentityTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
 
     /**
      * Order by update date desc
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function lastUpdatedFirst()
     {
-        return $this->addDescendingOrderByColumn(AuthenticationTableMap::COL_UPDATED_AT);
+        return $this->addDescendingOrderByColumn(IdentityTableMap::COL_UPDATED_AT);
     }
 
     /**
      * Order by update date asc
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function firstUpdatedFirst()
     {
-        return $this->addAscendingOrderByColumn(AuthenticationTableMap::COL_UPDATED_AT);
+        return $this->addAscendingOrderByColumn(IdentityTableMap::COL_UPDATED_AT);
     }
 
     /**
      * Order by create date desc
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function lastCreatedFirst()
     {
-        return $this->addDescendingOrderByColumn(AuthenticationTableMap::COL_CREATED_AT);
+        return $this->addDescendingOrderByColumn(IdentityTableMap::COL_CREATED_AT);
     }
 
     /**
@@ -660,21 +660,21 @@ abstract class AuthenticationQuery extends ModelCriteria
      *
      * @param      int $nbDays Maximum age of in days
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function recentlyCreated($nbDays = 7)
     {
-        return $this->addUsingAlias(AuthenticationTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+        return $this->addUsingAlias(IdentityTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
 
     /**
      * Order by create date asc
      *
-     * @return     $this|ChildAuthenticationQuery The current query, for fluid interface
+     * @return     $this|ChildIdentityQuery The current query, for fluid interface
      */
     public function firstCreatedFirst()
     {
-        return $this->addAscendingOrderByColumn(AuthenticationTableMap::COL_CREATED_AT);
+        return $this->addAscendingOrderByColumn(IdentityTableMap::COL_CREATED_AT);
     }
 
-} // AuthenticationQuery
+} // IdentityQuery

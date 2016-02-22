@@ -5,11 +5,11 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use Models\Authentication as ChildAuthentication;
-use Models\AuthenticationQuery as ChildAuthenticationQuery;
+use Models\Identity as ChildIdentity;
+use Models\IdentityQuery as ChildIdentityQuery;
 use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
-use Models\Map\AuthenticationTableMap;
+use Models\Map\IdentityTableMap;
 use Models\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -171,10 +171,10 @@ abstract class User implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildAuthentication[] Collection to store aggregation of ChildAuthentication objects.
+     * @var        ObjectCollection|ChildIdentity[] Collection to store aggregation of ChildIdentity objects.
      */
-    protected $collAuthentications;
-    protected $collAuthenticationsPartial;
+    protected $collIdentities;
+    protected $collIdentitiesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -203,9 +203,9 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildAuthentication[]
+     * @var ObjectCollection|ChildIdentity[]
      */
-    protected $authenticationsScheduledForDeletion = null;
+    protected $identitiesScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\User object.
@@ -1017,7 +1017,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collAuthentications = null;
+            $this->collIdentities = null;
 
         } // if (deep)
     }
@@ -1141,17 +1141,17 @@ abstract class User implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->authenticationsScheduledForDeletion !== null) {
-                if (!$this->authenticationsScheduledForDeletion->isEmpty()) {
-                    \Models\AuthenticationQuery::create()
-                        ->filterByPrimaryKeys($this->authenticationsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->identitiesScheduledForDeletion !== null) {
+                if (!$this->identitiesScheduledForDeletion->isEmpty()) {
+                    \Models\IdentityQuery::create()
+                        ->filterByPrimaryKeys($this->identitiesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->authenticationsScheduledForDeletion = null;
+                    $this->identitiesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collAuthentications !== null) {
-                foreach ($this->collAuthentications as $referrerFK) {
+            if ($this->collIdentities !== null) {
+                foreach ($this->collIdentities as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1440,20 +1440,20 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collAuthentications) {
+            if (null !== $this->collIdentities) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'authentications';
+                        $key = 'identities';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'authentications';
+                        $key = 'identities';
                         break;
                     default:
-                        $key = 'Authentications';
+                        $key = 'Identities';
                 }
 
-                $result[$key] = $this->collAuthentications->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collIdentities->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1777,9 +1777,9 @@ abstract class User implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getAuthentications() as $relObj) {
+            foreach ($this->getIdentities() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addAuthentication($relObj->copy($deepCopy));
+                    $copyObj->addIdentity($relObj->copy($deepCopy));
                 }
             }
 
@@ -1824,37 +1824,37 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Authentication' == $relationName) {
-            return $this->initAuthentications();
+        if ('Identity' == $relationName) {
+            return $this->initIdentities();
         }
     }
 
     /**
-     * Clears out the collAuthentications collection
+     * Clears out the collIdentities collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addAuthentications()
+     * @see        addIdentities()
      */
-    public function clearAuthentications()
+    public function clearIdentities()
     {
-        $this->collAuthentications = null; // important to set this to NULL since that means it is uninitialized
+        $this->collIdentities = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collAuthentications collection loaded partially.
+     * Reset is the collIdentities collection loaded partially.
      */
-    public function resetPartialAuthentications($v = true)
+    public function resetPartialIdentities($v = true)
     {
-        $this->collAuthenticationsPartial = $v;
+        $this->collIdentitiesPartial = $v;
     }
 
     /**
-     * Initializes the collAuthentications collection.
+     * Initializes the collIdentities collection.
      *
-     * By default this just sets the collAuthentications collection to an empty array (like clearcollAuthentications());
+     * By default this just sets the collIdentities collection to an empty array (like clearcollIdentities());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1863,20 +1863,20 @@ abstract class User implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initAuthentications($overrideExisting = true)
+    public function initIdentities($overrideExisting = true)
     {
-        if (null !== $this->collAuthentications && !$overrideExisting) {
+        if (null !== $this->collIdentities && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = AuthenticationTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = IdentityTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collAuthentications = new $collectionClassName;
-        $this->collAuthentications->setModel('\Models\Authentication');
+        $this->collIdentities = new $collectionClassName;
+        $this->collIdentities->setModel('\Models\Identity');
     }
 
     /**
-     * Gets an array of ChildAuthentication objects which contain a foreign key that references this object.
+     * Gets an array of ChildIdentity objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1886,108 +1886,108 @@ abstract class User implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildAuthentication[] List of ChildAuthentication objects
+     * @return ObjectCollection|ChildIdentity[] List of ChildIdentity objects
      * @throws PropelException
      */
-    public function getAuthentications(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getIdentities(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collAuthenticationsPartial && !$this->isNew();
-        if (null === $this->collAuthentications || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collAuthentications) {
+        $partial = $this->collIdentitiesPartial && !$this->isNew();
+        if (null === $this->collIdentities || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collIdentities) {
                 // return empty collection
-                $this->initAuthentications();
+                $this->initIdentities();
             } else {
-                $collAuthentications = ChildAuthenticationQuery::create(null, $criteria)
+                $collIdentities = ChildIdentityQuery::create(null, $criteria)
                     ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collAuthenticationsPartial && count($collAuthentications)) {
-                        $this->initAuthentications(false);
+                    if (false !== $this->collIdentitiesPartial && count($collIdentities)) {
+                        $this->initIdentities(false);
 
-                        foreach ($collAuthentications as $obj) {
-                            if (false == $this->collAuthentications->contains($obj)) {
-                                $this->collAuthentications->append($obj);
+                        foreach ($collIdentities as $obj) {
+                            if (false == $this->collIdentities->contains($obj)) {
+                                $this->collIdentities->append($obj);
                             }
                         }
 
-                        $this->collAuthenticationsPartial = true;
+                        $this->collIdentitiesPartial = true;
                     }
 
-                    return $collAuthentications;
+                    return $collIdentities;
                 }
 
-                if ($partial && $this->collAuthentications) {
-                    foreach ($this->collAuthentications as $obj) {
+                if ($partial && $this->collIdentities) {
+                    foreach ($this->collIdentities as $obj) {
                         if ($obj->isNew()) {
-                            $collAuthentications[] = $obj;
+                            $collIdentities[] = $obj;
                         }
                     }
                 }
 
-                $this->collAuthentications = $collAuthentications;
-                $this->collAuthenticationsPartial = false;
+                $this->collIdentities = $collIdentities;
+                $this->collIdentitiesPartial = false;
             }
         }
 
-        return $this->collAuthentications;
+        return $this->collIdentities;
     }
 
     /**
-     * Sets a collection of ChildAuthentication objects related by a one-to-many relationship
+     * Sets a collection of ChildIdentity objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $authentications A Propel collection.
+     * @param      Collection $identities A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function setAuthentications(Collection $authentications, ConnectionInterface $con = null)
+    public function setIdentities(Collection $identities, ConnectionInterface $con = null)
     {
-        /** @var ChildAuthentication[] $authenticationsToDelete */
-        $authenticationsToDelete = $this->getAuthentications(new Criteria(), $con)->diff($authentications);
+        /** @var ChildIdentity[] $identitiesToDelete */
+        $identitiesToDelete = $this->getIdentities(new Criteria(), $con)->diff($identities);
 
 
-        $this->authenticationsScheduledForDeletion = $authenticationsToDelete;
+        $this->identitiesScheduledForDeletion = $identitiesToDelete;
 
-        foreach ($authenticationsToDelete as $authenticationRemoved) {
-            $authenticationRemoved->setUser(null);
+        foreach ($identitiesToDelete as $identityRemoved) {
+            $identityRemoved->setUser(null);
         }
 
-        $this->collAuthentications = null;
-        foreach ($authentications as $authentication) {
-            $this->addAuthentication($authentication);
+        $this->collIdentities = null;
+        foreach ($identities as $identity) {
+            $this->addIdentity($identity);
         }
 
-        $this->collAuthentications = $authentications;
-        $this->collAuthenticationsPartial = false;
+        $this->collIdentities = $identities;
+        $this->collIdentitiesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Authentication objects.
+     * Returns the number of related Identity objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related Authentication objects.
+     * @return int             Count of related Identity objects.
      * @throws PropelException
      */
-    public function countAuthentications(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countIdentities(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collAuthenticationsPartial && !$this->isNew();
-        if (null === $this->collAuthentications || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collAuthentications) {
+        $partial = $this->collIdentitiesPartial && !$this->isNew();
+        if (null === $this->collIdentities || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collIdentities) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getAuthentications());
+                return count($this->getIdentities());
             }
 
-            $query = ChildAuthenticationQuery::create(null, $criteria);
+            $query = ChildIdentityQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1997,28 +1997,28 @@ abstract class User implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collAuthentications);
+        return count($this->collIdentities);
     }
 
     /**
-     * Method called to associate a ChildAuthentication object to this object
-     * through the ChildAuthentication foreign key attribute.
+     * Method called to associate a ChildIdentity object to this object
+     * through the ChildIdentity foreign key attribute.
      *
-     * @param  ChildAuthentication $l ChildAuthentication
+     * @param  ChildIdentity $l ChildIdentity
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function addAuthentication(ChildAuthentication $l)
+    public function addIdentity(ChildIdentity $l)
     {
-        if ($this->collAuthentications === null) {
-            $this->initAuthentications();
-            $this->collAuthenticationsPartial = true;
+        if ($this->collIdentities === null) {
+            $this->initIdentities();
+            $this->collIdentitiesPartial = true;
         }
 
-        if (!$this->collAuthentications->contains($l)) {
-            $this->doAddAuthentication($l);
+        if (!$this->collIdentities->contains($l)) {
+            $this->doAddIdentity($l);
 
-            if ($this->authenticationsScheduledForDeletion and $this->authenticationsScheduledForDeletion->contains($l)) {
-                $this->authenticationsScheduledForDeletion->remove($this->authenticationsScheduledForDeletion->search($l));
+            if ($this->identitiesScheduledForDeletion and $this->identitiesScheduledForDeletion->contains($l)) {
+                $this->identitiesScheduledForDeletion->remove($this->identitiesScheduledForDeletion->search($l));
             }
         }
 
@@ -2026,29 +2026,29 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildAuthentication $authentication The ChildAuthentication object to add.
+     * @param ChildIdentity $identity The ChildIdentity object to add.
      */
-    protected function doAddAuthentication(ChildAuthentication $authentication)
+    protected function doAddIdentity(ChildIdentity $identity)
     {
-        $this->collAuthentications[]= $authentication;
-        $authentication->setUser($this);
+        $this->collIdentities[]= $identity;
+        $identity->setUser($this);
     }
 
     /**
-     * @param  ChildAuthentication $authentication The ChildAuthentication object to remove.
+     * @param  ChildIdentity $identity The ChildIdentity object to remove.
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function removeAuthentication(ChildAuthentication $authentication)
+    public function removeIdentity(ChildIdentity $identity)
     {
-        if ($this->getAuthentications()->contains($authentication)) {
-            $pos = $this->collAuthentications->search($authentication);
-            $this->collAuthentications->remove($pos);
-            if (null === $this->authenticationsScheduledForDeletion) {
-                $this->authenticationsScheduledForDeletion = clone $this->collAuthentications;
-                $this->authenticationsScheduledForDeletion->clear();
+        if ($this->getIdentities()->contains($identity)) {
+            $pos = $this->collIdentities->search($identity);
+            $this->collIdentities->remove($pos);
+            if (null === $this->identitiesScheduledForDeletion) {
+                $this->identitiesScheduledForDeletion = clone $this->collIdentities;
+                $this->identitiesScheduledForDeletion->clear();
             }
-            $this->authenticationsScheduledForDeletion[]= clone $authentication;
-            $authentication->setUser(null);
+            $this->identitiesScheduledForDeletion[]= clone $identity;
+            $identity->setUser(null);
         }
 
         return $this;
@@ -2092,14 +2092,14 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collAuthentications) {
-                foreach ($this->collAuthentications as $o) {
+            if ($this->collIdentities) {
+                foreach ($this->collIdentities as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collAuthentications = null;
+        $this->collIdentities = null;
     }
 
     /**
@@ -2178,8 +2178,8 @@ abstract class User implements ActiveRecordInterface
                 $failureMap->addAll($retval);
             }
 
-            if (null !== $this->collAuthentications) {
-                foreach ($this->collAuthentications as $referrerFK) {
+            if (null !== $this->collIdentities) {
+                foreach ($this->collIdentities as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

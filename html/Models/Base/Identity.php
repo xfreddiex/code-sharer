@@ -5,11 +5,11 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use Models\Authentication as ChildAuthentication;
-use Models\AuthenticationQuery as ChildAuthenticationQuery;
+use Models\Identity as ChildIdentity;
+use Models\IdentityQuery as ChildIdentityQuery;
 use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
-use Models\Map\AuthenticationTableMap;
+use Models\Map\IdentityTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -24,18 +24,18 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'authentication' table.
+ * Base class that represents a row from the 'identity' table.
  *
  *
  *
 * @package    propel.generator.Models.Base
 */
-abstract class Authentication implements ActiveRecordInterface
+abstract class Identity implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Models\\Map\\AuthenticationTableMap';
+    const TABLE_MAP = '\\Models\\Map\\IdentityTableMap';
 
 
     /**
@@ -113,7 +113,7 @@ abstract class Authentication implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Models\Base\Authentication object.
+     * Initializes internal state of Models\Base\Identity object.
      */
     public function __construct()
     {
@@ -208,9 +208,9 @@ abstract class Authentication implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Authentication</code> instance.  If
-     * <code>obj</code> is an instance of <code>Authentication</code>, delegates to
-     * <code>equals(Authentication)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Identity</code> instance.  If
+     * <code>obj</code> is an instance of <code>Identity</code>, delegates to
+     * <code>equals(Identity)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -276,7 +276,7 @@ abstract class Authentication implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Authentication The current object, for fluid interface
+     * @return $this|Identity The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -411,7 +411,7 @@ abstract class Authentication implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -421,7 +421,7 @@ abstract class Authentication implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[AuthenticationTableMap::COL_ID] = true;
+            $this->modifiedColumns[IdentityTableMap::COL_ID] = true;
         }
 
         return $this;
@@ -431,7 +431,7 @@ abstract class Authentication implements ActiveRecordInterface
      * Set the value of [token] column.
      *
      * @param string $v new value
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      */
     public function setToken($v)
     {
@@ -441,7 +441,7 @@ abstract class Authentication implements ActiveRecordInterface
 
         if ($this->token !== $v) {
             $this->token = $v;
-            $this->modifiedColumns[AuthenticationTableMap::COL_TOKEN] = true;
+            $this->modifiedColumns[IdentityTableMap::COL_TOKEN] = true;
         }
 
         return $this;
@@ -451,7 +451,7 @@ abstract class Authentication implements ActiveRecordInterface
      * Set the value of [user_id] column.
      *
      * @param int $v new value
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -461,7 +461,7 @@ abstract class Authentication implements ActiveRecordInterface
 
         if ($this->user_id !== $v) {
             $this->user_id = $v;
-            $this->modifiedColumns[AuthenticationTableMap::COL_USER_ID] = true;
+            $this->modifiedColumns[IdentityTableMap::COL_USER_ID] = true;
         }
 
         if ($this->aUser !== null && $this->aUser->getId() !== $v) {
@@ -476,7 +476,7 @@ abstract class Authentication implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -484,7 +484,7 @@ abstract class Authentication implements ActiveRecordInterface
         if ($this->created_at !== null || $dt !== null) {
             if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
                 $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AuthenticationTableMap::COL_CREATED_AT] = true;
+                $this->modifiedColumns[IdentityTableMap::COL_CREATED_AT] = true;
             }
         } // if either are not null
 
@@ -496,7 +496,7 @@ abstract class Authentication implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      */
     public function setUpdatedAt($v)
     {
@@ -504,7 +504,7 @@ abstract class Authentication implements ActiveRecordInterface
         if ($this->updated_at !== null || $dt !== null) {
             if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
                 $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AuthenticationTableMap::COL_UPDATED_AT] = true;
+                $this->modifiedColumns[IdentityTableMap::COL_UPDATED_AT] = true;
             }
         } // if either are not null
 
@@ -547,22 +547,22 @@ abstract class Authentication implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : AuthenticationTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : IdentityTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AuthenticationTableMap::translateFieldName('Token', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : IdentityTableMap::translateFieldName('Token', TableMap::TYPE_PHPNAME, $indexType)];
             $this->token = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AuthenticationTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : IdentityTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AuthenticationTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : IdentityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AuthenticationTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : IdentityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -575,10 +575,10 @@ abstract class Authentication implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = AuthenticationTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = IdentityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Models\\Authentication'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Models\\Identity'), 0, $e);
         }
     }
 
@@ -623,13 +623,13 @@ abstract class Authentication implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildAuthenticationQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildIdentityQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -649,8 +649,8 @@ abstract class Authentication implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Authentication::setDeleted()
-     * @see Authentication::isDeleted()
+     * @see Identity::setDeleted()
+     * @see Identity::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -659,11 +659,11 @@ abstract class Authentication implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildAuthenticationQuery::create()
+            $deleteQuery = ChildIdentityQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -694,7 +694,7 @@ abstract class Authentication implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -704,16 +704,16 @@ abstract class Authentication implements ActiveRecordInterface
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
 
-                if (!$this->isColumnModified(AuthenticationTableMap::COL_CREATED_AT)) {
+                if (!$this->isColumnModified(IdentityTableMap::COL_CREATED_AT)) {
                     $this->setCreatedAt(time());
                 }
-                if (!$this->isColumnModified(AuthenticationTableMap::COL_UPDATED_AT)) {
+                if (!$this->isColumnModified(IdentityTableMap::COL_UPDATED_AT)) {
                     $this->setUpdatedAt(time());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
                 // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(AuthenticationTableMap::COL_UPDATED_AT)) {
+                if ($this->isModified() && !$this->isColumnModified(IdentityTableMap::COL_UPDATED_AT)) {
                     $this->setUpdatedAt(time());
                 }
             }
@@ -725,7 +725,7 @@ abstract class Authentication implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                AuthenticationTableMap::addInstanceToPool($this);
+                IdentityTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -794,30 +794,30 @@ abstract class Authentication implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[AuthenticationTableMap::COL_ID] = true;
+        $this->modifiedColumns[IdentityTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . AuthenticationTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . IdentityTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(AuthenticationTableMap::COL_ID)) {
+        if ($this->isColumnModified(IdentityTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_TOKEN)) {
+        if ($this->isColumnModified(IdentityTableMap::COL_TOKEN)) {
             $modifiedColumns[':p' . $index++]  = 'token';
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_USER_ID)) {
+        if ($this->isColumnModified(IdentityTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_CREATED_AT)) {
+        if ($this->isColumnModified(IdentityTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_UPDATED_AT)) {
+        if ($this->isColumnModified(IdentityTableMap::COL_UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
 
         $sql = sprintf(
-            'INSERT INTO authentication (%s) VALUES (%s)',
+            'INSERT INTO identity (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -887,7 +887,7 @@ abstract class Authentication implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AuthenticationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = IdentityTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -942,11 +942,11 @@ abstract class Authentication implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Authentication'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Identity'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Authentication'][$this->hashCode()] = true;
-        $keys = AuthenticationTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Identity'][$this->hashCode()] = true;
+        $keys = IdentityTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getToken(),
@@ -997,11 +997,11 @@ abstract class Authentication implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Models\Authentication
+     * @return $this|\Models\Identity
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AuthenticationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = IdentityTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1012,7 +1012,7 @@ abstract class Authentication implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Models\Authentication
+     * @return $this|\Models\Identity
      */
     public function setByPosition($pos, $value)
     {
@@ -1056,7 +1056,7 @@ abstract class Authentication implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = AuthenticationTableMap::getFieldNames($keyType);
+        $keys = IdentityTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
@@ -1092,7 +1092,7 @@ abstract class Authentication implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Models\Authentication The current object, for fluid interface
+     * @return $this|\Models\Identity The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1112,22 +1112,22 @@ abstract class Authentication implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(AuthenticationTableMap::DATABASE_NAME);
+        $criteria = new Criteria(IdentityTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(AuthenticationTableMap::COL_ID)) {
-            $criteria->add(AuthenticationTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(IdentityTableMap::COL_ID)) {
+            $criteria->add(IdentityTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_TOKEN)) {
-            $criteria->add(AuthenticationTableMap::COL_TOKEN, $this->token);
+        if ($this->isColumnModified(IdentityTableMap::COL_TOKEN)) {
+            $criteria->add(IdentityTableMap::COL_TOKEN, $this->token);
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_USER_ID)) {
-            $criteria->add(AuthenticationTableMap::COL_USER_ID, $this->user_id);
+        if ($this->isColumnModified(IdentityTableMap::COL_USER_ID)) {
+            $criteria->add(IdentityTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_CREATED_AT)) {
-            $criteria->add(AuthenticationTableMap::COL_CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(IdentityTableMap::COL_CREATED_AT)) {
+            $criteria->add(IdentityTableMap::COL_CREATED_AT, $this->created_at);
         }
-        if ($this->isColumnModified(AuthenticationTableMap::COL_UPDATED_AT)) {
-            $criteria->add(AuthenticationTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(IdentityTableMap::COL_UPDATED_AT)) {
+            $criteria->add(IdentityTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1145,8 +1145,8 @@ abstract class Authentication implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildAuthenticationQuery::create();
-        $criteria->add(AuthenticationTableMap::COL_ID, $this->id);
+        $criteria = ChildIdentityQuery::create();
+        $criteria->add(IdentityTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1208,7 +1208,7 @@ abstract class Authentication implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Models\Authentication (or compatible) type.
+     * @param      object $copyObj An object of \Models\Identity (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1234,7 +1234,7 @@ abstract class Authentication implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Models\Authentication Clone of current object.
+     * @return \Models\Identity Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1251,7 +1251,7 @@ abstract class Authentication implements ActiveRecordInterface
      * Declares an association between this object and a ChildUser object.
      *
      * @param  ChildUser $v
-     * @return $this|\Models\Authentication The current object (for fluent API support)
+     * @return $this|\Models\Identity The current object (for fluent API support)
      * @throws PropelException
      */
     public function setUser(ChildUser $v = null)
@@ -1267,7 +1267,7 @@ abstract class Authentication implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
         if ($v !== null) {
-            $v->addAuthentication($this);
+            $v->addIdentity($this);
         }
 
 
@@ -1291,7 +1291,7 @@ abstract class Authentication implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addAuthentications($this);
+                $this->aUser->addIdentities($this);
              */
         }
 
@@ -1306,7 +1306,7 @@ abstract class Authentication implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aUser) {
-            $this->aUser->removeAuthentication($this);
+            $this->aUser->removeIdentity($this);
         }
         $this->id = null;
         $this->token = null;
@@ -1343,7 +1343,7 @@ abstract class Authentication implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(AuthenticationTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(IdentityTableMap::DEFAULT_STRING_FORMAT);
     }
 
     // timestampable behavior
@@ -1351,11 +1351,11 @@ abstract class Authentication implements ActiveRecordInterface
     /**
      * Mark the current object so that the update date doesn't get updated during next save
      *
-     * @return     $this|ChildAuthentication The current object (for fluent API support)
+     * @return     $this|ChildIdentity The current object (for fluent API support)
      */
     public function keepUpdateDateUnchanged()
     {
-        $this->modifiedColumns[AuthenticationTableMap::COL_UPDATED_AT] = true;
+        $this->modifiedColumns[IdentityTableMap::COL_UPDATED_AT] = true;
 
         return $this;
     }

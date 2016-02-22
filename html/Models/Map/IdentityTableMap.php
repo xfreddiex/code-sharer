@@ -2,8 +2,8 @@
 
 namespace Models\Map;
 
-use Models\Authentication;
-use Models\AuthenticationQuery;
+use Models\Identity;
+use Models\IdentityQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'authentication' table.
+ * This class defines the structure of the 'identity' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class AuthenticationTableMap extends TableMap
+class IdentityTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class AuthenticationTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.Map.AuthenticationTableMap';
+    const CLASS_NAME = 'Models.Map.IdentityTableMap';
 
     /**
      * The default database name for this class
@@ -44,17 +44,17 @@ class AuthenticationTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'authentication';
+    const TABLE_NAME = 'identity';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Models\\Authentication';
+    const OM_CLASS = '\\Models\\Identity';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Models.Authentication';
+    const CLASS_DEFAULT = 'Models.Identity';
 
     /**
      * The total number of columns
@@ -74,27 +74,27 @@ class AuthenticationTableMap extends TableMap
     /**
      * the column name for the id field
      */
-    const COL_ID = 'authentication.id';
+    const COL_ID = 'identity.id';
 
     /**
      * the column name for the token field
      */
-    const COL_TOKEN = 'authentication.token';
+    const COL_TOKEN = 'identity.token';
 
     /**
      * the column name for the user_id field
      */
-    const COL_USER_ID = 'authentication.user_id';
+    const COL_USER_ID = 'identity.user_id';
 
     /**
      * the column name for the created_at field
      */
-    const COL_CREATED_AT = 'authentication.created_at';
+    const COL_CREATED_AT = 'identity.created_at';
 
     /**
      * the column name for the updated_at field
      */
-    const COL_UPDATED_AT = 'authentication.updated_at';
+    const COL_UPDATED_AT = 'identity.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -110,7 +110,7 @@ class AuthenticationTableMap extends TableMap
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array('Id', 'Token', 'UserId', 'CreatedAt', 'UpdatedAt', ),
         self::TYPE_CAMELNAME     => array('id', 'token', 'userId', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(AuthenticationTableMap::COL_ID, AuthenticationTableMap::COL_TOKEN, AuthenticationTableMap::COL_USER_ID, AuthenticationTableMap::COL_CREATED_AT, AuthenticationTableMap::COL_UPDATED_AT, ),
+        self::TYPE_COLNAME       => array(IdentityTableMap::COL_ID, IdentityTableMap::COL_TOKEN, IdentityTableMap::COL_USER_ID, IdentityTableMap::COL_CREATED_AT, IdentityTableMap::COL_UPDATED_AT, ),
         self::TYPE_FIELDNAME     => array('id', 'token', 'user_id', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
@@ -124,7 +124,7 @@ class AuthenticationTableMap extends TableMap
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array('Id' => 0, 'Token' => 1, 'UserId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
         self::TYPE_CAMELNAME     => array('id' => 0, 'token' => 1, 'userId' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
-        self::TYPE_COLNAME       => array(AuthenticationTableMap::COL_ID => 0, AuthenticationTableMap::COL_TOKEN => 1, AuthenticationTableMap::COL_USER_ID => 2, AuthenticationTableMap::COL_CREATED_AT => 3, AuthenticationTableMap::COL_UPDATED_AT => 4, ),
+        self::TYPE_COLNAME       => array(IdentityTableMap::COL_ID => 0, IdentityTableMap::COL_TOKEN => 1, IdentityTableMap::COL_USER_ID => 2, IdentityTableMap::COL_CREATED_AT => 3, IdentityTableMap::COL_UPDATED_AT => 4, ),
         self::TYPE_FIELDNAME     => array('id' => 0, 'token' => 1, 'user_id' => 2, 'created_at' => 3, 'updated_at' => 4, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
@@ -139,10 +139,10 @@ class AuthenticationTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('authentication');
-        $this->setPhpName('Authentication');
+        $this->setName('identity');
+        $this->setPhpName('Identity');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Models\\Authentication');
+        $this->setClassName('\\Models\\Identity');
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
@@ -237,7 +237,7 @@ class AuthenticationTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? AuthenticationTableMap::CLASS_DEFAULT : AuthenticationTableMap::OM_CLASS;
+        return $withPrefix ? IdentityTableMap::CLASS_DEFAULT : IdentityTableMap::OM_CLASS;
     }
 
     /**
@@ -251,22 +251,22 @@ class AuthenticationTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Authentication object, last column rank)
+     * @return array           (Identity object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = AuthenticationTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = AuthenticationTableMap::getInstanceFromPool($key))) {
+        $key = IdentityTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = IdentityTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + AuthenticationTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + IdentityTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = AuthenticationTableMap::OM_CLASS;
-            /** @var Authentication $obj */
+            $cls = IdentityTableMap::OM_CLASS;
+            /** @var Identity $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            AuthenticationTableMap::addInstanceToPool($obj, $key);
+            IdentityTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -289,18 +289,18 @@ class AuthenticationTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = AuthenticationTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = AuthenticationTableMap::getInstanceFromPool($key))) {
+            $key = IdentityTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = IdentityTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Authentication $obj */
+                /** @var Identity $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                AuthenticationTableMap::addInstanceToPool($obj, $key);
+                IdentityTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -321,11 +321,11 @@ class AuthenticationTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(AuthenticationTableMap::COL_ID);
-            $criteria->addSelectColumn(AuthenticationTableMap::COL_TOKEN);
-            $criteria->addSelectColumn(AuthenticationTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(AuthenticationTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(AuthenticationTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(IdentityTableMap::COL_ID);
+            $criteria->addSelectColumn(IdentityTableMap::COL_TOKEN);
+            $criteria->addSelectColumn(IdentityTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(IdentityTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(IdentityTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.token');
@@ -344,7 +344,7 @@ class AuthenticationTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(AuthenticationTableMap::DATABASE_NAME)->getTable(AuthenticationTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(IdentityTableMap::DATABASE_NAME)->getTable(IdentityTableMap::TABLE_NAME);
     }
 
     /**
@@ -352,16 +352,16 @@ class AuthenticationTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(AuthenticationTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(AuthenticationTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new AuthenticationTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(IdentityTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(IdentityTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new IdentityTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Authentication or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Identity or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Authentication object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Identity object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -372,27 +372,27 @@ class AuthenticationTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Models\Authentication) { // it's a model object
+        } elseif ($values instanceof \Models\Identity) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(AuthenticationTableMap::DATABASE_NAME);
-            $criteria->add(AuthenticationTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(IdentityTableMap::DATABASE_NAME);
+            $criteria->add(IdentityTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = AuthenticationQuery::create()->mergeWith($criteria);
+        $query = IdentityQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            AuthenticationTableMap::clearInstancePool();
+            IdentityTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                AuthenticationTableMap::removeInstanceFromPool($singleval);
+                IdentityTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -400,20 +400,20 @@ class AuthenticationTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the authentication table.
+     * Deletes all rows from the identity table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return AuthenticationQuery::create()->doDeleteAll($con);
+        return IdentityQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Authentication or Criteria object.
+     * Performs an INSERT on the database, given a Identity or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Authentication object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Identity object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -422,22 +422,22 @@ class AuthenticationTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AuthenticationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(IdentityTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Authentication object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Identity object
         }
 
-        if ($criteria->containsKey(AuthenticationTableMap::COL_ID) && $criteria->keyContainsValue(AuthenticationTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.AuthenticationTableMap::COL_ID.')');
+        if ($criteria->containsKey(IdentityTableMap::COL_ID) && $criteria->keyContainsValue(IdentityTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.IdentityTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = AuthenticationQuery::create()->mergeWith($criteria);
+        $query = IdentityQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -446,7 +446,7 @@ class AuthenticationTableMap extends TableMap
         });
     }
 
-} // AuthenticationTableMap
+} // IdentityTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-AuthenticationTableMap::buildTableMap();
+IdentityTableMap::buildTableMap();

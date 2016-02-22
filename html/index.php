@@ -5,6 +5,8 @@ require('../vendor/autoload.php');
 
 require('generated-conf/config.php');
 
+require("Helpers/Helper.php");
+
 use Router\Router;
 
 function autoload($class){

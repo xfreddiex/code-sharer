@@ -2,10 +2,10 @@
 
 namespace Models;
 
-use Models\Base\AuthenticationQuery as BaseAuthenticationQuery;
+use Models\Base\IdentityQuery as BaseIdentityQuery;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'authentication' table.
+ * Skeleton subclass for performing query and update operations on the 'identity' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use Models\Base\AuthenticationQuery as BaseAuthenticationQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class AuthenticationQuery extends BaseAuthenticationQuery
+class IdentityQuery extends BaseIdentityQuery
 {
 
 }

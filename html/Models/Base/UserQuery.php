@@ -56,17 +56,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildUserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildUserQuery leftJoinAuthentication($relationAlias = null) Adds a LEFT JOIN clause to the query using the Authentication relation
- * @method     ChildUserQuery rightJoinAuthentication($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Authentication relation
- * @method     ChildUserQuery innerJoinAuthentication($relationAlias = null) Adds a INNER JOIN clause to the query using the Authentication relation
+ * @method     ChildUserQuery leftJoinIdentity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Identity relation
+ * @method     ChildUserQuery rightJoinIdentity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Identity relation
+ * @method     ChildUserQuery innerJoinIdentity($relationAlias = null) Adds a INNER JOIN clause to the query using the Identity relation
  *
- * @method     ChildUserQuery joinWithAuthentication($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Authentication relation
+ * @method     ChildUserQuery joinWithIdentity($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Identity relation
  *
- * @method     ChildUserQuery leftJoinWithAuthentication() Adds a LEFT JOIN clause and with to the query using the Authentication relation
- * @method     ChildUserQuery rightJoinWithAuthentication() Adds a RIGHT JOIN clause and with to the query using the Authentication relation
- * @method     ChildUserQuery innerJoinWithAuthentication() Adds a INNER JOIN clause and with to the query using the Authentication relation
+ * @method     ChildUserQuery leftJoinWithIdentity() Adds a LEFT JOIN clause and with to the query using the Identity relation
+ * @method     ChildUserQuery rightJoinWithIdentity() Adds a RIGHT JOIN clause and with to the query using the Identity relation
+ * @method     ChildUserQuery innerJoinWithIdentity() Adds a INNER JOIN clause and with to the query using the Identity relation
  *
- * @method     \Models\AuthenticationQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Models\IdentityQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -744,40 +744,40 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Models\Authentication object
+     * Filter the query by a related \Models\Identity object
      *
-     * @param \Models\Authentication|ObjectCollection $authentication the related object to use as filter
+     * @param \Models\Identity|ObjectCollection $identity the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByAuthentication($authentication, $comparison = null)
+    public function filterByIdentity($identity, $comparison = null)
     {
-        if ($authentication instanceof \Models\Authentication) {
+        if ($identity instanceof \Models\Identity) {
             return $this
-                ->addUsingAlias(UserTableMap::COL_ID, $authentication->getUserId(), $comparison);
-        } elseif ($authentication instanceof ObjectCollection) {
+                ->addUsingAlias(UserTableMap::COL_ID, $identity->getUserId(), $comparison);
+        } elseif ($identity instanceof ObjectCollection) {
             return $this
-                ->useAuthenticationQuery()
-                ->filterByPrimaryKeys($authentication->getPrimaryKeys())
+                ->useIdentityQuery()
+                ->filterByPrimaryKeys($identity->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByAuthentication() only accepts arguments of type \Models\Authentication or Collection');
+            throw new PropelException('filterByIdentity() only accepts arguments of type \Models\Identity or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Authentication relation
+     * Adds a JOIN clause to the query using the Identity relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function joinAuthentication($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinIdentity($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Authentication');
+        $relationMap = $tableMap->getRelation('Identity');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -792,14 +792,14 @@ abstract class UserQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Authentication');
+            $this->addJoinObject($join, 'Identity');
         }
 
         return $this;
     }
 
     /**
-     * Use the Authentication relation Authentication object
+     * Use the Identity relation Identity object
      *
      * @see useQuery()
      *
@@ -807,13 +807,13 @@ abstract class UserQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Models\AuthenticationQuery A secondary query class using the current class as primary query
+     * @return \Models\IdentityQuery A secondary query class using the current class as primary query
      */
-    public function useAuthenticationQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useIdentityQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinAuthentication($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Authentication', '\Models\AuthenticationQuery');
+            ->joinIdentity($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Identity', '\Models\IdentityQuery');
     }
 
     /**

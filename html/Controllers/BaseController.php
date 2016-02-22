@@ -15,12 +15,9 @@ abstract class BaseController{
 
 	protected $HTTPStatusCodes = array();
 	protected $contentTypes = array();
-
-	protected $refererURI;
-
+	
 	public function __construct(){
 		$this->template = 'Views/basic_template.phtml';
-		$this->setRefererURI();
 
 		$this->data['title'] = '';
 		$this->data['keywords'] = '';
@@ -52,15 +49,6 @@ abstract class BaseController{
 			$this->$method($params);
 			$this->after($method);
 		}
-	}
-
-	protected function setRefererURI(){
-		if(isset($_SERVER['HTTP_REFERER'])){
-			$uri = parse_url($_SERVER['HTTP_REFERER']);
-			$this->refererURI = $uri["path"].(isset($uri["query"]) ? "?".$uri["query"] : "").(isset($uri["fragment"]) ? "#".$uri["fragment"] : "");
-		}
-		else
-			$this->refererURI = "/";
 	}
 
 	protected function view(){
