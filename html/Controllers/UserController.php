@@ -68,9 +68,15 @@ class UserController extends BaseController{
 
 	protected function signOut(){
 		unset($_SESSION["userId"]);
-		setcookie("identityId", "", time() - 86400);
-		setcookie("identityToken", "", time() - 86400);
-		redirect();
+		if(isset($_COOKIE["identityId"])){
+			$identity = IdentityQuery::create()->findPK($_COOKIE["identityId"]);
+			if($identity){
+				$identity->delete();
+				setcookie("identityId", "", time() - 86400);
+				setcookie("identityToken", "", time() - 86400);
+			}
+		}
+		redirect("/");
 	}
 
 

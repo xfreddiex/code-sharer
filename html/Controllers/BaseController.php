@@ -38,7 +38,7 @@ abstract class BaseController extends Controller{
 				}
 			}
 		}
-		if($this->data["user"]){
+		if(isset($this->data["user"])){
 			$this->data["userLogged"] = true;
 			$this->data["userUsername"] = $this->data["user"]->getUsername();
 			return;
