@@ -4,6 +4,8 @@ namespace Controllers;
 use Controllers\BaseController;
 use Models\User;
 use Models\UserQuery;
+use Models\Identity;
+use Models\IdentityQuery;
 
 class UserController extends BaseController{
 
@@ -25,10 +27,10 @@ class UserController extends BaseController{
 			}
 			else
 				$this->sendFlashMessage("You have been successfuly signed up.", "success");
-			$this->redirect("/");
+			redirect("/");
 		}
 		else
-			$this->setHTTPStatusCode("400");
+			setHTTPStatusCode("400");
 	}
 
 	protected function signIn(){	
@@ -41,52 +43,53 @@ class UserController extends BaseController{
 			else if($user->checkPassword($_POST["password"])){
 				$_SESSION["userId"] = $user->getId();
 				if(isset($_POST["rememberMe"])){
-					if(isset($_COOCKIE["identityId"])){
-						$identity = Identity::create()
-							->findPK($_COOCKIE["identityId"])
+					if(isset($_COOKIE["identityId"])){
+						$identity = IdentityQuery::create()
+							->filterById($_COOKIE["identityId"])
 							->delete();
-						setcookie("identityId", null, time() - 3600);
-						setcookie("identityToken", null, time() - 3600);
 					}
 					$token = generateRandomString(32);
 					$identity = new Identity();
 					$identity->setToken($token)
+						->setUser($user)
+						->setExpiresAt(time() + (86400 * 14))
 						->save();
-					$user->addIdentity($identity)
-						->save();
-					setcookie("identityId", $identity->getId, time() + (86400 * 15), "/");
-					setcookie("identityToken", $token, time() + (86400 * 15), "/");
+					setcookie("identityId", $identity->getId(), time() + (86400 * 14));
+					setcookie("identityToken", $token, time() + (86400 * 14));
 				}
 			}
 			else
 				$this->sendFlashMessage("You have not been signed in. You entered wrong password.", "danger");
-			$this->redirect(getEndURI($_SERVER["HTTP_REFERER"]));
+			redirect(getEndURI($_SERVER["HTTP_REFERER"]));
 		}
 		else
-			$this->setHTTPStatusCode("400");
+			setHTTPStatusCode("400");
 	}
 
-	protocted function signOut(){
-		
+	protected function signOut(){
+		unset($_SESSION["userId"]);
+		setcookie("identityId", "", time() - 86400);
+		setcookie("identityToken", "", time() - 86400);
+		redirect();
 	}
 
 
 	protected function usernameExistsJSON(){
-		$this->setContentType("json");
+		setContentType("json");
 		if(isset($_GET["username"])){
 			$this->viewString(json_encode(array("usernameExists" => $this->usernameExists($_GET["username"]))), "application/json");
 			return;
 		}
-		$this->setHTTPStatusCode("400");
+		setHTTPStatusCode("400");
 	}
 
 	protected function emailExistsJSON(){
-		$this->setContentType("json");
+		setContentType("json");
 		if(isset($_GET["email"])){
 			$this->viewString(json_encode(array("emailExists" => $this->emailExists($_GET["email"]))), "application/json");
 			return;
 		}
-		$this->setHTTPStatusCode("400");
+		setHTTPStatusCode("400");
 	}
 
 	protected function usernameExists($username){

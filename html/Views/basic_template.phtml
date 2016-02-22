@@ -42,7 +42,11 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right hidden-xs">
 						<li>
-							<a href="#" data-toggle="modal" data-target="#sign-in-modal">Sign in</a>
+							<?php if($userLogged): ?>
+								<a href="/sign-out"><?=$userUsername?></a>
+							<?php else: ?>
+								<a href="#" data-toggle="modal" data-target="#sign-in-modal">Sign in</a>
+							<?php endif ?>
 						</li>
 					</ul>
 				</div>

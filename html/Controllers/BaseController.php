@@ -1,154 +1,48 @@
 <?php
 namespace Controllers;
 
+use Controllers\Controller;
 use Models\User;
 use Models\UserQuery;
+use Models\Identity;
+use Models\IdentityQuery;
  
-abstract class BaseController{
-	protected $data = array();
-	protected $template;
+abstract class BaseController extends Controller{
 
-	protected $beforeAll = array();
-	protected $afterAll = array();
-	protected $before = array();
-	protected $after = array();
-
-	protected $HTTPStatusCodes = array();
-	protected $contentTypes = array();
-	
 	public function __construct(){
+		parent::__construct();
 		$this->template = 'Views/basic_template.phtml';
 
-		$this->data['title'] = '';
-		$this->data['keywords'] = '';
+		$this->data['title'] = 'Starling';
+		$this->data['keywords'] = 'starling, codesharer';
 		$this->data['description'] = '';
 
-		$this->data['flash_messages'] = array();
-
 		$this->addBeforeAll("prepareFlashMessages");
-
-		$this->HTTPStatusCodes = array(
-			"400" => "400 Bad Request",
-			"404" => "404 Not Found",
-			"405" => "405 Method Not Allowed",
-			"406" => "406 Not Acceptable"
-		);
-
-		$this->contentTypes = array(
-			"json" => "application/json",
-			"html" => "text/html",
-			"javascript" => "application/javascript",
-			"css" => "text/css"
-		);
-		//array_push($this->after);
+		$this->addBeforeAll("loadUser");
 	}
 
-	public function __call($method, $params){
-		if(method_exists($this, $method)){
-			$this->before($method);
-			$this->$method($params);
-			$this->after($method);
+	protected function loadUser(){
+		if(isset($_SESSION["userId"])){
+			$this->data["user"] = UserQuery::create()->findPK($_SESSION["userId"]);
 		}
-	}
-
-	protected function view(){
-		$file = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml"));
-		$this->viewFile($file);
-	}
-
-	protected function viewToTemplate(){
-		$file = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[3]["class"]."/".debug_backtrace()[3]["function"].".phtml"));
-		$this->viewFile($file);
-	}
-
-	protected function viewFile($file){
-		if(file_exists($file)){
-			extract($this->data);
-			require($file);
-		}
-	}
-
-	protected function viewString($string){
-		echo $string;
-	}
-
-	protected function before($method){
-		foreach($this->beforeAll as $beforeAllMethod){
-			$this->$beforeAllMethod();
-		}
-		if(isset($this->before[$method])){
-			foreach($this->before[$method] as $beforeMethod){
-				$this->$beforeMethod();
+		else if(isset($_COOKIE["identityId"]) && isset($_COOKIE["identityToken"])){
+			$identity = IdentityQuery::create()
+				->findPK($_COOKIE["identityId"]);
+			if($identity && $identity->checkToken($_COOKIE["identityToken"])){
+				$this->data["user"] = UserQuery::create()->filterByIdentity($identity)->findOne();
+				if($this->data["user"]){
+						$token = generateRandomString(32);
+						$identity->setToken($token)->setExpiresAt(time() + (86400 * 14))->save();
+						setcookie("identityId", $identity->getId(), time() + (86400 * 14));
+						setcookie("identityToken", $token, time() + (86400 * 14));
+				}
 			}
 		}
-	}
-
-	protected function after($method){
-		foreach($this->afterAll as $afterAllMethod){
-			$this->$afterAllMethod();
+		if($this->data["user"]){
+			$this->data["userLogged"] = true;
+			$this->data["userUsername"] = $this->data["user"]->getUsername();
+			return;
 		}
-		if(isset($this->after[$method])){
-			foreach($this->after[$method] as $afterMethod){
-				$this->$afterMethod();
-			}
-		}
+		$this->data["userLogged"] = false;
 	}
-
-	protected function sendFlashMessage($message, $type = "info"){
-		$type = $type == "error" ? "danger" : $type;
-		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
-	}
-
-	protected function sendFlashMessageNow($message, $type = "info"){
-		$type = $type == "error" ? "danger" : $type;
-		$this->data["flash_messages"] = array("message" => $message, "type" => $type);
-	}
-
-	protected function prepareFlashMessages(){
-		if(isset($_SESSION["flash_messages"])){
-			$this->data["flash_messages"] = $_SESSION["flash_messages"];
-			unset($_SESSION["flash_messages"]);
-		}
-	}
-
-	protected function redirect($url){
-		$url = trim($url, "/");
-		header("Location: /$url");
-		header("Connection: close");
-		exit;
-	}
-
-	protected function setHTTPStatusCode($code){
-		header("HTTP/1.0 " . $this->HTTPStatusCodes[$code]);
-	}
-
-	protected function setContentType($type){
-		header("Content-Type: " . $this->contentTypes[$type]);
-	}
-
-	protected function addBefore($beforeMethod, $methods = array()){
-		foreach($methods as $method){
-			if(isset($this->before[$beforeMethod]) && !in_array($method, $this->before[$beforeMethod]))
-				array_push($this->before[$beforeMethod], $method);
-			else
-				$this->before[$beforeMethod] = array($method);
-		}
-	}
-
-	protected function addAfter($afterMethod, $methods = array()){
-		foreach($methods as $method){
-			if(isset($this->after[$afterMethod]) && !in_array($method, $this->after[$afterMethod]))
-				array_push($this->after[$afterMethod], $method);
-			else
-				$this->after[$afterMethod] = array($method);
-		}
-	}
-
-	protected function addBeforeAll($beforeAllMethod){
-		$this->beforeAll[] = $beforeAllMethod;
-	}
-
-	protected function addAfterAll($afterAllMethod){
-		$this->afterAll[] = $afterAllMethod;
-	}		
 }

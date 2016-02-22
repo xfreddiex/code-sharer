@@ -39,11 +39,10 @@ p {
 .btn:not(.search-button) {
   border: 0px;
   color: white;
-  font-size: 22px;
+  font-size: 20px;
   height: 35px;
-  font-size: 22px;
   line-height: 35px;
-  padding: 0px 7px; }
+  padding: 0px 9px; }
 
 .btn-default:not(.search-button) {
   background-color: black; }
@@ -164,10 +163,10 @@ p {
 .modal-content {
   border-radius: 4px; }
 
-/*----*/
-.modal-content .form-control {
+.modal-content {
   border: 1px solid #dddddd; }
 
+/*----*/
 header .logo {
   height: 31.2px;
   max-width: 100%; }

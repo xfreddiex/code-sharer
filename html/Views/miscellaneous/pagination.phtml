@@ -1,5 +1,5 @@
 <?php
-	$currentPageNumber = (isset($_GET["page"]) ? $_GET["page"])
+	$currentPageNumber = (isset($_GET["page"]) ? $_GET["page"] : 1);
 	$url = str_replace('/&page=[^&]*&/', "", $_SERVER["REQUEST_URI"]);
 	$url .= (strpos($url, "?") === false ? "?" : "&")."page=";
 ?>
@@ -7,7 +7,7 @@
 	<ul class="pagination">
 		<li><a href=""><i class="fa fa-chevron-left"></i></a></li>
 		<?php for($i =  as $message): ?>
-		<li><a href="#">1</a></li>
+		<li><a href="#" <?php?>>1</a></li>
 		<li><a href="#">2</a></li>
 		<li><a href="#">3</a></li>
 		<li><a href="#">4</a></li>
