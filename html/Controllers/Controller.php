@@ -17,8 +17,6 @@ abstract class Controller{
 	protected $contentTypes = array();
 	
 	public function __construct(){
-		$this->template = 'Views/basic_template.phtml';
-
 		$this->data['title'] = '';
 		$this->data['keywords'] = '';
 		$this->data['description'] = '';

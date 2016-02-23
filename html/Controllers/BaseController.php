@@ -13,8 +13,10 @@ abstract class BaseController extends Controller{
 		parent::__construct();
 		$this->template = 'Views/basic_template.phtml';
 
+		$this->data["referersURI"] = getReferersURIEnd();
+
 		$this->data['title'] = 'Starling';
-		$this->data['keywords'] = 'starling, codesharer';
+		$this->data['keywords'] = 'starling, code-sharer';
 		$this->data['description'] = '';
 
 		$this->addBeforeAll("prepareFlashMessages");
@@ -32,9 +34,9 @@ abstract class BaseController extends Controller{
 				$this->data["user"] = UserQuery::create()->filterByIdentity($identity)->findOne();
 				if($this->data["user"]){
 						$token = generateRandomString(32);
-						$identity->setToken($token)->setExpiresAt(time() + (86400 * 14))->save();
-						setcookie("identityId", $identity->getId(), time() + (86400 * 14));
-						setcookie("identityToken", $token, time() + (86400 * 14));
+						$identity->setToken($token)->setExpiresAt(time() + (86400 * 120))->save();
+						setcookie("identityId", $identity->getId(), time() + (86400 * 120));
+						setcookie("identityToken", $token, time() + (86400 * 120));
 				}
 			}
 		}

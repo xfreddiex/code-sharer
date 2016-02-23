@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="Includes/Croppie/croppie.css" />
+<script src="Includes/Croppie/croppie.min.js"></script>
+
+<div id="image-upload">
+</div>
+<div class="container">
+	<form action="/upload-image" method="post" enctype="multipart/form-data">
+		Select image to upload:
+		<input type="file" name="image" id="imageInput">
+		<button type="submit">Upload Image</button>
+	</form>
+</div>
+<script>
+	$(document).ready(function() {
+		var image = $('#image-upload').croppie(	{
+			viewport: { width: 250, height: 250 },
+			boundary: { width: 300, height: 300 },
+			showZoomer: true
+		});
+		image.croppie('bind', {
+	    	url: "Includes/images/jerry.jpg",
+	    	points: [0,0,250,250]
+		});
+			
+	});
+</script>

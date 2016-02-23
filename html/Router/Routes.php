@@ -7,6 +7,8 @@ return array(
 	array('uri' => '/sign-up', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'signUp'),
 	array('uri' => '/sign-in', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'signIn'),
 	array('uri' => '/sign-out', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'signOut'),
+	array('uri' => '/profile', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'profile'),
+	array('uri' => '/user-update', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'update'),
 	array('uri' => '/username-exists', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'usernameExistsJSON'),
 	array('uri' => '/email-exists', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'emailExistsJSON'),
 	"error404" => array('uri' => '/404', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Error', 'method' => 'error404'),
