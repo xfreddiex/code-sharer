@@ -1,26 +1,53 @@
 <link rel="stylesheet" href="Includes/Croppie/croppie.css" />
 <script src="Includes/Croppie/croppie.min.js"></script>
+<script src="Includes/javascript/avatar-n-cropper.js"></script>
+<div  class="profile-wrapper">
+	<div class="container">
+		<h1>Your profile</h1>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="thumbnail panel panel-default" id="profile-info">
+					<div class="img-wrapper">
+						<img class="img-responsive" id="avatar250" src="Includes/images/avatars/250x250/33.jpg" tittle="<?=$username?> avatar" alt="<?=$username?> avatar">
+						<button id="edit-img-button" class="fa fa-pencil-square-o" data-toggle="modal" data-target="#edit-img-modal"></button>
+					</div>
+					<div class="panel-body">
+						<h3>
+							<?php if(!$name && !$surname): ?><?=$username?>
+							<?php else: ?>
+								<?php if($name): ?><?=$name?><?php endif ?>
+								<?php if($surname): ?><?=$surname?><?php endif ?>
+							<?php endif ?>
+						</h3>
+						<p><?=$email?></p>
+						<button class="btn btn-info btn-block">Settings</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+			</div>
+		</div>
+	</div>
 
-<div id="image-upload">
+	<div class="modal fade" id="edit-img-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
+					<h2 class="modal-title">Upload your avatar image</h2>
+				</div>
+					<div class="modal-body">
+						<div id="img-box"></div>
+					</div>
+					<div class="modal-footer">
+						<form action="/updateAvatar" method="POST"  enctype="multipart/form-data">
+							<input type="file" name="newAvatar">
+							<button type="submit" class="btn btn-default">Save</button>
+						</form>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
 </div>
-<div class="container">
-	<form action="/upload-image" method="post" enctype="multipart/form-data">
-		Select image to upload:
-		<input type="file" name="image" id="imageInput">
-		<button type="submit">Upload Image</button>
-	</form>
-</div>
-<script>
-	$(document).ready(function() {
-		var image = $('#image-upload').croppie(	{
-			viewport: { width: 250, height: 250 },
-			boundary: { width: 300, height: 300 },
-			showZoomer: true
-		});
-		image.croppie('bind', {
-	    	url: "Includes/images/jerry.jpg",
-	    	points: [0,0,250,250]
-		});
-			
-	});
-</script>

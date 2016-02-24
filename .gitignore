@@ -1,4 +1,5 @@
-html/Assets/styles/.sass-cache
+html/Includes/styles/.sass-cache
+html/Includes/images/avatars
 vendor
 propel.yml
 propel.yml.dist

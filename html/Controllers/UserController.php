@@ -12,17 +12,19 @@ class UserController extends BaseController{
 	public function __construct(){
 		parent::__construct();
 		$this->data["userLogged"] = false;
-		$this->data["userAuthorizated"] = false;
+		$this->data["userAuthorized"] = false;
+		$this->data["avatarDir250"] = "Includes/images/avatars/250x250/";
+		$this->data["avatarDir40"] = "Includes/images/avatars/40x40/";
 		$this->addBefore("checkAuthorization", array("update"));
 	}
 
 	protected function profile(){
 		if($this->data["userLogged"]){
-			$this->data["userUsername"] = $this->data["user"]->getUsername();
-			$this->data["userName"] = $this->data["user"]->getName();
-			$this->data["userSurname"] = $this->data["user"]->getSurname();
-			$this->data["userEmail"] = $this->data["user"]->getEmail();
-			$this->data["userAvatarPath"] = $this->data["user"]->getAvatarPath();			
+			$this->data["username"] = $this->data["user"]->getUsername();
+			$this->data["name"] = $this->data["user"]->getName();
+			$this->data["surname"] = $this->data["user"]->getSurname();
+			$this->data["email"] = $this->data["user"]->getEmail();
+			$this->data["avatarPath"] = $this->data["avatarDir250"].($this->data["user"]->getAvatarPath() ? $this->data["user"]->getAvatarPath() : "default.png");		
 			$this->viewFile($this->template);	
 		}
 		else{
@@ -40,7 +42,7 @@ class UserController extends BaseController{
 	}
 
 	protected function update(){
-		if($this->data["userAuthorizated"]){
+		if($this->data["userAuthorized"]){
 			$user = $this->data["user"];
 			if(isset($_POST["newName"]))
 				$user->setName($_POST["newName"]);
@@ -68,17 +70,17 @@ class UserController extends BaseController{
 	}
 
 	protected function updateAvatar(){
-		if($this->data["userAuthorizated"]){
+		if($this->data["userAuthorized"]){
 			
 		}			
 	}
 
 	protected function checkAutorizatition(){
 		if($this->data["userLogged"] && isset($_POST["password"]) && $this->data["user"]->checkPassword($_POST["password"])){
-			$_POST["userAuthorizated"] = true;
+			$_POST["userAuthorized"] = true;
 		}
 		else
-			$_POST["userAuthorizated"] = false;
+			$_POST["userAuthorized"] = false;
 	}
 
 	protected function signUp(){
