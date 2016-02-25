@@ -7,9 +7,18 @@
 		<div class="row">
 			<div class="col-md-4">
 				<div class="thumbnail panel panel-default" id="profile-info">
-					<div class="img-wrapper">
-						<img class="img-responsive" id="avatar250" src="Includes/images/avatars/250x250/33.jpg" tittle="<?=$username?> avatar" alt="<?=$username?> avatar">
-						<button id="edit-img-button" class="fa fa-pencil-square-o" data-toggle="modal" data-target="#edit-img-modal"></button>
+					<div id="avatar-wrapper">
+						<div class="img-group">
+							<img class="img-responsive" id="avatar250" src="<?=$avatarPath?>" tittle="<?=$username?> avatar" alt="<?=$username?> avatar">
+							<button class="fa fa-pencil-square-o img-button" id="img-edit-button"></button>
+						</div>
+						<div id="croppbox"></div>
+					</div>
+					<div id="img-form-wrapper" class="panel-body">
+						<form action="/avatar-update" method="POST" enctype="multipart/form-data" id="upload-img-form">
+							<div class="btn btn-default btn-upload"><i class="fa fa-upload"></i><input type="file" accept="image/*" name="avatar-input" required></div>
+							<button class="btn btn-default pull-right" type="submit">Save</button>
+						</form>
 					</div>
 					<div class="panel-body">
 						<h3>
@@ -25,27 +34,6 @@
 				</div>
 			</div>
 			<div class="col-md-8">
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="edit-img-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
-					<h2 class="modal-title">Upload your avatar image</h2>
-				</div>
-					<div class="modal-body">
-						<div id="img-box"></div>
-					</div>
-					<div class="modal-footer">
-						<form action="/updateAvatar" method="POST"  enctype="multipart/form-data">
-							<input type="file" name="newAvatar">
-							<button type="submit" class="btn btn-default">Save</button>
-						</form>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>

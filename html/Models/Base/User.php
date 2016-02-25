@@ -24,7 +24,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
-use Propel\Runtime\Validator\Constraints\Unique;
+use Propel\Runtime\Validator\Constraints\Uniqueness;
 use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -2138,10 +2138,10 @@ abstract class User implements ActiveRecordInterface
     {
         $metadata->addPropertyConstraint('username', new Length(array ('max' => 32,'maxMessage' => 'Maximal username length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('username', new NotBlank(array ('message' => 'Username should not be blank.',)));
-        $metadata->addPropertyConstraint('username', new Unique(array ('message' => 'Username already exists.',)));
+        $metadata->addPropertyConstraint('username', new Uniqueness(array ('message' => 'Username already exists.',)));
         $metadata->addPropertyConstraint('email', new Length(array ('max' => 70,'maxMessage' => 'Maximal email address length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('email', new NotBlank(array ('message' => 'Email address should not be blank.',)));
-        $metadata->addPropertyConstraint('email', new Unique(array ('message' => 'Email address is already used.',)));
+        $metadata->addPropertyConstraint('email', new Uniqueness(array ('message' => 'Email address is already used.',)));
         $metadata->addPropertyConstraint('email', new Email(array ('message' => 'Entered email address must be valid.',)));
         $metadata->addPropertyConstraint('password', new Length(array ('min' => 6,'max' => 60,'minMessage' => 'Password must contain at least {{ limit }} characters.','maxMessage' => 'Maximal password length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('password', new NotBlank(array ('message' => 'Password should not be blank.',)));

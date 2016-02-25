@@ -1,22 +1,47 @@
 $(document).ready(function(){
- 	$(".img-wrapper").mouseover(function(){
-		$(".img-wrapper button").show();
+ 	$(".img-group").mouseover(function(){
+		$(".img-button").show();
 	});
-	$(".img-wrapper").mouseout(function(){
-		$(".img-wrapper button").hide();
+	$(".img-group").mouseout(function(){
+		$(".img-button").hide();
 	});
 
-	$(".img-wrapper button").click(function(){
-		var cropp = $("#img-box").croppie({
-			viewport: {
-				width: 250,
-				height: 250,
-			},
-			boundary: {
-				width: 280,
-				height: 280
-			}
-		});
+	var croppBox = null;
+	var cropp;
+
+	$("#img-edit-button").click(function(){
+		$("#img-form-wrapper").slideDown();
+	});
+
+	function readURL(input) {
+        if(input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                cropp.croppie('bind', {
+					url: e.target.result,
+					points: [0,0,250,250]
+				});
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    $('input[name="avatar-input"]').change(function(){
+        $("#avatar-wrapper .img-group").hide();
+
+        if(!croppBox){
+	        croppBox = $("#croppbox");
+			cropp = croppBox.croppie({
+				viewport: {
+					width: 250,
+					height: 250,
+				},
+				boundary: {
+					width: 250,
+					height: 250
+				}
+			});
+		}
 
 		var avatarPath = $("#avatar250").attr("src");
 		
@@ -24,5 +49,20 @@ $(document).ready(function(){
 			url: avatarPath,
 			points: [0,0,250,250]
 		});
+
+		readURL(this);
+	});
+
+    var done = false;
+	
+	$("#upload-img-form").submit(function(event){
+		if(!done){
+			event.preventDefault();
+			cropp.croppie("result", {type : "canvas"}).then(function(resp){
+				$('<input>').attr({'type' : 'hidden', 'name' : 'newAvatar', 'value' : resp}).appendTo('#upload-img-form');
+	    		done = true;
+	    		$("#upload-img-form").submit();
+			});
+		}
 	});
 });

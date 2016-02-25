@@ -70,17 +70,30 @@ class UserController extends BaseController{
 	}
 
 	protected function updateAvatar(){
-		if($this->data["userAuthorized"]){
-			
-		}			
+		if(isset($_POST["newAvatar"]) && $this->data["userLogged"]){
+			$data = explode(',', $_POST["newAvatar"]);
+			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
+				$dir = "Includes/images/avatars/250x250/";
+				$img = base64_decode($data[1]);
+				$name = $this->data["user"]->getAvatarPath();
+				if(!$name){
+					$name = md5(uniqid()).".png";
+					$this->data["user"]->setAvatarPath($name)->save();
+				}
+				$path = $dir.$name;
+				file_put_contents($path, $img);
+				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
+				redirect($this->data["referersURI"]);
+			}
+			else
+				setHTTPStatusCode("400");
+		}	
+		else		
+			setHTTPStatusCode("400");
 	}
 
 	protected function checkAutorizatition(){
-		if($this->data["userLogged"] && isset($_POST["password"]) && $this->data["user"]->checkPassword($_POST["password"])){
-			$_POST["userAuthorized"] = true;
-		}
-		else
-			$_POST["userAuthorized"] = false;
+		$_POST["userAuthorized"] = ($this->data["userLogged"] && isset($_POST["password"]) && $this->data["user"]->checkPassword($_POST["password"]));
 	}
 
 	protected function signUp(){

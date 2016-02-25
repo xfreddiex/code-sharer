@@ -27,7 +27,7 @@ h2 {
 h3 {
   font-size: 16px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 4px;
   margin-bottom: 10px; }
 
 p {
@@ -73,6 +73,20 @@ p {
 
 .btn-info:not(.search-button):hover {
   background-color: #014450; }
+
+.btn-upload {
+  position: relative;
+  overflow: hidden;
+  display: inline-block; }
+
+.btn-upload input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0; }
 
 /*----*/
 /*alerts*/
@@ -166,6 +180,10 @@ p {
 
 /*----*/
 /*modal*/
+.modal .form-control {
+  padding: 4px 10px;
+  font-size: 18px; }
+
 .modal-content {
   border-radius: 4px; }
 
@@ -259,9 +277,6 @@ footer {
   line-height: 20px; }
 #sign-in-modal .checkbox {
   margin: 0px; }
-#sign-in-modal .form-control {
-  padding: 4px 10px;
-  font-size: 18px; }
 
 /*----*/
 /*homepage*/
@@ -273,10 +288,12 @@ footer {
   .homepage-wrapper h2 {
     color: white;
     font-size: 40px;
-    margin-bottom: 24px; }
+    margin-bottom: 24px;
+    font-weight: normal; }
   .homepage-wrapper h1 {
     color: white;
-    font-size: 100px; }
+    font-size: 100px;
+    font-weight: normal; }
   .homepage-wrapper p {
     color: white; }
   .homepage-wrapper div {
@@ -323,9 +340,9 @@ footer {
 /*profile*/
 .profile-wrapper #profile-info {
   max-width: 270px; }
-.profile-wrapper .img-wrapper {
+.profile-wrapper .img-group {
   position: relative; }
-.profile-wrapper #edit-img-button {
+.profile-wrapper .img-button {
   display: none;
   padding: 0px;
   color: white;
@@ -341,6 +358,23 @@ footer {
   bottom: 0px;
   right: 0px;
   border: 0px; }
+.profile-wrapper #img-form-wrapper {
+  display: none;
+  border-bottom: 10px solid #f8f8f8; }
+.profile-wrapper .cr-slider-wrap {
+  margin-top: 16px !important; }
+.profile-wrapper .croppie-container {
+  padding: 0px !important; }
+.profile-wrapper .cr-viewport {
+  border: 0px !important; }
+
+/*----*/
+/*authorization-modal*/
+#authorization-modal input {
+  display: inline-block;
+  width: auto; }
+#authorization-modal .form-group {
+  margin-bottom: 0px; }
 
 /*----*/
 
