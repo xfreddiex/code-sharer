@@ -74,14 +74,19 @@ class UserController extends BaseController{
 			$data = explode(',', $_POST["newAvatar"]);
 			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
 				$dir = "Includes/images/avatars/250x250/";
-				$img = base64_decode($data[1]);
+				$img = imagecreatefromstring(base64_decode($data[1]));
 				$name = $this->data["user"]->getAvatarPath();
 				if(!$name){
 					$name = md5(uniqid()).".png";
 					$this->data["user"]->setAvatarPath($name)->save();
 				}
 				$path = $dir.$name;
-				file_put_contents($path, $img);
+				imagepng($img, $path);
+		
+				$dir = "Includes/images/avatars/40x40/";
+				$path = $dir.$name;
+				imagepng(resizeImg($img, 40, 40), $path);
+				
 				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
 				redirect($this->data["referersURI"]);
 			}

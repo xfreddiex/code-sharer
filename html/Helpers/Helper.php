@@ -34,3 +34,11 @@ function setContentType($type){
 	);
 	header("Content-Type: " . $contentTypes[$type]);
 }
+
+function resizeImg($img, $width, $height){
+		$widthOrig = imagesx($img);
+		$heightOrig = imagesy($img);
+		$imgNew = imagecreatetruecolor($width, $height);
+		imagecopyresampled($imgNew, $img, 0, 0, 0, 0, $width, $height, $widthOrig, $heightOrig);
+		return $imgNew;
+	}

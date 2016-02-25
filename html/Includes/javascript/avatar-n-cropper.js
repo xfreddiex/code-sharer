@@ -19,7 +19,6 @@ $(document).ready(function(){
             reader.onload = function (e) {
                 cropp.croppie('bind', {
 					url: e.target.result,
-					points: [0,0,250,250]
 				});
             }
             reader.readAsDataURL(input.files[0]);
@@ -42,14 +41,6 @@ $(document).ready(function(){
 				}
 			});
 		}
-
-		var avatarPath = $("#avatar250").attr("src");
-		
-		cropp.croppie('bind', {
-			url: avatarPath,
-			points: [0,0,250,250]
-		});
-
 		readURL(this);
 	});
 

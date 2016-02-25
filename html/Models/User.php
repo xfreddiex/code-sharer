@@ -28,7 +28,10 @@ class User extends BaseUser
 		}
 
 		if (!password_verify($v, $this->password)) {
-			$this->getIdentities()->deleteAll();
+			$identities = $this->getIdentities();
+			foreach($identities as $identity){
+				$identity->delete();
+			}
 			$this->password = password_hash($v, PASSWORD_DEFAULT);
 			$this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
 		}
