@@ -13,18 +13,11 @@ class UserController extends BaseController{
 		parent::__construct();
 		$this->data["userLogged"] = false;
 		$this->data["userAuthorized"] = false;
-		$this->data["avatarDir250"] = "Includes/images/avatars/250x250/";
-		$this->data["avatarDir40"] = "Includes/images/avatars/40x40/";
 		$this->addBefore("checkAuthorization", array("update"));
 	}
 
 	protected function profile(){
 		if($this->data["userLogged"]){
-			$this->data["username"] = $this->data["user"]->getUsername();
-			$this->data["name"] = $this->data["user"]->getName();
-			$this->data["surname"] = $this->data["user"]->getSurname();
-			$this->data["email"] = $this->data["user"]->getEmail();
-			$this->data["avatarPath"] = $this->data["avatarDir250"].($this->data["user"]->getAvatarPath() ? $this->data["user"]->getAvatarPath() : "default.png");		
 			$this->viewFile($this->template);	
 		}
 		else{
@@ -34,7 +27,13 @@ class UserController extends BaseController{
 	}
 
 	protected function settings(){
-
+		if($this->data["userLogged"]){
+			$this->viewFile($this->template);	
+		}
+		else{
+			$this->sendFlashMessage("To change settings you must be signed in.", "error");
+			redirect("/");
+		}
 	}
 
 	protected function delete(){
@@ -73,20 +72,19 @@ class UserController extends BaseController{
 		if(isset($_POST["newAvatar"]) && $this->data["userLogged"]){
 			$data = explode(',', $_POST["newAvatar"]);
 			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
-				$dir = "Includes/images/avatars/250x250/";
 				$img = imagecreatefromstring(base64_decode($data[1]));
-				$name = $this->data["user"]->getAvatarPath();
-				if(!$name){
-					$name = md5(uniqid()).".png";
-					$this->data["user"]->setAvatarPath($name)->save();
-				}
-				$path = $dir.$name;
-				imagepng($img, $path);
+				$nameToDelete = $this->data["user"]->getAvatarPath();
+				$name = md5(uniqid()).".png";
+				$this->data["user"]->setAvatarPath($name)->save();
+
+				$dir = "Includes/images/avatars/250x250/";
+				unlink($dir.$nameToDelete);
+				imagepng(resizeImg($img, 250, 250), $dir.$name);
 		
 				$dir = "Includes/images/avatars/40x40/";
-				$path = $dir.$name;
-				imagepng(resizeImg($img, 40, 40), $path);
-				
+				unlink($dir.$nameToDelete);
+				imagepng(resizeImg($img, 40, 40), $dir.$name);
+
 				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
 				redirect($this->data["referersURI"]);
 			}
@@ -97,7 +95,7 @@ class UserController extends BaseController{
 			setHTTPStatusCode("400");
 	}
 
-	protected function checkAutorizatition(){
+	protected function checkAutorization(){
 		$_POST["userAuthorized"] = ($this->data["userLogged"] && isset($_POST["password"]) && $this->data["user"]->checkPassword($_POST["password"]));
 	}
 
@@ -171,11 +169,45 @@ class UserController extends BaseController{
 		redirect("/");
 	}
 
+	protected function validateOne(){
+		setContentType("json");
+		$user = new User();
+		$given = array_keys($_POST);
+		$response["error"] = null;
+		if(count($given) == 1){
+			if($given[0] == "username"){
+				$user->setUsername($_POST["username"]);
+			}
+			else if($given[0] == "password"){
+				$user->setPassword($_POST["password"]);
+			}
+			else if($given[0] == "email"){
+				$user->setEmail($_POST["email"]);
+			}
+			else{
+				setHTTPStatusCode("400");
+				return;
+			}
+			if(!$user->validate()){
+				foreach($user->getValidationFailures() as $failure){
+					if($given[0] == $failure->getPropertyPath()){
+						$response["error"] = array(
+							"name" => $failure->getPropertyPath(),
+							"message" => $failure->getMessage()
+						);
+					}
+				}
+			}
+			$this->viewString(json_encode($response));
+		}
+		else
+			setHTTPStatusCode("400");
+	}
 
 	protected function usernameExistsJSON(){
 		setContentType("json");
 		if(isset($_GET["username"])){
-			$this->viewString(json_encode(array("usernameExists" => $this->usernameExists($_GET["username"]))), "application/json");
+			$this->viewString(json_encode(array("usernameExists" => $this->usernameExists($_GET["username"]))));
 			return;
 		}
 		setHTTPStatusCode("400");
@@ -184,7 +216,7 @@ class UserController extends BaseController{
 	protected function emailExistsJSON(){
 		setContentType("json");
 		if(isset($_GET["email"])){
-			$this->viewString(json_encode(array("emailExists" => $this->emailExists($_GET["email"]))), "application/json");
+			$this->viewString(json_encode(array("emailExists" => $this->emailExists($_GET["email"]))));
 			return;
 		}
 		setHTTPStatusCode("400");

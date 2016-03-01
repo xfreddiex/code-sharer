@@ -147,6 +147,12 @@ p{
 	}
 }
 
+.popover.top.alert-danger{
+	.arrow:after{
+		border-top-color: #AB2C00;
+	}
+}
+
 /*----*/
 
 /*inputs*/
@@ -166,13 +172,13 @@ p{
 	border: 1px solid #178599;
 	/*box-shadow: 0px 0px 4px #046d81 !important;*/
 }
-.has-error *, .has-error *:focus{
+.has-error input, .has-error input:focus{
 	outline: none !important;
 	border: 1px solid #D23702 !important;
 	box-shadow: none !important;
 	/*box-shadow: 0px 0px 4px #D23702 !important;*/
 }
-.has-success *, .has-success *:focus{
+.has-success input, .has-success input:focus{
 	border: 1px solid #c0cf02 !important;
 	box-shadow: none !important;
 	/*box-shadow: 0px 0px 4px #c0cf02 !important;*/
@@ -240,10 +246,96 @@ p{
 /*----*/
 
 /*panels*/
-
 .panel{
-	border: 10px solid #f8f8f8;
 	border-radius: 4px;
+	box-shadow: none;
+	h2{
+		margin: 0px;
+	}
+}
+.panel-default{
+	border: 10px solid #f0f0f0;
+	.panel-heading{
+		background-color: #f0f0f0;
+		border: 0px;
+		padding-top: 0px;
+		padding-left: 10px;
+	}
+}
+
+/*----*/
+
+/*dropdowns*/
+
+.dropdown-menu{
+	box-shadow: none;
+	border: 1px solid #999999;
+	background-color: black;
+	li{
+		a{
+			font-size: 16px !important;
+			padding: 10px 10px !important;
+			height: 36px !important;
+			line-height: 16px !important;
+			color: #999999 !important;
+			position: relative;
+			span{
+				display: inline-block;
+			}
+			i{
+				position: absolute;
+				right: 10px;
+				top: middle;
+				float: right;
+			}
+		}
+		a:hover{
+			background: black;
+			color: white;
+		}
+	}
+	.divider{
+		margin: 5px;
+		background: #999999;
+	}
+}
+
+/*----*/
+
+/*imgs*/
+
+.img-group{
+	position: relative;
+	img{
+		width: 100%;
+	}
+	.img-button{
+		display: none;
+		padding: 0px;
+		color: white;
+		width: 38px;
+		height: 36px;
+		background-color: rgba(0,0,0,0.5);
+		font-size: 32px;
+		line-height: 36px;
+		text-align: center;
+		padding-left: 1px;
+		padding-top: 1px;
+		position: absolute;
+		bottom: 0px;
+		right: 0px; 
+		border: 0px;
+		border-top-left-radius: 4px;
+	}
+}
+.cr-slider-wrap{
+	margin-top: 16px !important;
+}
+.croppie-container{
+	padding: 0px !important;
+}
+.cr-viewport{
+	border: 0px !important;
 }
 
 /*----*/
@@ -297,10 +389,24 @@ header{
 		a{
 			color: #999999 !important;
 			font-size: 24px;
+			line-height: 40px;
+			padding-top: 5px; 
+			padding-bottom: 5px;
+			height: 50px;
+			img{
+				margin-left: 10px;
+				height: 32px;
+				margin-top: -5px;
+				border-radius: 4px;
+			}
 		}
 		a:hover{
-		color: white !important;
+			color: white !important;
 		}
+	}
+	a.dropdown-toggle:hover, a.dropdown-toggle:focus{
+		background: black !important;
+		color: white;
 	}
 	@media screen and (max-width: 767px){
 		.navbar-form{
@@ -410,8 +516,9 @@ footer{
 			height: 54px;
 		}
 		.alert{
-			padding: 6px 10px;
+			padding: 7px 10px;
 			margin: 0px;
+			line-height: 21px;
 			display: none;
 		}
 	}
@@ -425,29 +532,6 @@ footer{
 
 /*profile*/
 .profile-wrapper{
-	#profile-info{
-		max-width: 270px;
-	}
-	.img-group{
-		position: relative;
-	}
-	.img-button{
-		display: none;
-		padding: 0px;
-		color: white;
-		width: 38px;
-		height: 36px;
-		background-color: rgba(0,0,0,0.5);
-		font-size: 32px;
-		line-height: 36px;
-		text-align: center;
-		padding-left: 1px;
-		padding-top: 1px;
-		position: absolute;
-		bottom: 0px;
-		right: 0px; 
-		border: 0px;
-	}
 	#img-form-wrapper{
 		display: none;
 		border-bottom: 10px solid #f8f8f8;
@@ -461,6 +545,11 @@ footer{
 	.cr-viewport{
 		border: 0px !important;
 	}
+	@media screen and (max-width: 767px){
+		#profile-info{
+			max-width: 320px;
+		}
+	}
 }
 
 /*----*/
@@ -468,12 +557,35 @@ footer{
 /*authorization-modal*/
 
 #authorization-modal{
-	input{
-		display: inline-block;
-		width: auto;
-	}
 	.form-group{
 		margin-bottom: 0px;
+	}
+	p{
+		margin-bottom: 0px;
+		line-height: 35px;
+	}
+}
+
+/*----*/
+
+/*settings*/
+
+.settings-wrapper{
+	#img-form-wrapper{
+		display: none;
+	}
+	.form-wrapper{
+		.alert{
+			padding: 7px 10px;
+			margin: 0px;
+			line-height: 21px;
+			display: none;
+		}
+	}
+	@media screen and (max-width: 767px){
+		#avatar-settings{
+			max-width: 320px;
+		}
 	}
 }
 

@@ -1,16 +1,10 @@
 $(document).ready(function(){
- 	$(".img-group").mouseover(function(){
-		$(".img-button").show();
-	});
-	$(".img-group").mouseout(function(){
-		$(".img-button").hide();
-	});
 
 	var croppBox = null;
 	var cropp;
 
 	$("#img-edit-button").click(function(){
-		$("#img-form-wrapper").slideDown();
+		$("#img-form-wrapper").slideToggle();
 	});
 
 	function readURL(input) {
@@ -26,18 +20,22 @@ $(document).ready(function(){
     }
     
     $('input[name="avatar-input"]').change(function(){
+        
+		var width = $("#avatar250").innerWidth();
+		var height = $("#avatar250").innerHeight();
+
         $("#avatar-wrapper .img-group").hide();
 
         if(!croppBox){
 	        croppBox = $("#croppbox");
 			cropp = croppBox.croppie({
 				viewport: {
-					width: 250,
-					height: 250,
+					width: width,
+					height: height
 				},
 				boundary: {
-					width: 250,
-					height: 250
+					width: width,
+					height: height
 				}
 			});
 		}

@@ -12,21 +12,43 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(30) NOT NULL,
+    `username` VARCHAR(32) NOT NULL,
     `name` VARCHAR(50),
     `surname` VARCHAR(50),
-    `password` VARCHAR(50) NOT NULL,
+    `password` VARCHAR(60) NOT NULL,
     `email` VARCHAR(70) NOT NULL,
-    `avatar` VARCHAR(70),
-    `password_token` VARCHAR(64),
-    `email_token` VARCHAR(64),
+    `avatar_path` VARCHAR(70),
+    `password_reset_token` VARCHAR(64),
+    `email_confirm_token` VARCHAR(64),
     `email_confirmed_at` DATETIME,
     `deleted_at` DATETIME,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `user_u_f86ef3` (`username`)
-) ENGINE=InnoDB;
+    UNIQUE INDEX `unique_username` (`username`),
+    UNIQUE INDEX `unique_email` (`email`)
+) ENGINE=InnoDB CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
+
+-- ---------------------------------------------------------------------
+-- identity
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `identity`;
+
+CREATE TABLE `identity`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(60) NOT NULL,
+    `user_id` INTEGER NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    INDEX `identity_fi_29554a` (`user_id`),
+    CONSTRAINT `identity_fk_29554a`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `user` (`id`)
+) ENGINE=InnoDB CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
 
 -- ---------------------------------------------------------------------
 -- group
@@ -44,7 +66,7 @@ CREATE TABLE `group`
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
 
 -- ---------------------------------------------------------------------
 -- pack
@@ -63,7 +85,7 @@ CREATE TABLE `pack`
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
 
 -- ---------------------------------------------------------------------
 -- file
@@ -87,7 +109,7 @@ CREATE TABLE `file`
     CONSTRAINT `file_fk_c61110`
         FOREIGN KEY (`pack_id`)
         REFERENCES `pack` (`id`)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -19,6 +19,9 @@ use Models\Map\UserTableMap;
 class User extends BaseUser
 {
 	public function preSave(ConnectionInterface $con = null){
+		if($this->validate()){
+			$this->hashPassword();
+		}
 		return $this->validate();
 	}
 
@@ -27,20 +30,33 @@ class User extends BaseUser
 			$v = (string) $v;
 		}
 
-		if (!password_verify($v, $this->password)) {
+		if($this->password !== $v){
 			$identities = $this->getIdentities();
 			foreach($identities as $identity){
 				$identity->delete();
 			}
-			$this->password = password_hash($v, PASSWORD_DEFAULT);
+			$this->password = $v;
 			$this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
 		}
 
 		return $this;
 	}
 
+	public function hashPassword(){
+		$this->password = password_hash($this->password, PASSWORD_DEFAULT);
+	}
+
 	public function checkPassword($password){
 		return password_verify($password, $this->password);
 	}
 
+	public function getAvatar250(){
+		$dir = "Includes/images/avatars/250x250/";
+		return $dir.(file_exists($dir.$this->avatar_path) ? $this->avatar_path : "default.png");
+	}
+
+	public function getAvatar40(){
+		$dir = "Includes/images/avatars/40x40/";
+		return $dir.(file_exists($dir.$this->avatar_path) ? $this->avatar_path : "default.png");
+	}
 }

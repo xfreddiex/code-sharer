@@ -3,6 +3,10 @@
           xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd"
           namespace="Models"
     >
+    <vendor type="mysql">
+        <parameter name="Charset" value="utf8"/>
+        <parameter name="Collate" value="utf8_unicode_ci"/>
+    </vendor>
 
     <table name="user" phpName="User">
     	<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
