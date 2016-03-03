@@ -146,6 +146,12 @@ p{
 		color: #014450;
 	}
 }
+.alert-form{
+	padding: 7px 10px;
+	margin: 0px;
+	line-height: 21px;
+	margin-bottom: 15px;
+}
 
 .popover.top.alert-danger{
 	.arrow:after{
@@ -267,36 +273,44 @@ p{
 
 /*dropdowns*/
 
-.dropdown-menu{
-	box-shadow: none;
-	border: 1px solid #999999;
-	background-color: black;
-	li{
-		a{
-			font-size: 16px !important;
-			padding: 10px 10px !important;
-			height: 36px !important;
-			line-height: 16px !important;
-			color: #999999 !important;
-			position: relative;
-			span{
-				display: inline-block;
+.dropdown{
+	.dropdown-toggle{
+		text-align: right;
+	}
+	.dropdown-menu{
+		box-shadow: none;
+		border: 1px solid #999999;
+		background-color: black;
+		li{
+			a{
+				font-size: 16px !important;
+				padding: 10px 10px !important;
+				height: 36px !important;
+				line-height: 16px !important;
+				color: #999999 !important;
+				position: relative;
+				span{
+					display: inline-block;
+				}
+				i{
+					position: absolute;
+					right: 10px;
+					top: middle;
+					float: right;
+				}
 			}
-			i{
-				position: absolute;
-				right: 10px;
-				top: middle;
-				float: right;
+			a:hover{
+				background: black;
+				color: white;
 			}
 		}
-		a:hover{
-			background: black;
-			color: white;
+		.divider{
+			margin: 5px;
+			background: #999999;
 		}
 	}
-	.divider{
-		margin: 5px;
-		background: #999999;
+	@media screen and (max-width: 767px){
+		padding-right: 15px;		
 	}
 }
 
@@ -515,12 +529,6 @@ footer{
 		.row{
 			height: 54px;
 		}
-		.alert{
-			padding: 7px 10px;
-			margin: 0px;
-			line-height: 21px;
-			display: none;
-		}
 	}
 	@media screen and (max-width: 767px){
 		padding-top: 30px;
@@ -573,14 +581,6 @@ footer{
 .settings-wrapper{
 	#img-form-wrapper{
 		display: none;
-	}
-	.form-wrapper{
-		.alert{
-			padding: 7px 10px;
-			margin: 0px;
-			line-height: 21px;
-			display: none;
-		}
 	}
 	@media screen and (max-width: 767px){
 		#avatar-settings{

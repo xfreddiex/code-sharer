@@ -122,6 +122,12 @@ p {
   .alert-info .close:hover {
     color: #014450; }
 
+.alert-form {
+  padding: 7px 10px;
+  margin: 0px;
+  line-height: 21px;
+  margin-bottom: 15px; }
+
 .popover.top.alert-danger .arrow:after {
   border-top-color: #AB2C00; }
 
@@ -216,30 +222,35 @@ p {
 
 /*----*/
 /*dropdowns*/
-.dropdown-menu {
+.dropdown .dropdown-toggle {
+  text-align: right; }
+.dropdown .dropdown-menu {
   box-shadow: none;
   border: 1px solid #999999;
   background-color: black; }
-  .dropdown-menu li a {
+  .dropdown .dropdown-menu li a {
     font-size: 16px !important;
     padding: 10px 10px !important;
     height: 36px !important;
     line-height: 16px !important;
     color: #999999 !important;
     position: relative; }
-    .dropdown-menu li a span {
+    .dropdown .dropdown-menu li a span {
       display: inline-block; }
-    .dropdown-menu li a i {
+    .dropdown .dropdown-menu li a i {
       position: absolute;
       right: 10px;
       top: middle;
       float: right; }
-  .dropdown-menu li a:hover {
+  .dropdown .dropdown-menu li a:hover {
     background: black;
     color: white; }
-  .dropdown-menu .divider {
+  .dropdown .dropdown-menu .divider {
     margin: 5px;
     background: #999999; }
+@media screen and (max-width: 767px) {
+  .dropdown {
+    padding-right: 15px; } }
 
 /*----*/
 /*imgs*/
@@ -412,11 +423,6 @@ footer {
       font-size: 18px; }
     .homepage-wrapper #sign-up-form .row {
       height: 54px; }
-    .homepage-wrapper #sign-up-form .alert {
-      padding: 7px 10px;
-      margin: 0px;
-      line-height: 21px;
-      display: none; }
   @media screen and (max-width: 767px) {
     .homepage-wrapper {
       padding-top: 30px;
@@ -448,11 +454,6 @@ footer {
 /*----*/
 /*settings*/
 .settings-wrapper #img-form-wrapper {
-  display: none; }
-.settings-wrapper .form-wrapper .alert {
-  padding: 7px 10px;
-  margin: 0px;
-  line-height: 21px;
   display: none; }
 @media screen and (max-width: 767px) {
   .settings-wrapper #avatar-settings {

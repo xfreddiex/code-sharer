@@ -13,7 +13,7 @@ class UserController extends BaseController{
 		parent::__construct();
 		$this->data["userLogged"] = false;
 		$this->data["userAuthorized"] = false;
-		$this->addBefore("checkAuthorization", array("update"));
+		$this->addBefore("update", array("authorization"));
 	}
 
 	protected function profile(){
@@ -47,9 +47,9 @@ class UserController extends BaseController{
 				$user->setName($_POST["newName"]);
 			if(isset($_POST["newSurname"]))
 				$user->setSurname($_POST["newSurname"]);
-			if(isset($_POST["newEmail"]))
+			if(isset($_POST["newEmail"]) && $_POST["newEmail"])
 				$user->setEmail($_POST["newEmail"]);
-			if(isset($_POST["newPassword"]))
+			if(isset($_POST["newPassword"]) && $_POST["newPassword"])
 				$user->setPassword($_POST["newPassword"]);
 
 			if($user->save() <= 0){
@@ -62,10 +62,11 @@ class UserController extends BaseController{
 			}
 			else
 				$this->sendFlashMessage("User data has been successfuly updated.", "success");
-			redirect($this->data["referersURI"]);
 		}
-		else
+		else{
 			$this->sendFlashMessage("You have not been authorized to change user data.", "error");
+		}
+		redirect(getReferersURIEnd());
 	}
 
 	protected function updateAvatar(){
@@ -74,19 +75,22 @@ class UserController extends BaseController{
 			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
 				$img = imagecreatefromstring(base64_decode($data[1]));
 				$nameToDelete = $this->data["user"]->getAvatarPath();
+				var_dump($nameToDelete);
 				$name = md5(uniqid()).".png";
 				$this->data["user"]->setAvatarPath($name)->save();
 
 				$dir = "Includes/images/avatars/250x250/";
-				unlink($dir.$nameToDelete);
+				if($nameToDelete)
+					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 250, 250), $dir.$name);
 		
 				$dir = "Includes/images/avatars/40x40/";
-				unlink($dir.$nameToDelete);
+				if($nameToDelete)
+					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 40, 40), $dir.$name);
 
 				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
-				redirect($this->data["referersURI"]);
+				//redirect($this->data["referersURI"]);
 			}
 			else
 				setHTTPStatusCode("400");
@@ -95,8 +99,8 @@ class UserController extends BaseController{
 			setHTTPStatusCode("400");
 	}
 
-	protected function checkAutorization(){
-		$_POST["userAuthorized"] = ($this->data["userLogged"] && isset($_POST["password"]) && $this->data["user"]->checkPassword($_POST["password"]));
+	protected function authorization(){
+		$this->data["userAuthorized"] = ($this->data["userLogged"] && isset($_POST["authorizationPassword"]) && $this->data["user"]->checkPassword($_POST["authorizationPassword"]));
 	}
 
 	protected function signUp(){
@@ -183,6 +187,12 @@ class UserController extends BaseController{
 			}
 			else if($given[0] == "email"){
 				$user->setEmail($_POST["email"]);
+			}
+			else if($given[0] == "name"){
+				$user->setName($_POST["name"]);
+			}
+			else if($given[0] == "surname"){
+				$user->setSurname($_POST["surname"]);
 			}
 			else{
 				setHTTPStatusCode("400");

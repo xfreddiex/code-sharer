@@ -93,21 +93,21 @@ abstract class Controller{
 		}
 	}
 
-	protected function addBefore($beforeMethod, $methods = array()){
-		foreach($methods as $method){
-			if(isset($this->before[$beforeMethod]) && !in_array($method, $this->before[$beforeMethod]))
-				array_push($this->before[$beforeMethod], $method);
+	protected function addBefore($method, $beforeMethods = array()){
+		foreach($beforeMethods as $beforeMethod){
+			if(isset($this->before[$method]) && !in_array($beforeMethod, $this->before[$method]))
+				array_push($this->before[$method], $beforeMethod);
 			else
-				$this->before[$beforeMethod] = array($method);
+				$this->before[$method] = array($beforeMethod);
 		}
 	}
 
-	protected function addAfter($afterMethod, $methods = array()){
-		foreach($methods as $method){
-			if(isset($this->after[$afterMethod]) && !in_array($method, $this->after[$afterMethod]))
-				array_push($this->after[$afterMethod], $method);
+	protected function addAfter($method, $afterMethods = array()){
+		foreach($afterMethods as $afterMethod){
+			if(isset($this->after[$method]) && !in_array($afterMethod, $this->after[$method]))
+				array_push($this->after[$method], $afterMethod);
 			else
-				$this->after[$afterMethod] = array($method);
+				$this->after[$method] = array($afterMethod);
 		}
 	}
 

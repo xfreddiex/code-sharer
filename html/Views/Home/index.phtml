@@ -11,25 +11,22 @@
 				<h2>A place to share your code</h2>
 			</div>
 			<div class="col-xs-12 col-sm-6 col-sm-pull-6">
-				<form class="validate" action="/sign-up" method="post" id="sign-up-form">
+				<form action="/sign-up" method="post" id="sign-up-form">
 					<h2>Sign up</h2>
 					<div class="form-group" id="email-wrapper">
-						<input class="form-control" type="email" name="email" id="email-input" placeholder="email" required>
+						<input class="form-control" type="email" name="email" validation="ajax" validation-event="change" validation-type="email" id="email-input" placeholder="email" required>
 					</div>
 					<div class="form-group" id="username-wrapper">
-						<input class="form-control" type="text" name="username" id="username-input" placeholder="username" required>
+						<input class="form-control" type="text" name="username" validation="ajax" validation-event="keyup" validation-type="username" id="username-input" placeholder="username" required>
 					</div>
 					<div class="form-group" id="password-wrapper">
-						<input class="form-control" type="password" name="password" id="password-input" placeholder="password" required>
+						<input class="form-control" type="password" name="password" validation="ajax" validation-event="keyup" validation-type="password" validation-name="Passwords" id="password-input" placeholder="password" required>
 					</div>
 					<div class="form-group" id="password-again-wrapper">
-						<input class="form-control" type="password" name="password-again" id="password-again-input" placeholder="password again" required>
+						<input class="form-control" type="password" name="password-again" validation="compare" validation-event="keyup" validation-name="Passwords" id="password-again-input" placeholder="password again" required>
 					</div>
 					<div class="row">
-						<div class="col-xs-8">
-							<div class="alert alert-danger alert-box"></div>
-						</div>
-						<div class="col-xs-4">
+						<div class="col-xs-12">
 							<button type="submit" class="btn btn-default pull-right">Sign up</button>		
 						</div>
 					</div>

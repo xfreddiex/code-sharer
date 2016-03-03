@@ -20,7 +20,7 @@
 						</form>
 					</div>
 					<div class="panel-body">
-						<?=($user->getName() || $user->getSurname() ? "<h3>".$user->getName().($user->getName() && $user->getSurname() ? " ": null).$user->getSurame()."</h3>": null)?>
+						<?=($user->getName() || $user->getSurname() ? "<h3>".$user->getName().($user->getName() && $user->getSurname() ? " ": null).$user->getSurname()."</h3>": null)?>
 						<h3><?=$user->getUsername()?></h3>
 						<p><?=$user->getEmail()?></p>
 						<a href="/settings" class="btn btn-info btn-block">Settings</a>

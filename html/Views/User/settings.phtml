@@ -1,15 +1,16 @@
 <div class="settings-wrapper">
 	<div class="container">
+		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
 		<h1>Settings</h1>
 		<div class="row">
 			<div class="col-sm-8">
 				<div class="panel panel-default">
 					<div class="panel-body form-wrapper">
-						<form class="form-horizontal">
+						<form action="/user-update" method="POST" class="form-horizontal" id="settings-form">
 							<div class="form-group">
 								<label for="newUsername" class="col-sm-3 control-label">Username</label>
 								<div class="col-sm-9">
-									<input type="text"  disabled="disabled" class="form-control" name="newUsername" value="<?=$user->getUsername()?>">
+									<p class="form-control-static"><?=$user->getUsername()?></p>
 								</div>
 							</div>
 							<div class="form-group">
@@ -33,28 +34,38 @@
 							<div class="form-group">
 								<label for="newPassword" class="col-sm-3 control-label">New password</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" name="newPassword" placeholder"password">
+									<input type="password" class="form-control" name="newPassword">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="passwordAgain" class="col-sm-3 control-label">Password again</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" name="passwordAgain" placeholder"password">
+									<input type="password" class="form-control" name="passwordAgain">
 								</div>
 							</div>
-							<?php $this->viewFile("Views/miscellaneous/authorization-modal.phtml");?>
+							<div class="form-group">
+								<div class="col-sm-4 col-md-5">
+									<div class="alert alert-info alert-form">Please verify your identity.</div>
+								</div>
+								<label for="authorizationPassword" class="col-sm-3 col-md-2 control-label">Password</label>
+								<div class="col-sm-5">
+									<input type="password" class="form-control" name="authorizationPassword" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-8 col-sm-4">
+									<button type="submit" class="btn btn-success btn-block">Save</button>
+								</div>
+							</div>
 						</form>
-						<div class="col-xs-offset-3 col-sm-7">
-							<div class="alert alert-danger"></div>
-						</div>
-						<div class="col-xs-2">
-							<button type="submit" class="btn btn-default pull-right" data-toggle="modal" data-target="#authorization-modal">Save</button>
-						</div>
 					</div>
 				</div>
 			</div>
 			<div class="col-sm-4">
 				<div class="panel panel-default" id="avatar-settings">
+					<div class="panel-heading">
+						<h2>Avatar image</h2>
+					</div>
 					<div id="avatar-wrapper">
 						<div class="img-group">
 							<img id="avatar250" src="<?=$user->getAvatar250()?>" tittle="<?=$user->getUsername()?> avatar" alt="<?=$user->getUsername()?> avatar">
