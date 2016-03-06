@@ -47,7 +47,7 @@ $(document).ready(function(){
 	$("#upload-img-form").submit(function(event){
 		if(!done){
 			event.preventDefault();
-			cropp.croppie("result", {type : "canvas"}).then(function(resp){
+			cropp.croppie("result", {type : "canvas", size : "original"}).then(function(resp){
 				$('<input>').attr({'type' : 'hidden', 'name' : 'newAvatar', 'value' : resp}).appendTo('#upload-img-form');
 	    		done = true;
 	    		$("#upload-img-form").submit();

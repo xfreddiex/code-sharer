@@ -1,0 +1,38 @@
+<div  class="user-wrapper">
+	<div class="container">
+		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<div class="row">
+			<div class="col-sm-4 col-md-3">
+				<div class="panel panel-default" id="user-info">
+					<div class="row">
+						<div class="col-xs-4 col-sm-12">
+							<div id="avatar-wrapper">
+								<div class="img-group">
+									<img id="avatar250" src="<?=$user->getAvatar250()?>" tittle="<?=$user->getUsername()?> avatar" alt="<?=$user->getUsername()?> avatar">
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-8 col-sm-12">
+							<div class="panel-body">
+								<?=($user->getName() || $user->getSurname() ? "<h3>".$user->getName().($user->getName() && $user->getSurname() ? " ": null).$user->getSurname()."</h3>": null)?>
+								<h3><?=$user->getUsername()?></h3>
+								<p><?=$user->getEmail()?></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-8 col-md-9">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2><?=$user->getUsername()?>'s packs</h2>
+					</div>
+					<div class="panel-body">
+						<p>You dont have any packs yet.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

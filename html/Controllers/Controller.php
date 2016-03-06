@@ -22,13 +22,12 @@ abstract class Controller{
 		$this->data['description'] = '';
 
 		$this->data['flash_messages'] = array();
-		//array_push($this->after);
 	}
 
 	public function __call($method, $params){
 		if(method_exists($this, $method)){
 			$this->before($method);
-			$this->$method($params);
+			$this->$method($params[0]);
 			$this->after($method);
 		}
 	}

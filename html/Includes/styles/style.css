@@ -8,6 +8,9 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 html {
   min-width: 320px; }
 
+section .container {
+  padding-top: 20px; }
+
 /*text*/
 * {
   font-family: "Ubuntu";
@@ -18,7 +21,8 @@ h1, h2, h3, p {
 
 h1 {
   font-size: 32px;
-  font-weight: bold; }
+  font-weight: bold;
+  margin-top: 0px; }
 
 h2 {
   font-size: 22px;
@@ -151,18 +155,24 @@ p {
 .form-control:focus {
   outline: none !important;
   border: 1px solid #178599;
-  /*box-shadow: 0px 0px 4px #046d81 !important;*/ }
+  box-shadow: none; }
 
 .has-error input, .has-error input:focus {
   outline: none !important;
   border: 1px solid #D23702 !important;
   box-shadow: none !important;
-  /*box-shadow: 0px 0px 4px #D23702 !important;*/ }
+  box-shadow: none; }
 
 .has-success input, .has-success input:focus {
   border: 1px solid #c0cf02 !important;
   box-shadow: none !important;
-  /*box-shadow: 0px 0px 4px #c0cf02 !important;*/ }
+  box-shadow: none; }
+
+.form-group .help-block {
+  line-height: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #666666; }
 
 /*----*/
 /*checkbox*/
@@ -189,10 +199,6 @@ p {
 
 /*----*/
 /*modal*/
-.modal .form-control {
-  padding: 4px 10px;
-  font-size: 18px; }
-
 .modal-content {
   border-radius: 4px; }
 
@@ -226,7 +232,7 @@ p {
   text-align: right; }
 .dropdown .dropdown-menu {
   box-shadow: none;
-  border: 1px solid #999999;
+  border-top: 1px solid #999999;
   background-color: black; }
   .dropdown .dropdown-menu li a {
     font-size: 16px !important;
@@ -276,15 +282,6 @@ p {
     border: 0px;
     border-top-left-radius: 4px; }
 
-.cr-slider-wrap {
-  margin-top: 16px !important; }
-
-.croppie-container {
-  padding: 0px !important; }
-
-.cr-viewport {
-  border: 0px !important; }
-
 /*----*/
 header .logo {
   height: 31.2px;
@@ -299,22 +296,22 @@ header .navbar-brand {
 header .form-control {
   padding: 5px 10px;
   font-size: 16px;
-  color: black;
+  color: #bbbbbb;
+  box-shadow: none;
+  /*@include placeholder{
+  	color: #666666;
+  }*/ }
+header .form-control:focus {
+  outline: none !important;
+  border: 0px;
   box-shadow: none; }
-  header .form-control.placeholder {
-    color: #666666; }
-  header .form-control:-moz-placeholder {
-    color: #666666; }
-  header .form-control::-moz-placeholder {
-    color: #666666; }
-  header .form-control::-webkit-input-placeholder {
-    color: #666666; }
 header .form-control, header .btn {
-  border: 1px solid #666666;
+  border: 0px;
+  background-color: #333333;
   border-radius: 4px;
   height: 32px; }
 header .btn {
-  border: 1px solid #666666;
+  border-left: 0px;
   font-size: 18px;
   padding-top: 2px;
   color: #666666; }
@@ -430,18 +427,21 @@ footer {
 
 /*----*/
 /*profile*/
-.profile-wrapper #img-form-wrapper {
+.user-wrapper #img-form-wrapper {
   display: none;
   border-bottom: 10px solid #f8f8f8; }
-.profile-wrapper .cr-slider-wrap {
+.user-wrapper .cr-slider-wrap {
   margin-top: 16px !important; }
-.profile-wrapper .croppie-container {
+.user-wrapper .croppie-container {
   padding: 0px !important; }
-.profile-wrapper .cr-viewport {
+.user-wrapper .cr-viewport {
   border: 0px !important; }
 @media screen and (max-width: 767px) {
-  .profile-wrapper #profile-info {
-    max-width: 320px; } }
+  .user-wrapper #img-form-wrapper {
+    padding-top: 0px;
+    border-bottom: 0px; }
+    .user-wrapper #img-form-wrapper .btn {
+      margin-top: 10px; } }
 
 /*----*/
 /*authorization-modal*/
@@ -455,9 +455,24 @@ footer {
 /*settings*/
 .settings-wrapper #img-form-wrapper {
   display: none; }
+.settings-wrapper .cr-slider-wrap {
+  margin-top: 16px !important; }
+.settings-wrapper .croppie-container {
+  padding: 0px !important; }
+.settings-wrapper .cr-viewport {
+  border: 0px !important; }
 @media screen and (max-width: 767px) {
   .settings-wrapper #avatar-settings {
     max-width: 320px; } }
+
+/*----*/
+/*newPack*/
+.new-pack-wrapper textarea[name="description"] {
+  resize: vertical;
+  min-height: 105px; }
+.new-pack-wrapper textarea[name="tags"] {
+  resize: vertical;
+  min-height: 60px; }
 
 /*----*/
 

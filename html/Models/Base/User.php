@@ -5,11 +5,23 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Models\Group as ChildGroup;
+use Models\GroupPermission as ChildGroupPermission;
+use Models\GroupPermissionQuery as ChildGroupPermissionQuery;
+use Models\GroupQuery as ChildGroupQuery;
 use Models\Identity as ChildIdentity;
 use Models\IdentityQuery as ChildIdentityQuery;
+use Models\Pack as ChildPack;
+use Models\PackPermission as ChildPackPermission;
+use Models\PackPermissionQuery as ChildPackPermissionQuery;
+use Models\PackQuery as ChildPackQuery;
 use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
+use Models\Map\GroupPermissionTableMap;
+use Models\Map\GroupTableMap;
 use Models\Map\IdentityTableMap;
+use Models\Map\PackPermissionTableMap;
+use Models\Map\PackTableMap;
 use Models\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -31,6 +43,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextFactory;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
@@ -177,6 +190,30 @@ abstract class User implements ActiveRecordInterface
     protected $collIdentitiesPartial;
 
     /**
+     * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
+     */
+    protected $collPackPermissions;
+    protected $collPackPermissionsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildGroupPermission[] Collection to store aggregation of ChildGroupPermission objects.
+     */
+    protected $collGroupPermissions;
+    protected $collGroupPermissionsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildPack[] Collection to store aggregation of ChildPack objects.
+     */
+    protected $collPacks;
+    protected $collPacksPartial;
+
+    /**
+     * @var        ObjectCollection|ChildGroup[] Collection to store aggregation of ChildGroup objects.
+     */
+    protected $collGroups;
+    protected $collGroupsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -206,6 +243,30 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildIdentity[]
      */
     protected $identitiesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildPackPermission[]
+     */
+    protected $packPermissionsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildGroupPermission[]
+     */
+    protected $groupPermissionsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildPack[]
+     */
+    protected $packsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildGroup[]
+     */
+    protected $groupsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\User object.
@@ -1019,6 +1080,14 @@ abstract class User implements ActiveRecordInterface
 
             $this->collIdentities = null;
 
+            $this->collPackPermissions = null;
+
+            $this->collGroupPermissions = null;
+
+            $this->collPacks = null;
+
+            $this->collGroups = null;
+
         } // if (deep)
     }
 
@@ -1152,6 +1221,74 @@ abstract class User implements ActiveRecordInterface
 
             if ($this->collIdentities !== null) {
                 foreach ($this->collIdentities as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->packPermissionsScheduledForDeletion !== null) {
+                if (!$this->packPermissionsScheduledForDeletion->isEmpty()) {
+                    \Models\PackPermissionQuery::create()
+                        ->filterByPrimaryKeys($this->packPermissionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->packPermissionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPackPermissions !== null) {
+                foreach ($this->collPackPermissions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->groupPermissionsScheduledForDeletion !== null) {
+                if (!$this->groupPermissionsScheduledForDeletion->isEmpty()) {
+                    \Models\GroupPermissionQuery::create()
+                        ->filterByPrimaryKeys($this->groupPermissionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->groupPermissionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collGroupPermissions !== null) {
+                foreach ($this->collGroupPermissions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->packsScheduledForDeletion !== null) {
+                if (!$this->packsScheduledForDeletion->isEmpty()) {
+                    \Models\PackQuery::create()
+                        ->filterByPrimaryKeys($this->packsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->packsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPacks !== null) {
+                foreach ($this->collPacks as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->groupsScheduledForDeletion !== null) {
+                if (!$this->groupsScheduledForDeletion->isEmpty()) {
+                    \Models\GroupQuery::create()
+                        ->filterByPrimaryKeys($this->groupsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->groupsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collGroups !== null) {
+                foreach ($this->collGroups as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1454,6 +1591,66 @@ abstract class User implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collIdentities->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collPackPermissions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'packPermissions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'pack_permissions';
+                        break;
+                    default:
+                        $key = 'PackPermissions';
+                }
+
+                $result[$key] = $this->collPackPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collGroupPermissions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'groupPermissions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'group_permissions';
+                        break;
+                    default:
+                        $key = 'GroupPermissions';
+                }
+
+                $result[$key] = $this->collGroupPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collPacks) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'packs';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'packs';
+                        break;
+                    default:
+                        $key = 'Packs';
+                }
+
+                $result[$key] = $this->collPacks->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collGroups) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'groups';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'groups';
+                        break;
+                    default:
+                        $key = 'Groups';
+                }
+
+                $result[$key] = $this->collGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1783,6 +1980,30 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getPackPermissions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPackPermission($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getGroupPermissions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addGroupPermission($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getPacks() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPack($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getGroups() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addGroup($relObj->copy($deepCopy));
+                }
+            }
+
         } // if ($deepCopy)
 
         if ($makeNew) {
@@ -1826,6 +2047,18 @@ abstract class User implements ActiveRecordInterface
     {
         if ('Identity' == $relationName) {
             return $this->initIdentities();
+        }
+        if ('PackPermission' == $relationName) {
+            return $this->initPackPermissions();
+        }
+        if ('GroupPermission' == $relationName) {
+            return $this->initGroupPermissions();
+        }
+        if ('Pack' == $relationName) {
+            return $this->initPacks();
+        }
+        if ('Group' == $relationName) {
+            return $this->initGroups();
         }
     }
 
@@ -2055,6 +2288,981 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collPackPermissions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPackPermissions()
+     */
+    public function clearPackPermissions()
+    {
+        $this->collPackPermissions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collPackPermissions collection loaded partially.
+     */
+    public function resetPartialPackPermissions($v = true)
+    {
+        $this->collPackPermissionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collPackPermissions collection.
+     *
+     * By default this just sets the collPackPermissions collection to an empty array (like clearcollPackPermissions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPackPermissions($overrideExisting = true)
+    {
+        if (null !== $this->collPackPermissions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = PackPermissionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collPackPermissions = new $collectionClassName;
+        $this->collPackPermissions->setModel('\Models\PackPermission');
+    }
+
+    /**
+     * Gets an array of ChildPackPermission objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     * @throws PropelException
+     */
+    public function getPackPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPackPermissionsPartial && !$this->isNew();
+        if (null === $this->collPackPermissions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPackPermissions) {
+                // return empty collection
+                $this->initPackPermissions();
+            } else {
+                $collPackPermissions = ChildPackPermissionQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collPackPermissionsPartial && count($collPackPermissions)) {
+                        $this->initPackPermissions(false);
+
+                        foreach ($collPackPermissions as $obj) {
+                            if (false == $this->collPackPermissions->contains($obj)) {
+                                $this->collPackPermissions->append($obj);
+                            }
+                        }
+
+                        $this->collPackPermissionsPartial = true;
+                    }
+
+                    return $collPackPermissions;
+                }
+
+                if ($partial && $this->collPackPermissions) {
+                    foreach ($this->collPackPermissions as $obj) {
+                        if ($obj->isNew()) {
+                            $collPackPermissions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPackPermissions = $collPackPermissions;
+                $this->collPackPermissionsPartial = false;
+            }
+        }
+
+        return $this->collPackPermissions;
+    }
+
+    /**
+     * Sets a collection of ChildPackPermission objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $packPermissions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setPackPermissions(Collection $packPermissions, ConnectionInterface $con = null)
+    {
+        /** @var ChildPackPermission[] $packPermissionsToDelete */
+        $packPermissionsToDelete = $this->getPackPermissions(new Criteria(), $con)->diff($packPermissions);
+
+
+        $this->packPermissionsScheduledForDeletion = $packPermissionsToDelete;
+
+        foreach ($packPermissionsToDelete as $packPermissionRemoved) {
+            $packPermissionRemoved->setUser(null);
+        }
+
+        $this->collPackPermissions = null;
+        foreach ($packPermissions as $packPermission) {
+            $this->addPackPermission($packPermission);
+        }
+
+        $this->collPackPermissions = $packPermissions;
+        $this->collPackPermissionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related PackPermission objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related PackPermission objects.
+     * @throws PropelException
+     */
+    public function countPackPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPackPermissionsPartial && !$this->isNew();
+        if (null === $this->collPackPermissions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPackPermissions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getPackPermissions());
+            }
+
+            $query = ChildPackPermissionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collPackPermissions);
+    }
+
+    /**
+     * Method called to associate a ChildPackPermission object to this object
+     * through the ChildPackPermission foreign key attribute.
+     *
+     * @param  ChildPackPermission $l ChildPackPermission
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addPackPermission(ChildPackPermission $l)
+    {
+        if ($this->collPackPermissions === null) {
+            $this->initPackPermissions();
+            $this->collPackPermissionsPartial = true;
+        }
+
+        if (!$this->collPackPermissions->contains($l)) {
+            $this->doAddPackPermission($l);
+
+            if ($this->packPermissionsScheduledForDeletion and $this->packPermissionsScheduledForDeletion->contains($l)) {
+                $this->packPermissionsScheduledForDeletion->remove($this->packPermissionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildPackPermission $packPermission The ChildPackPermission object to add.
+     */
+    protected function doAddPackPermission(ChildPackPermission $packPermission)
+    {
+        $this->collPackPermissions[]= $packPermission;
+        $packPermission->setUser($this);
+    }
+
+    /**
+     * @param  ChildPackPermission $packPermission The ChildPackPermission object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removePackPermission(ChildPackPermission $packPermission)
+    {
+        if ($this->getPackPermissions()->contains($packPermission)) {
+            $pos = $this->collPackPermissions->search($packPermission);
+            $this->collPackPermissions->remove($pos);
+            if (null === $this->packPermissionsScheduledForDeletion) {
+                $this->packPermissionsScheduledForDeletion = clone $this->collPackPermissions;
+                $this->packPermissionsScheduledForDeletion->clear();
+            }
+            $this->packPermissionsScheduledForDeletion[]= clone $packPermission;
+            $packPermission->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related PackPermissions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     */
+    public function getPackPermissionsJoinGroup(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildPackPermissionQuery::create(null, $criteria);
+        $query->joinWith('Group', $joinBehavior);
+
+        return $this->getPackPermissions($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related PackPermissions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     */
+    public function getPackPermissionsJoinPack(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildPackPermissionQuery::create(null, $criteria);
+        $query->joinWith('Pack', $joinBehavior);
+
+        return $this->getPackPermissions($query, $con);
+    }
+
+    /**
+     * Clears out the collGroupPermissions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addGroupPermissions()
+     */
+    public function clearGroupPermissions()
+    {
+        $this->collGroupPermissions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collGroupPermissions collection loaded partially.
+     */
+    public function resetPartialGroupPermissions($v = true)
+    {
+        $this->collGroupPermissionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collGroupPermissions collection.
+     *
+     * By default this just sets the collGroupPermissions collection to an empty array (like clearcollGroupPermissions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initGroupPermissions($overrideExisting = true)
+    {
+        if (null !== $this->collGroupPermissions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = GroupPermissionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collGroupPermissions = new $collectionClassName;
+        $this->collGroupPermissions->setModel('\Models\GroupPermission');
+    }
+
+    /**
+     * Gets an array of ChildGroupPermission objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildGroupPermission[] List of ChildGroupPermission objects
+     * @throws PropelException
+     */
+    public function getGroupPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupPermissionsPartial && !$this->isNew();
+        if (null === $this->collGroupPermissions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collGroupPermissions) {
+                // return empty collection
+                $this->initGroupPermissions();
+            } else {
+                $collGroupPermissions = ChildGroupPermissionQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collGroupPermissionsPartial && count($collGroupPermissions)) {
+                        $this->initGroupPermissions(false);
+
+                        foreach ($collGroupPermissions as $obj) {
+                            if (false == $this->collGroupPermissions->contains($obj)) {
+                                $this->collGroupPermissions->append($obj);
+                            }
+                        }
+
+                        $this->collGroupPermissionsPartial = true;
+                    }
+
+                    return $collGroupPermissions;
+                }
+
+                if ($partial && $this->collGroupPermissions) {
+                    foreach ($this->collGroupPermissions as $obj) {
+                        if ($obj->isNew()) {
+                            $collGroupPermissions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collGroupPermissions = $collGroupPermissions;
+                $this->collGroupPermissionsPartial = false;
+            }
+        }
+
+        return $this->collGroupPermissions;
+    }
+
+    /**
+     * Sets a collection of ChildGroupPermission objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $groupPermissions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setGroupPermissions(Collection $groupPermissions, ConnectionInterface $con = null)
+    {
+        /** @var ChildGroupPermission[] $groupPermissionsToDelete */
+        $groupPermissionsToDelete = $this->getGroupPermissions(new Criteria(), $con)->diff($groupPermissions);
+
+
+        $this->groupPermissionsScheduledForDeletion = $groupPermissionsToDelete;
+
+        foreach ($groupPermissionsToDelete as $groupPermissionRemoved) {
+            $groupPermissionRemoved->setUser(null);
+        }
+
+        $this->collGroupPermissions = null;
+        foreach ($groupPermissions as $groupPermission) {
+            $this->addGroupPermission($groupPermission);
+        }
+
+        $this->collGroupPermissions = $groupPermissions;
+        $this->collGroupPermissionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related GroupPermission objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related GroupPermission objects.
+     * @throws PropelException
+     */
+    public function countGroupPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupPermissionsPartial && !$this->isNew();
+        if (null === $this->collGroupPermissions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collGroupPermissions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getGroupPermissions());
+            }
+
+            $query = ChildGroupPermissionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collGroupPermissions);
+    }
+
+    /**
+     * Method called to associate a ChildGroupPermission object to this object
+     * through the ChildGroupPermission foreign key attribute.
+     *
+     * @param  ChildGroupPermission $l ChildGroupPermission
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addGroupPermission(ChildGroupPermission $l)
+    {
+        if ($this->collGroupPermissions === null) {
+            $this->initGroupPermissions();
+            $this->collGroupPermissionsPartial = true;
+        }
+
+        if (!$this->collGroupPermissions->contains($l)) {
+            $this->doAddGroupPermission($l);
+
+            if ($this->groupPermissionsScheduledForDeletion and $this->groupPermissionsScheduledForDeletion->contains($l)) {
+                $this->groupPermissionsScheduledForDeletion->remove($this->groupPermissionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildGroupPermission $groupPermission The ChildGroupPermission object to add.
+     */
+    protected function doAddGroupPermission(ChildGroupPermission $groupPermission)
+    {
+        $this->collGroupPermissions[]= $groupPermission;
+        $groupPermission->setUser($this);
+    }
+
+    /**
+     * @param  ChildGroupPermission $groupPermission The ChildGroupPermission object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeGroupPermission(ChildGroupPermission $groupPermission)
+    {
+        if ($this->getGroupPermissions()->contains($groupPermission)) {
+            $pos = $this->collGroupPermissions->search($groupPermission);
+            $this->collGroupPermissions->remove($pos);
+            if (null === $this->groupPermissionsScheduledForDeletion) {
+                $this->groupPermissionsScheduledForDeletion = clone $this->collGroupPermissions;
+                $this->groupPermissionsScheduledForDeletion->clear();
+            }
+            $this->groupPermissionsScheduledForDeletion[]= clone $groupPermission;
+            $groupPermission->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related GroupPermissions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildGroupPermission[] List of ChildGroupPermission objects
+     */
+    public function getGroupPermissionsJoinGroup(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildGroupPermissionQuery::create(null, $criteria);
+        $query->joinWith('Group', $joinBehavior);
+
+        return $this->getGroupPermissions($query, $con);
+    }
+
+    /**
+     * Clears out the collPacks collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPacks()
+     */
+    public function clearPacks()
+    {
+        $this->collPacks = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collPacks collection loaded partially.
+     */
+    public function resetPartialPacks($v = true)
+    {
+        $this->collPacksPartial = $v;
+    }
+
+    /**
+     * Initializes the collPacks collection.
+     *
+     * By default this just sets the collPacks collection to an empty array (like clearcollPacks());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPacks($overrideExisting = true)
+    {
+        if (null !== $this->collPacks && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = PackTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collPacks = new $collectionClassName;
+        $this->collPacks->setModel('\Models\Pack');
+    }
+
+    /**
+     * Gets an array of ChildPack objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildPack[] List of ChildPack objects
+     * @throws PropelException
+     */
+    public function getPacks(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPacksPartial && !$this->isNew();
+        if (null === $this->collPacks || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPacks) {
+                // return empty collection
+                $this->initPacks();
+            } else {
+                $collPacks = ChildPackQuery::create(null, $criteria)
+                    ->filterByOwner($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collPacksPartial && count($collPacks)) {
+                        $this->initPacks(false);
+
+                        foreach ($collPacks as $obj) {
+                            if (false == $this->collPacks->contains($obj)) {
+                                $this->collPacks->append($obj);
+                            }
+                        }
+
+                        $this->collPacksPartial = true;
+                    }
+
+                    return $collPacks;
+                }
+
+                if ($partial && $this->collPacks) {
+                    foreach ($this->collPacks as $obj) {
+                        if ($obj->isNew()) {
+                            $collPacks[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPacks = $collPacks;
+                $this->collPacksPartial = false;
+            }
+        }
+
+        return $this->collPacks;
+    }
+
+    /**
+     * Sets a collection of ChildPack objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $packs A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setPacks(Collection $packs, ConnectionInterface $con = null)
+    {
+        /** @var ChildPack[] $packsToDelete */
+        $packsToDelete = $this->getPacks(new Criteria(), $con)->diff($packs);
+
+
+        $this->packsScheduledForDeletion = $packsToDelete;
+
+        foreach ($packsToDelete as $packRemoved) {
+            $packRemoved->setOwner(null);
+        }
+
+        $this->collPacks = null;
+        foreach ($packs as $pack) {
+            $this->addPack($pack);
+        }
+
+        $this->collPacks = $packs;
+        $this->collPacksPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Pack objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Pack objects.
+     * @throws PropelException
+     */
+    public function countPacks(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPacksPartial && !$this->isNew();
+        if (null === $this->collPacks || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPacks) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getPacks());
+            }
+
+            $query = ChildPackQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByOwner($this)
+                ->count($con);
+        }
+
+        return count($this->collPacks);
+    }
+
+    /**
+     * Method called to associate a ChildPack object to this object
+     * through the ChildPack foreign key attribute.
+     *
+     * @param  ChildPack $l ChildPack
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addPack(ChildPack $l)
+    {
+        if ($this->collPacks === null) {
+            $this->initPacks();
+            $this->collPacksPartial = true;
+        }
+
+        if (!$this->collPacks->contains($l)) {
+            $this->doAddPack($l);
+
+            if ($this->packsScheduledForDeletion and $this->packsScheduledForDeletion->contains($l)) {
+                $this->packsScheduledForDeletion->remove($this->packsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildPack $pack The ChildPack object to add.
+     */
+    protected function doAddPack(ChildPack $pack)
+    {
+        $this->collPacks[]= $pack;
+        $pack->setOwner($this);
+    }
+
+    /**
+     * @param  ChildPack $pack The ChildPack object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removePack(ChildPack $pack)
+    {
+        if ($this->getPacks()->contains($pack)) {
+            $pos = $this->collPacks->search($pack);
+            $this->collPacks->remove($pos);
+            if (null === $this->packsScheduledForDeletion) {
+                $this->packsScheduledForDeletion = clone $this->collPacks;
+                $this->packsScheduledForDeletion->clear();
+            }
+            $this->packsScheduledForDeletion[]= clone $pack;
+            $pack->setOwner(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collGroups collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addGroups()
+     */
+    public function clearGroups()
+    {
+        $this->collGroups = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collGroups collection loaded partially.
+     */
+    public function resetPartialGroups($v = true)
+    {
+        $this->collGroupsPartial = $v;
+    }
+
+    /**
+     * Initializes the collGroups collection.
+     *
+     * By default this just sets the collGroups collection to an empty array (like clearcollGroups());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initGroups($overrideExisting = true)
+    {
+        if (null !== $this->collGroups && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = GroupTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collGroups = new $collectionClassName;
+        $this->collGroups->setModel('\Models\Group');
+    }
+
+    /**
+     * Gets an array of ChildGroup objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildGroup[] List of ChildGroup objects
+     * @throws PropelException
+     */
+    public function getGroups(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupsPartial && !$this->isNew();
+        if (null === $this->collGroups || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collGroups) {
+                // return empty collection
+                $this->initGroups();
+            } else {
+                $collGroups = ChildGroupQuery::create(null, $criteria)
+                    ->filterByOwner($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collGroupsPartial && count($collGroups)) {
+                        $this->initGroups(false);
+
+                        foreach ($collGroups as $obj) {
+                            if (false == $this->collGroups->contains($obj)) {
+                                $this->collGroups->append($obj);
+                            }
+                        }
+
+                        $this->collGroupsPartial = true;
+                    }
+
+                    return $collGroups;
+                }
+
+                if ($partial && $this->collGroups) {
+                    foreach ($this->collGroups as $obj) {
+                        if ($obj->isNew()) {
+                            $collGroups[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collGroups = $collGroups;
+                $this->collGroupsPartial = false;
+            }
+        }
+
+        return $this->collGroups;
+    }
+
+    /**
+     * Sets a collection of ChildGroup objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $groups A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setGroups(Collection $groups, ConnectionInterface $con = null)
+    {
+        /** @var ChildGroup[] $groupsToDelete */
+        $groupsToDelete = $this->getGroups(new Criteria(), $con)->diff($groups);
+
+
+        $this->groupsScheduledForDeletion = $groupsToDelete;
+
+        foreach ($groupsToDelete as $groupRemoved) {
+            $groupRemoved->setOwner(null);
+        }
+
+        $this->collGroups = null;
+        foreach ($groups as $group) {
+            $this->addGroup($group);
+        }
+
+        $this->collGroups = $groups;
+        $this->collGroupsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Group objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Group objects.
+     * @throws PropelException
+     */
+    public function countGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupsPartial && !$this->isNew();
+        if (null === $this->collGroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collGroups) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getGroups());
+            }
+
+            $query = ChildGroupQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByOwner($this)
+                ->count($con);
+        }
+
+        return count($this->collGroups);
+    }
+
+    /**
+     * Method called to associate a ChildGroup object to this object
+     * through the ChildGroup foreign key attribute.
+     *
+     * @param  ChildGroup $l ChildGroup
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addGroup(ChildGroup $l)
+    {
+        if ($this->collGroups === null) {
+            $this->initGroups();
+            $this->collGroupsPartial = true;
+        }
+
+        if (!$this->collGroups->contains($l)) {
+            $this->doAddGroup($l);
+
+            if ($this->groupsScheduledForDeletion and $this->groupsScheduledForDeletion->contains($l)) {
+                $this->groupsScheduledForDeletion->remove($this->groupsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildGroup $group The ChildGroup object to add.
+     */
+    protected function doAddGroup(ChildGroup $group)
+    {
+        $this->collGroups[]= $group;
+        $group->setOwner($this);
+    }
+
+    /**
+     * @param  ChildGroup $group The ChildGroup object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeGroup(ChildGroup $group)
+    {
+        if ($this->getGroups()->contains($group)) {
+            $pos = $this->collGroups->search($group);
+            $this->collGroups->remove($pos);
+            if (null === $this->groupsScheduledForDeletion) {
+                $this->groupsScheduledForDeletion = clone $this->collGroups;
+                $this->groupsScheduledForDeletion->clear();
+            }
+            $this->groupsScheduledForDeletion[]= clone $group;
+            $group->setOwner(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2097,9 +3305,33 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collPackPermissions) {
+                foreach ($this->collPackPermissions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collGroupPermissions) {
+                foreach ($this->collGroupPermissions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collPacks) {
+                foreach ($this->collPacks as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collGroups) {
+                foreach ($this->collGroups as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collIdentities = null;
+        $this->collPackPermissions = null;
+        $this->collGroupPermissions = null;
+        $this->collPacks = null;
+        $this->collGroups = null;
     }
 
     /**
@@ -2139,6 +3371,7 @@ abstract class User implements ActiveRecordInterface
         $metadata->addPropertyConstraint('username', new Length(array ('max' => 32,'maxMessage' => 'Maximal username length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('username', new NotBlank(array ('message' => 'Username should not be blank.',)));
         $metadata->addPropertyConstraint('username', new Uniqueness(array ('message' => 'Username already exists.',)));
+        $metadata->addPropertyConstraint('username', new Regex(array ('pattern' => '/^[a-zA-Z0-9]*$/','match' => true,'message' => 'Username must contain only alphanumeric characters.',)));
         $metadata->addPropertyConstraint('email', new Length(array ('max' => 70,'maxMessage' => 'Maximal email address length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('email', new NotBlank(array ('message' => 'Email address should not be blank.',)));
         $metadata->addPropertyConstraint('email', new Uniqueness(array ('message' => 'Email address is already used.',)));
@@ -2180,6 +3413,42 @@ abstract class User implements ActiveRecordInterface
 
             if (null !== $this->collIdentities) {
                 foreach ($this->collIdentities as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collPackPermissions) {
+                foreach ($this->collPackPermissions as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collGroupPermissions) {
+                foreach ($this->collGroupPermissions as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collPacks) {
+                foreach ($this->collPacks as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collGroups) {
+                foreach ($this->collGroups as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

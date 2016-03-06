@@ -66,7 +66,47 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithIdentity() Adds a RIGHT JOIN clause and with to the query using the Identity relation
  * @method     ChildUserQuery innerJoinWithIdentity() Adds a INNER JOIN clause and with to the query using the Identity relation
  *
- * @method     \Models\IdentityQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildUserQuery leftJoinPackPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the PackPermission relation
+ * @method     ChildUserQuery rightJoinPackPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PackPermission relation
+ * @method     ChildUserQuery innerJoinPackPermission($relationAlias = null) Adds a INNER JOIN clause to the query using the PackPermission relation
+ *
+ * @method     ChildUserQuery joinWithPackPermission($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the PackPermission relation
+ *
+ * @method     ChildUserQuery leftJoinWithPackPermission() Adds a LEFT JOIN clause and with to the query using the PackPermission relation
+ * @method     ChildUserQuery rightJoinWithPackPermission() Adds a RIGHT JOIN clause and with to the query using the PackPermission relation
+ * @method     ChildUserQuery innerJoinWithPackPermission() Adds a INNER JOIN clause and with to the query using the PackPermission relation
+ *
+ * @method     ChildUserQuery leftJoinGroupPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the GroupPermission relation
+ * @method     ChildUserQuery rightJoinGroupPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GroupPermission relation
+ * @method     ChildUserQuery innerJoinGroupPermission($relationAlias = null) Adds a INNER JOIN clause to the query using the GroupPermission relation
+ *
+ * @method     ChildUserQuery joinWithGroupPermission($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the GroupPermission relation
+ *
+ * @method     ChildUserQuery leftJoinWithGroupPermission() Adds a LEFT JOIN clause and with to the query using the GroupPermission relation
+ * @method     ChildUserQuery rightJoinWithGroupPermission() Adds a RIGHT JOIN clause and with to the query using the GroupPermission relation
+ * @method     ChildUserQuery innerJoinWithGroupPermission() Adds a INNER JOIN clause and with to the query using the GroupPermission relation
+ *
+ * @method     ChildUserQuery leftJoinPack($relationAlias = null) Adds a LEFT JOIN clause to the query using the Pack relation
+ * @method     ChildUserQuery rightJoinPack($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Pack relation
+ * @method     ChildUserQuery innerJoinPack($relationAlias = null) Adds a INNER JOIN clause to the query using the Pack relation
+ *
+ * @method     ChildUserQuery joinWithPack($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Pack relation
+ *
+ * @method     ChildUserQuery leftJoinWithPack() Adds a LEFT JOIN clause and with to the query using the Pack relation
+ * @method     ChildUserQuery rightJoinWithPack() Adds a RIGHT JOIN clause and with to the query using the Pack relation
+ * @method     ChildUserQuery innerJoinWithPack() Adds a INNER JOIN clause and with to the query using the Pack relation
+ *
+ * @method     ChildUserQuery leftJoinGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the Group relation
+ * @method     ChildUserQuery rightJoinGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Group relation
+ * @method     ChildUserQuery innerJoinGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the Group relation
+ *
+ * @method     ChildUserQuery joinWithGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Group relation
+ *
+ * @method     ChildUserQuery leftJoinWithGroup() Adds a LEFT JOIN clause and with to the query using the Group relation
+ * @method     ChildUserQuery rightJoinWithGroup() Adds a RIGHT JOIN clause and with to the query using the Group relation
+ * @method     ChildUserQuery innerJoinWithGroup() Adds a INNER JOIN clause and with to the query using the Group relation
+ *
+ * @method     \Models\IdentityQuery|\Models\PackPermissionQuery|\Models\GroupPermissionQuery|\Models\PackQuery|\Models\GroupQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -814,6 +854,298 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->joinIdentity($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Identity', '\Models\IdentityQuery');
+    }
+
+    /**
+     * Filter the query by a related \Models\PackPermission object
+     *
+     * @param \Models\PackPermission|ObjectCollection $packPermission the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByPackPermission($packPermission, $comparison = null)
+    {
+        if ($packPermission instanceof \Models\PackPermission) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $packPermission->getBelongerId(), $comparison);
+        } elseif ($packPermission instanceof ObjectCollection) {
+            return $this
+                ->usePackPermissionQuery()
+                ->filterByPrimaryKeys($packPermission->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPackPermission() only accepts arguments of type \Models\PackPermission or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PackPermission relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinPackPermission($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PackPermission');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PackPermission');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PackPermission relation PackPermission object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\PackPermissionQuery A secondary query class using the current class as primary query
+     */
+    public function usePackPermissionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPackPermission($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PackPermission', '\Models\PackPermissionQuery');
+    }
+
+    /**
+     * Filter the query by a related \Models\GroupPermission object
+     *
+     * @param \Models\GroupPermission|ObjectCollection $groupPermission the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByGroupPermission($groupPermission, $comparison = null)
+    {
+        if ($groupPermission instanceof \Models\GroupPermission) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $groupPermission->getUserId(), $comparison);
+        } elseif ($groupPermission instanceof ObjectCollection) {
+            return $this
+                ->useGroupPermissionQuery()
+                ->filterByPrimaryKeys($groupPermission->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByGroupPermission() only accepts arguments of type \Models\GroupPermission or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the GroupPermission relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinGroupPermission($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('GroupPermission');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'GroupPermission');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the GroupPermission relation GroupPermission object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\GroupPermissionQuery A secondary query class using the current class as primary query
+     */
+    public function useGroupPermissionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinGroupPermission($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'GroupPermission', '\Models\GroupPermissionQuery');
+    }
+
+    /**
+     * Filter the query by a related \Models\Pack object
+     *
+     * @param \Models\Pack|ObjectCollection $pack the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByPack($pack, $comparison = null)
+    {
+        if ($pack instanceof \Models\Pack) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $pack->getUserId(), $comparison);
+        } elseif ($pack instanceof ObjectCollection) {
+            return $this
+                ->usePackQuery()
+                ->filterByPrimaryKeys($pack->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPack() only accepts arguments of type \Models\Pack or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Pack relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinPack($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Pack');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Pack');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Pack relation Pack object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\PackQuery A secondary query class using the current class as primary query
+     */
+    public function usePackQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPack($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Pack', '\Models\PackQuery');
+    }
+
+    /**
+     * Filter the query by a related \Models\Group object
+     *
+     * @param \Models\Group|ObjectCollection $group the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByGroup($group, $comparison = null)
+    {
+        if ($group instanceof \Models\Group) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $group->getUserId(), $comparison);
+        } elseif ($group instanceof ObjectCollection) {
+            return $this
+                ->useGroupQuery()
+                ->filterByPrimaryKeys($group->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByGroup() only accepts arguments of type \Models\Group or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Group relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Group');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Group');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Group relation Group object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\GroupQuery A secondary query class using the current class as primary query
+     */
+    public function useGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinGroup($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Group', '\Models\GroupQuery');
     }
 
     /**

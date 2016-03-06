@@ -10,37 +10,37 @@
 							<div class="form-group">
 								<label for="newUsername" class="col-sm-3 control-label">Username</label>
 								<div class="col-sm-9">
-									<p class="form-control-static"><?=$user->getUsername()?></p>
+									<p class="form-control-static"><?=$loggedUser->getUsername()?></p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="newEmail" class="col-sm-3 control-label">Email</label>
 								<div class="col-sm-9">
-									<input type="email" class="form-control" name="newEmail" value="<?=$user->getEmail()?>">
+									<input type="email" class="form-control" name="newEmail" validation="ajax" validation-event="change" validation-type="email" value="<?=$loggedUser->getEmail()?>">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="newName" class="col-sm-3 control-label">Name</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" name="newName" value="<?=$user->getName()?>">
+									<input type="text" class="form-control" name="newName" validation="ajax" validation-event="change" validation-type="name" value="<?=$loggedUser->getName()?>">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="newSurname" class="col-sm-3 control-label">Surname</label>
 								<div class="col-sm-9">
-									<input type="text" class="form-control" name="newSurname" value="<?=$user->getSurname()?>">
+									<input type="text" class="form-control" name="newSurname" validation="ajax" validation-event="change" validation-type="surname" value="<?=$loggedUser->getSurname()?>">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="newPassword" class="col-sm-3 control-label">New password</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" name="newPassword">
+									<input type="password" class="form-control" name="newPassword" validation="ajax" validation-event="keyup" validation-type="password" validation-name="Passwords">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="passwordAgain" class="col-sm-3 control-label">Password again</label>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" name="passwordAgain">
+									<input type="password" class="form-control" name="passwordAgain" validation="compare" validation-event="keyup" validation-name="Passwords">
 								</div>
 							</div>
 							<div class="form-group">
@@ -68,7 +68,7 @@
 					</div>
 					<div id="avatar-wrapper">
 						<div class="img-group">
-							<img id="avatar250" src="<?=$user->getAvatar250()?>" tittle="<?=$user->getUsername()?> avatar" alt="<?=$user->getUsername()?> avatar">
+							<img id="avatar250" src="<?=$loggedUser->getAvatar250()?>" tittle="<?=$loggedUser->getUsername()?> avatar" alt="<?=$loggedUser->getUsername()?> avatar">
 							<button class="fa fa-pencil-square-o img-button" id="img-edit-button"></button>
 						</div>
 						<div id="croppbox"></div>

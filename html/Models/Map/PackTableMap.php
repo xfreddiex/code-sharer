@@ -59,7 +59,7 @@ class PackTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class PackTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the id field
@@ -87,9 +87,14 @@ class PackTableMap extends TableMap
     const COL_DESCRIPTION = 'pack.description';
 
     /**
-     * the column name for the public field
+     * the column name for the private field
      */
-    const COL_PUBLIC = 'pack.public';
+    const COL_PRIVATE = 'pack.private';
+
+    /**
+     * the column name for the user_id field
+     */
+    const COL_USER_ID = 'pack.user_id';
 
     /**
      * the column name for the deleted_at field
@@ -123,11 +128,11 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Public', 'DeletedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'public', 'deletedAt', 'tags', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PUBLIC, PackTableMap::COL_DELETED_AT, PackTableMap::COL_TAGS, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'public', 'deleted_at', 'tags', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'UserId', 'DeletedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'userId', 'deletedAt', 'tags', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PRIVATE, PackTableMap::COL_USER_ID, PackTableMap::COL_DELETED_AT, PackTableMap::COL_TAGS, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'user_id', 'deleted_at', 'tags', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -137,11 +142,11 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Public' => 3, 'DeletedAt' => 4, 'Tags' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'deletedAt' => 4, 'tags' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PUBLIC => 3, PackTableMap::COL_DELETED_AT => 4, PackTableMap::COL_TAGS => 5, PackTableMap::COL_CREATED_AT => 6, PackTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'public' => 3, 'deleted_at' => 4, 'tags' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'UserId' => 4, 'DeletedAt' => 5, 'Tags' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'userId' => 4, 'deletedAt' => 5, 'tags' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PRIVATE => 3, PackTableMap::COL_USER_ID => 4, PackTableMap::COL_DELETED_AT => 5, PackTableMap::COL_TAGS => 6, PackTableMap::COL_CREATED_AT => 7, PackTableMap::COL_UPDATED_AT => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'user_id' => 4, 'deleted_at' => 5, 'tags' => 6, 'created_at' => 7, 'updated_at' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -162,11 +167,12 @@ class PackTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 50, null);
-        $this->addColumn('description', 'Description', 'VARCHAR', false, 250, null);
-        $this->addColumn('public', 'Public', 'BOOLEAN', true, 1, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 32, null);
+        $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
+        $this->addColumn('private', 'Private', 'BOOLEAN', true, 1, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('tags', 'Tags', 'VARCHAR', false, 200, null);
+        $this->addColumn('tags', 'Tags', 'ARRAY', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -176,6 +182,20 @@ class PackTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Owner', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
+        $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':pack_id',
+    1 => ':id',
+  ),
+), null, null, 'PackPermissions', false);
         $this->addRelation('File', '\\Models\\File', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -195,6 +215,7 @@ class PackTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal pack name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'Regex','options' => array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Pack name should not contain whitespaces.',),), 'rule3' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'Pack name should not be blank.',),), 'rule4' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
 
@@ -342,7 +363,8 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn(PackTableMap::COL_ID);
             $criteria->addSelectColumn(PackTableMap::COL_NAME);
             $criteria->addSelectColumn(PackTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(PackTableMap::COL_PUBLIC);
+            $criteria->addSelectColumn(PackTableMap::COL_PRIVATE);
+            $criteria->addSelectColumn(PackTableMap::COL_USER_ID);
             $criteria->addSelectColumn(PackTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(PackTableMap::COL_TAGS);
             $criteria->addSelectColumn(PackTableMap::COL_CREATED_AT);
@@ -351,7 +373,8 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
-            $criteria->addSelectColumn($alias . '.public');
+            $criteria->addSelectColumn($alias . '.private');
+            $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.tags');
             $criteria->addSelectColumn($alias . '.created_at');

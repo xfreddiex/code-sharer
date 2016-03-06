@@ -1,10 +1,11 @@
 
-function Validator(form){
+function Validator(form, url){
 	this.ok = true;
 	this.form = form;
-	this.form.find('input[validation="ajax"][validation-event="keyup"]').keyup({validator : this}, validateByAjax);
-	this.form.find('input[validation="ajax"][validation-event="change"]').change({validator : this}, validateByAjax);
-	this.form.find('input[validation="compare"][validation-event="keyup"]').keyup({validator : this},validateCompare);
+	this.url = url;
+	this.form.find('*[validation="ajax"][validation-event="keyup"]').keyup({validator : this}, validateByAjax);
+	this.form.find('*[validation="ajax"][validation-event="change"]').change({validator : this}, validateByAjax);
+	this.form.find('*[validation="compare"][validation-event="keyup"]').keyup({validator : this},validateCompare);
 	this.form.submit({validator : this}, function(event){
 		if(!event.data.validator.ok){
 			event.preventDefault();
@@ -20,7 +21,7 @@ validateByAjax = function(event){
 		data[input.attr("validation-type")] = input.val();
 		$.ajax({
 			type: 'POST',
-			url: '/validate-one',
+			url: validator.url,
 			data: data,
 			dataType : "json",
 			context: {input : input, validator : validator},

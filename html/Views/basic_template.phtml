@@ -28,9 +28,9 @@
 							<img class="logo" src="Includes/images/starling_white.svg" alt="logo">
 						</a>
 						<ul class="nav navbar-nav visible-xs">
-							<?php if($userLogged): ?>
+							<?php if($loggedUser): ?>
 								<li class="dropdown pull-right">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$user->getUsername()?><img class="avatar" src="<?=$user->getAvatar40()?>" tittle="<?=$user->getUsername()?> avatar" alt="<?=$user->getUsername()?> avatar"></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$loggedUser->getUsername()?><img class="avatar" src="<?=$loggedUser->getAvatar40()?>" tittle="<?=$loggedUser->getUsername()?> avatar" alt="<?=$loggedUser->getUsername()?> avatar"></a>
 									<ul class="dropdown-menu">
 										<li><a href="/profile">Profile<i class="fa fa-user"></i></a></li>
 										<li><a href="/settings">Settings<i class="fa fa-cog"></i></a></li>
@@ -60,9 +60,9 @@
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right hidden-xs">
-						<?php if($userLogged): ?>
+						<?php if($loggedUser): ?>
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$user->getUsername()?><img class="avatar" src="<?=$user->getAvatar40()?>" tittle="<?=$user->getUsername()?> avatar" alt="<?=$user->getUsername()?> avatar"></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$loggedUser->getUsername()?><img class="avatar" src="<?=$loggedUser->getAvatar40()?>" tittle="<?=$loggedUser->getUsername()?> avatar" alt="<?=$loggedUser->getUsername()?> avatar"></a>
 								<ul class="dropdown-menu">
 									<li><a href="/profile">Profile<i class="fa fa-user"></i></a></li>
 									<li><a href="/settings">Settings<i class="fa fa-cog"></i></a></li>

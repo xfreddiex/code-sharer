@@ -21,18 +21,20 @@ abstract class BaseController extends Controller{
 
 		$this->addBeforeAll("prepareFlashMessages");
 		$this->addBeforeAll("loadUser");
+
+		$this->data["loggedUser"] = NULL;
 	}
 
 	protected function loadUser(){
 		if(isset($_SESSION["userId"])){
-			$this->data["user"] = UserQuery::create()->findPK($_SESSION["userId"]);
+			$this->data["loggedUser"] = UserQuery::create()->findPK($_SESSION["userId"]);
 		}
 		else if(isset($_COOKIE["identityId"]) && isset($_COOKIE["identityToken"])){
 			$identity = IdentityQuery::create()
 				->findPK($_COOKIE["identityId"]);
 			if($identity && $identity->checkToken($_COOKIE["identityToken"])){
-				$this->data["user"] = UserQuery::create()->filterByIdentity($identity)->findOne();
-				if($this->data["user"]){
+				$this->data["loggedUser"] = UserQuery::create()->filterByIdentity($identity)->findOne();
+				if($this->data["loggedUser"]){
 						$token = generateRandomString(32);
 						$identity->setToken($token)->setExpiresAt(time() + (86400 * 120))->save();
 						setcookie("identityId", $identity->getId(), time() + (86400 * 120));
@@ -40,10 +42,5 @@ abstract class BaseController extends Controller{
 				}
 			}
 		}
-		if(isset($this->data["user"])){
-			$this->data["userLogged"] = true;
-			return;
-		}
-		$this->data["userLogged"] = false;
 	}
 }

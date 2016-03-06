@@ -8,8 +8,13 @@ use \PDO;
 use Models\File as ChildFile;
 use Models\FileQuery as ChildFileQuery;
 use Models\Pack as ChildPack;
+use Models\PackPermission as ChildPackPermission;
+use Models\PackPermissionQuery as ChildPackPermissionQuery;
 use Models\PackQuery as ChildPackQuery;
+use Models\User as ChildUser;
+use Models\UserQuery as ChildUserQuery;
 use Models\Map\FileTableMap;
+use Models\Map\PackPermissionTableMap;
 use Models\Map\PackTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -24,6 +29,18 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
+use Symfony\Component\Translation\IdentityTranslator;
+use Symfony\Component\Validator\ConstraintValidatorFactory;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Context\ExecutionContextFactory;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
+use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Base class that represents a row from the 'pack' table.
@@ -88,11 +105,18 @@ abstract class Pack implements ActiveRecordInterface
     protected $description;
 
     /**
-     * The value for the public field.
+     * The value for the private field.
      *
      * @var        boolean
      */
-    protected $public;
+    protected $private;
+
+    /**
+     * The value for the user_id field.
+     *
+     * @var        int
+     */
+    protected $user_id;
 
     /**
      * The value for the deleted_at field.
@@ -104,9 +128,16 @@ abstract class Pack implements ActiveRecordInterface
     /**
      * The value for the tags field.
      *
-     * @var        string
+     * @var        array
      */
     protected $tags;
+
+    /**
+     * The unserialized $tags value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $tags_unserialized;
 
     /**
      * The value for the created_at field.
@@ -123,6 +154,17 @@ abstract class Pack implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * @var        ChildUser
+     */
+    protected $aOwner;
+
+    /**
+     * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
+     */
+    protected $collPackPermissions;
+    protected $collPackPermissionsPartial;
+
+    /**
      * @var        ObjectCollection|ChildFile[] Collection to store aggregation of ChildFile objects.
      */
     protected $collFiles;
@@ -135,6 +177,29 @@ abstract class Pack implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    // validate behavior
+
+    /**
+     * Flag to prevent endless validation loop, if this object is referenced
+     * by another object which falls in this transaction.
+     * @var        boolean
+     */
+    protected $alreadyInValidation = false;
+
+    /**
+     * ConstraintViolationList object
+     *
+     * @see     http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolationList.html
+     * @var     ConstraintViolationList
+     */
+    protected $validationFailures;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildPackPermission[]
+     */
+    protected $packPermissionsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -398,23 +463,33 @@ abstract class Pack implements ActiveRecordInterface
     }
 
     /**
-     * Get the [public] column value.
+     * Get the [private] column value.
      *
      * @return boolean
      */
-    public function getPublic()
+    public function getPrivate()
     {
-        return $this->public;
+        return $this->private;
     }
 
     /**
-     * Get the [public] column value.
+     * Get the [private] column value.
      *
      * @return boolean
      */
-    public function isPublic()
+    public function isPrivate()
     {
-        return $this->getPublic();
+        return $this->getPrivate();
+    }
+
+    /**
+     * Get the [user_id] column value.
+     *
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
     }
 
     /**
@@ -440,12 +515,31 @@ abstract class Pack implements ActiveRecordInterface
     /**
      * Get the [tags] column value.
      *
-     * @return string
+     * @return array
      */
     public function getTags()
     {
-        return $this->tags;
+        if (null === $this->tags_unserialized) {
+            $this->tags_unserialized = array();
+        }
+        if (!$this->tags_unserialized && null !== $this->tags) {
+            $tags_unserialized = substr($this->tags, 2, -2);
+            $this->tags_unserialized = $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
+        }
+
+        return $this->tags_unserialized;
     }
+
+    /**
+     * Test the presence of a value in the [tags] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasTag($value)
+    {
+        return in_array($value, $this->getTags());
+    } // hasTag()
 
     /**
      * Get the [optionally formatted] temporal [created_at] column value.
@@ -548,7 +642,7 @@ abstract class Pack implements ActiveRecordInterface
     } // setDescription()
 
     /**
-     * Sets the value of the [public] column.
+     * Sets the value of the [private] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -557,7 +651,7 @@ abstract class Pack implements ActiveRecordInterface
      * @param  boolean|integer|string $v The new value
      * @return $this|\Models\Pack The current object (for fluent API support)
      */
-    public function setPublic($v)
+    public function setPrivate($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -567,13 +661,37 @@ abstract class Pack implements ActiveRecordInterface
             }
         }
 
-        if ($this->public !== $v) {
-            $this->public = $v;
-            $this->modifiedColumns[PackTableMap::COL_PUBLIC] = true;
+        if ($this->private !== $v) {
+            $this->private = $v;
+            $this->modifiedColumns[PackTableMap::COL_PRIVATE] = true;
         }
 
         return $this;
-    } // setPublic()
+    } // setPrivate()
+
+    /**
+     * Set the value of [user_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function setUserId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[PackTableMap::COL_USER_ID] = true;
+        }
+
+        if ($this->aOwner !== null && $this->aOwner->getId() !== $v) {
+            $this->aOwner = null;
+        }
+
+        return $this;
+    } // setUserId()
 
     /**
      * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
@@ -598,22 +716,53 @@ abstract class Pack implements ActiveRecordInterface
     /**
      * Set the value of [tags] column.
      *
-     * @param string $v new value
+     * @param array $v new value
      * @return $this|\Models\Pack The current object (for fluent API support)
      */
     public function setTags($v)
     {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->tags !== $v) {
-            $this->tags = $v;
+        if ($this->tags_unserialized !== $v) {
+            $this->tags_unserialized = $v;
+            $this->tags = '| ' . implode(' | ', $v) . ' |';
             $this->modifiedColumns[PackTableMap::COL_TAGS] = true;
         }
 
         return $this;
     } // setTags()
+
+    /**
+     * Adds a value to the [tags] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function addTag($value)
+    {
+        $currentArray = $this->getTags();
+        $currentArray []= $value;
+        $this->setTags($currentArray);
+
+        return $this;
+    } // addTag()
+
+    /**
+     * Removes a value from the [tags] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function removeTag($value)
+    {
+        $targetArray = array();
+        foreach ($this->getTags() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setTags($targetArray);
+
+        return $this;
+    } // removeTag()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -700,25 +849,29 @@ abstract class Pack implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PackTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PackTableMap::translateFieldName('Public', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->public = (null !== $col) ? (boolean) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PackTableMap::translateFieldName('Private', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->private = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tags = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PackTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tags = $col;
+            $this->tags_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PackTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : PackTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : PackTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : PackTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -731,7 +884,7 @@ abstract class Pack implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = PackTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = PackTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\Pack'), 0, $e);
@@ -753,6 +906,9 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aOwner !== null && $this->user_id !== $this->aOwner->getId()) {
+            $this->aOwner = null;
+        }
     } // ensureConsistency
 
     /**
@@ -791,6 +947,9 @@ abstract class Pack implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->aOwner = null;
+            $this->collPackPermissions = null;
 
             $this->collFiles = null;
 
@@ -905,6 +1064,18 @@ abstract class Pack implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aOwner !== null) {
+                if ($this->aOwner->isModified() || $this->aOwner->isNew()) {
+                    $affectedRows += $this->aOwner->save($con);
+                }
+                $this->setOwner($this->aOwner);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -914,6 +1085,23 @@ abstract class Pack implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->packPermissionsScheduledForDeletion !== null) {
+                if (!$this->packPermissionsScheduledForDeletion->isEmpty()) {
+                    \Models\PackPermissionQuery::create()
+                        ->filterByPrimaryKeys($this->packPermissionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->packPermissionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPackPermissions !== null) {
+                foreach ($this->collPackPermissions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->filesScheduledForDeletion !== null) {
@@ -968,8 +1156,11 @@ abstract class Pack implements ActiveRecordInterface
         if ($this->isColumnModified(PackTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'description';
         }
-        if ($this->isColumnModified(PackTableMap::COL_PUBLIC)) {
-            $modifiedColumns[':p' . $index++]  = 'public';
+        if ($this->isColumnModified(PackTableMap::COL_PRIVATE)) {
+            $modifiedColumns[':p' . $index++]  = 'private';
+        }
+        if ($this->isColumnModified(PackTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'user_id';
         }
         if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'deleted_at';
@@ -1003,8 +1194,11 @@ abstract class Pack implements ActiveRecordInterface
                     case 'description':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
                         break;
-                    case 'public':
-                        $stmt->bindValue($identifier, (int) $this->public, PDO::PARAM_INT);
+                    case 'private':
+                        $stmt->bindValue($identifier, (int) $this->private, PDO::PARAM_INT);
+                        break;
+                    case 'user_id':
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
                     case 'deleted_at':
                         $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1090,18 +1284,21 @@ abstract class Pack implements ActiveRecordInterface
                 return $this->getDescription();
                 break;
             case 3:
-                return $this->getPublic();
+                return $this->getPrivate();
                 break;
             case 4:
-                return $this->getDeletedAt();
+                return $this->getUserId();
                 break;
             case 5:
-                return $this->getTags();
+                return $this->getDeletedAt();
                 break;
             case 6:
-                return $this->getCreatedAt();
+                return $this->getTags();
                 break;
             case 7:
+                return $this->getCreatedAt();
+                break;
+            case 8:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1137,22 +1334,23 @@ abstract class Pack implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getDescription(),
-            $keys[3] => $this->getPublic(),
-            $keys[4] => $this->getDeletedAt(),
-            $keys[5] => $this->getTags(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[3] => $this->getPrivate(),
+            $keys[4] => $this->getUserId(),
+            $keys[5] => $this->getDeletedAt(),
+            $keys[6] => $this->getTags(),
+            $keys[7] => $this->getCreatedAt(),
+            $keys[8] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
-        }
-
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         if ($result[$keys[7]] instanceof \DateTime) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
+        }
+
+        if ($result[$keys[8]] instanceof \DateTime) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1161,6 +1359,36 @@ abstract class Pack implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aOwner) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'user';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'user';
+                        break;
+                    default:
+                        $key = 'User';
+                }
+
+                $result[$key] = $this->aOwner->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collPackPermissions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'packPermissions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'pack_permissions';
+                        break;
+                    default:
+                        $key = 'PackPermissions';
+                }
+
+                $result[$key] = $this->collPackPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collFiles) {
 
                 switch ($keyType) {
@@ -1220,18 +1448,25 @@ abstract class Pack implements ActiveRecordInterface
                 $this->setDescription($value);
                 break;
             case 3:
-                $this->setPublic($value);
+                $this->setPrivate($value);
                 break;
             case 4:
-                $this->setDeletedAt($value);
+                $this->setUserId($value);
                 break;
             case 5:
-                $this->setTags($value);
+                $this->setDeletedAt($value);
                 break;
             case 6:
-                $this->setCreatedAt($value);
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setTags($value);
                 break;
             case 7:
+                $this->setCreatedAt($value);
+                break;
+            case 8:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1270,19 +1505,22 @@ abstract class Pack implements ActiveRecordInterface
             $this->setDescription($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPublic($arr[$keys[3]]);
+            $this->setPrivate($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setDeletedAt($arr[$keys[4]]);
+            $this->setUserId($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setTags($arr[$keys[5]]);
+            $this->setDeletedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
+            $this->setTags($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setCreatedAt($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setUpdatedAt($arr[$keys[8]]);
         }
     }
 
@@ -1334,8 +1572,11 @@ abstract class Pack implements ActiveRecordInterface
         if ($this->isColumnModified(PackTableMap::COL_DESCRIPTION)) {
             $criteria->add(PackTableMap::COL_DESCRIPTION, $this->description);
         }
-        if ($this->isColumnModified(PackTableMap::COL_PUBLIC)) {
-            $criteria->add(PackTableMap::COL_PUBLIC, $this->public);
+        if ($this->isColumnModified(PackTableMap::COL_PRIVATE)) {
+            $criteria->add(PackTableMap::COL_PRIVATE, $this->private);
+        }
+        if ($this->isColumnModified(PackTableMap::COL_USER_ID)) {
+            $criteria->add(PackTableMap::COL_USER_ID, $this->user_id);
         }
         if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
             $criteria->add(PackTableMap::COL_DELETED_AT, $this->deleted_at);
@@ -1437,7 +1678,8 @@ abstract class Pack implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setDescription($this->getDescription());
-        $copyObj->setPublic($this->getPublic());
+        $copyObj->setPrivate($this->getPrivate());
+        $copyObj->setUserId($this->getUserId());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setTags($this->getTags());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -1447,6 +1689,12 @@ abstract class Pack implements ActiveRecordInterface
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
+
+            foreach ($this->getPackPermissions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPackPermission($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getFiles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1484,6 +1732,57 @@ abstract class Pack implements ActiveRecordInterface
         return $copyObj;
     }
 
+    /**
+     * Declares an association between this object and a ChildUser object.
+     *
+     * @param  ChildUser $v
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setOwner(ChildUser $v = null)
+    {
+        if ($v === null) {
+            $this->setUserId(NULL);
+        } else {
+            $this->setUserId($v->getId());
+        }
+
+        $this->aOwner = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildUser object, it will not be re-added.
+        if ($v !== null) {
+            $v->addPack($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildUser object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildUser The associated ChildUser object.
+     * @throws PropelException
+     */
+    public function getOwner(ConnectionInterface $con = null)
+    {
+        if ($this->aOwner === null && ($this->user_id !== null)) {
+            $this->aOwner = ChildUserQuery::create()->findPk($this->user_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aOwner->addPacks($this);
+             */
+        }
+
+        return $this->aOwner;
+    }
+
 
     /**
      * Initializes a collection based on the name of a relation.
@@ -1495,9 +1794,287 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('PackPermission' == $relationName) {
+            return $this->initPackPermissions();
+        }
         if ('File' == $relationName) {
             return $this->initFiles();
         }
+    }
+
+    /**
+     * Clears out the collPackPermissions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPackPermissions()
+     */
+    public function clearPackPermissions()
+    {
+        $this->collPackPermissions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collPackPermissions collection loaded partially.
+     */
+    public function resetPartialPackPermissions($v = true)
+    {
+        $this->collPackPermissionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collPackPermissions collection.
+     *
+     * By default this just sets the collPackPermissions collection to an empty array (like clearcollPackPermissions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPackPermissions($overrideExisting = true)
+    {
+        if (null !== $this->collPackPermissions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = PackPermissionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collPackPermissions = new $collectionClassName;
+        $this->collPackPermissions->setModel('\Models\PackPermission');
+    }
+
+    /**
+     * Gets an array of ChildPackPermission objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildPack is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     * @throws PropelException
+     */
+    public function getPackPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPackPermissionsPartial && !$this->isNew();
+        if (null === $this->collPackPermissions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPackPermissions) {
+                // return empty collection
+                $this->initPackPermissions();
+            } else {
+                $collPackPermissions = ChildPackPermissionQuery::create(null, $criteria)
+                    ->filterByPack($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collPackPermissionsPartial && count($collPackPermissions)) {
+                        $this->initPackPermissions(false);
+
+                        foreach ($collPackPermissions as $obj) {
+                            if (false == $this->collPackPermissions->contains($obj)) {
+                                $this->collPackPermissions->append($obj);
+                            }
+                        }
+
+                        $this->collPackPermissionsPartial = true;
+                    }
+
+                    return $collPackPermissions;
+                }
+
+                if ($partial && $this->collPackPermissions) {
+                    foreach ($this->collPackPermissions as $obj) {
+                        if ($obj->isNew()) {
+                            $collPackPermissions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPackPermissions = $collPackPermissions;
+                $this->collPackPermissionsPartial = false;
+            }
+        }
+
+        return $this->collPackPermissions;
+    }
+
+    /**
+     * Sets a collection of ChildPackPermission objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $packPermissions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function setPackPermissions(Collection $packPermissions, ConnectionInterface $con = null)
+    {
+        /** @var ChildPackPermission[] $packPermissionsToDelete */
+        $packPermissionsToDelete = $this->getPackPermissions(new Criteria(), $con)->diff($packPermissions);
+
+
+        $this->packPermissionsScheduledForDeletion = $packPermissionsToDelete;
+
+        foreach ($packPermissionsToDelete as $packPermissionRemoved) {
+            $packPermissionRemoved->setPack(null);
+        }
+
+        $this->collPackPermissions = null;
+        foreach ($packPermissions as $packPermission) {
+            $this->addPackPermission($packPermission);
+        }
+
+        $this->collPackPermissions = $packPermissions;
+        $this->collPackPermissionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related PackPermission objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related PackPermission objects.
+     * @throws PropelException
+     */
+    public function countPackPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPackPermissionsPartial && !$this->isNew();
+        if (null === $this->collPackPermissions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPackPermissions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getPackPermissions());
+            }
+
+            $query = ChildPackPermissionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPack($this)
+                ->count($con);
+        }
+
+        return count($this->collPackPermissions);
+    }
+
+    /**
+     * Method called to associate a ChildPackPermission object to this object
+     * through the ChildPackPermission foreign key attribute.
+     *
+     * @param  ChildPackPermission $l ChildPackPermission
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function addPackPermission(ChildPackPermission $l)
+    {
+        if ($this->collPackPermissions === null) {
+            $this->initPackPermissions();
+            $this->collPackPermissionsPartial = true;
+        }
+
+        if (!$this->collPackPermissions->contains($l)) {
+            $this->doAddPackPermission($l);
+
+            if ($this->packPermissionsScheduledForDeletion and $this->packPermissionsScheduledForDeletion->contains($l)) {
+                $this->packPermissionsScheduledForDeletion->remove($this->packPermissionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildPackPermission $packPermission The ChildPackPermission object to add.
+     */
+    protected function doAddPackPermission(ChildPackPermission $packPermission)
+    {
+        $this->collPackPermissions[]= $packPermission;
+        $packPermission->setPack($this);
+    }
+
+    /**
+     * @param  ChildPackPermission $packPermission The ChildPackPermission object to remove.
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function removePackPermission(ChildPackPermission $packPermission)
+    {
+        if ($this->getPackPermissions()->contains($packPermission)) {
+            $pos = $this->collPackPermissions->search($packPermission);
+            $this->collPackPermissions->remove($pos);
+            if (null === $this->packPermissionsScheduledForDeletion) {
+                $this->packPermissionsScheduledForDeletion = clone $this->collPackPermissions;
+                $this->packPermissionsScheduledForDeletion->clear();
+            }
+            $this->packPermissionsScheduledForDeletion[]= clone $packPermission;
+            $packPermission->setPack(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Pack is new, it will return
+     * an empty collection; or if this Pack has previously
+     * been saved, it will retrieve related PackPermissions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Pack.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     */
+    public function getPackPermissionsJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildPackPermissionQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getPackPermissions($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Pack is new, it will return
+     * an empty collection; or if this Pack has previously
+     * been saved, it will retrieve related PackPermissions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Pack.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildPackPermission[] List of ChildPackPermission objects
+     */
+    public function getPackPermissionsJoinGroup(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildPackPermissionQuery::create(null, $criteria);
+        $query->joinWith('Group', $joinBehavior);
+
+        return $this->getPackPermissions($query, $con);
     }
 
     /**
@@ -1732,12 +2309,17 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aOwner) {
+            $this->aOwner->removePack($this);
+        }
         $this->id = null;
         $this->name = null;
         $this->description = null;
-        $this->public = null;
+        $this->private = null;
+        $this->user_id = null;
         $this->deleted_at = null;
         $this->tags = null;
+        $this->tags_unserialized = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;
@@ -1758,6 +2340,11 @@ abstract class Pack implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collPackPermissions) {
+                foreach ($this->collPackPermissions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collFiles) {
                 foreach ($this->collFiles as $o) {
                     $o->clearAllReferences($deep);
@@ -1765,7 +2352,9 @@ abstract class Pack implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collPackPermissions = null;
         $this->collFiles = null;
+        $this->aOwner = null;
     }
 
     /**
@@ -1790,6 +2379,102 @@ abstract class Pack implements ActiveRecordInterface
         $this->modifiedColumns[PackTableMap::COL_UPDATED_AT] = true;
 
         return $this;
+    }
+
+    // validate behavior
+
+    /**
+     * Configure validators constraints. The Validator object uses this method
+     * to perform object validation.
+     *
+     * @param ClassMetadata $metadata
+     */
+    static public function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('name', new Length(array ('max' => 32,'maxMessage' => 'Maximal pack name length is {{ limit }} characters.',)));
+        $metadata->addPropertyConstraint('name', new Regex(array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Pack name should not contain whitespaces.',)));
+        $metadata->addPropertyConstraint('name', new NotBlank(array ('message' => 'Pack name should not be blank.',)));
+        $metadata->addPropertyConstraint('description', new Length(array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',)));
+    }
+
+    /**
+     * Validates the object and all objects related to this table.
+     *
+     * @see        getValidationFailures()
+     * @param      ValidatorInterface|null $validator A Validator class instance
+     * @return     boolean Whether all objects pass validation.
+     */
+    public function validate(ValidatorInterface $validator = null)
+    {
+        if (null === $validator) {
+            $validator = new RecursiveValidator(
+                new ExecutionContextFactory(new IdentityTranslator()),
+                new LazyLoadingMetadataFactory(new StaticMethodLoader()),
+                new ConstraintValidatorFactory()
+            );
+        }
+
+        $failureMap = new ConstraintViolationList();
+
+        if (!$this->alreadyInValidation) {
+            $this->alreadyInValidation = true;
+            $retval = null;
+
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            // If validate() method exists, the validate-behavior is configured for related object
+            if (method_exists($this->aOwner, 'validate')) {
+                if (!$this->aOwner->validate($validator)) {
+                    $failureMap->addAll($this->aOwner->getValidationFailures());
+                }
+            }
+
+            $retval = $validator->validate($this);
+            if (count($retval) > 0) {
+                $failureMap->addAll($retval);
+            }
+
+            if (null !== $this->collPackPermissions) {
+                foreach ($this->collPackPermissions as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collFiles) {
+                foreach ($this->collFiles as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+
+            $this->alreadyInValidation = false;
+        }
+
+        $this->validationFailures = $failureMap;
+
+        return (Boolean) (!(count($this->validationFailures) > 0));
+
+    }
+
+    /**
+     * Gets any ConstraintViolation objects that resulted from last call to validate().
+     *
+     *
+     * @return     object ConstraintViolationList
+     * @see        validate()
+     */
+    public function getValidationFailures()
+    {
+        return $this->validationFailures;
     }
 
     /**

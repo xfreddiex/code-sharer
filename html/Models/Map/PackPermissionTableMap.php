@@ -2,8 +2,8 @@
 
 namespace Models\Map;
 
-use Models\User;
-use Models\UserQuery;
+use Models\PackPermission;
+use Models\PackPermissionQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'user' table.
+ * This class defines the structure of the 'pack_permission' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class UserTableMap extends TableMap
+class PackPermissionTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class UserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.Map.UserTableMap';
+    const CLASS_NAME = 'Models.Map.PackPermissionTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'user';
+    const TABLE_NAME = 'pack_permission';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Models\\User';
+    const OM_CLASS = '\\Models\\PackPermission';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Models.User';
+    const CLASS_DEFAULT = 'Models.PackPermission';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,77 +69,61 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'user.id';
+    const COL_ID = 'pack_permission.id';
 
     /**
-     * the column name for the username field
+     * the column name for the permission_type field
      */
-    const COL_USERNAME = 'user.username';
+    const COL_PERMISSION_TYPE = 'pack_permission.permission_type';
 
     /**
-     * the column name for the name field
+     * the column name for the belonger_id field
      */
-    const COL_NAME = 'user.name';
+    const COL_BELONGER_ID = 'pack_permission.belonger_id';
 
     /**
-     * the column name for the surname field
+     * the column name for the belonger_type field
      */
-    const COL_SURNAME = 'user.surname';
+    const COL_BELONGER_TYPE = 'pack_permission.belonger_type';
 
     /**
-     * the column name for the password field
+     * the column name for the pack_id field
      */
-    const COL_PASSWORD = 'user.password';
-
-    /**
-     * the column name for the email field
-     */
-    const COL_EMAIL = 'user.email';
-
-    /**
-     * the column name for the avatar_path field
-     */
-    const COL_AVATAR_PATH = 'user.avatar_path';
-
-    /**
-     * the column name for the password_reset_token field
-     */
-    const COL_PASSWORD_RESET_TOKEN = 'user.password_reset_token';
-
-    /**
-     * the column name for the email_confirm_token field
-     */
-    const COL_EMAIL_CONFIRM_TOKEN = 'user.email_confirm_token';
-
-    /**
-     * the column name for the email_confirmed_at field
-     */
-    const COL_EMAIL_CONFIRMED_AT = 'user.email_confirmed_at';
+    const COL_PACK_ID = 'pack_permission.pack_id';
 
     /**
      * the column name for the deleted_at field
      */
-    const COL_DELETED_AT = 'user.deleted_at';
+    const COL_DELETED_AT = 'pack_permission.deleted_at';
 
     /**
      * the column name for the created_at field
      */
-    const COL_CREATED_AT = 'user.created_at';
+    const COL_CREATED_AT = 'pack_permission.created_at';
 
     /**
      * the column name for the updated_at field
      */
-    const COL_UPDATED_AT = 'user.updated_at';
+    const COL_UPDATED_AT = 'pack_permission.updated_at';
 
     /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
+
+    /** The enumerated values for the permission_type field */
+    const COL_PERMISSION_TYPE_VIEW = 'view';
+    const COL_PERMISSION_TYPE_EDIT = 'edit';
+    const COL_PERMISSION_TYPE_REMOVE = 'remove';
+
+    /** The enumerated values for the belonger_type field */
+    const COL_BELONGER_TYPE_GROUP = 'group';
+    const COL_BELONGER_TYPE_USER = 'user';
 
     /**
      * holds an array of fieldnames
@@ -148,11 +132,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Name', 'Surname', 'Password', 'Email', 'AvatarPath', 'PasswordResetToken', 'EmailConfirmToken', 'EmailConfirmedAt', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatarPath', 'passwordResetToken', 'emailConfirmToken', 'emailConfirmedAt', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_NAME, UserTableMap::COL_SURNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_EMAIL, UserTableMap::COL_AVATAR_PATH, UserTableMap::COL_PASSWORD_RESET_TOKEN, UserTableMap::COL_EMAIL_CONFIRM_TOKEN, UserTableMap::COL_EMAIL_CONFIRMED_AT, UserTableMap::COL_DELETED_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'name', 'surname', 'password', 'email', 'avatar_path', 'password_reset_token', 'email_confirm_token', 'email_confirmed_at', 'deleted_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id', 'PermissionType', 'BelongerId', 'BelongerType', 'PackId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'permissionType', 'belongerId', 'belongerType', 'packId', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID, PackPermissionTableMap::COL_PERMISSION_TYPE, PackPermissionTableMap::COL_BELONGER_ID, PackPermissionTableMap::COL_BELONGER_TYPE, PackPermissionTableMap::COL_PACK_ID, PackPermissionTableMap::COL_DELETED_AT, PackPermissionTableMap::COL_CREATED_AT, PackPermissionTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'permission_type', 'belonger_id', 'belonger_type', 'pack_id', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -162,12 +146,46 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Name' => 2, 'Surname' => 3, 'Password' => 4, 'Email' => 5, 'AvatarPath' => 6, 'PasswordResetToken' => 7, 'EmailConfirmToken' => 8, 'EmailConfirmedAt' => 9, 'DeletedAt' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatarPath' => 6, 'passwordResetToken' => 7, 'emailConfirmToken' => 8, 'emailConfirmedAt' => 9, 'deletedAt' => 10, 'createdAt' => 11, 'updatedAt' => 12, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_NAME => 2, UserTableMap::COL_SURNAME => 3, UserTableMap::COL_PASSWORD => 4, UserTableMap::COL_EMAIL => 5, UserTableMap::COL_AVATAR_PATH => 6, UserTableMap::COL_PASSWORD_RESET_TOKEN => 7, UserTableMap::COL_EMAIL_CONFIRM_TOKEN => 8, UserTableMap::COL_EMAIL_CONFIRMED_AT => 9, UserTableMap::COL_DELETED_AT => 10, UserTableMap::COL_CREATED_AT => 11, UserTableMap::COL_UPDATED_AT => 12, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'name' => 2, 'surname' => 3, 'password' => 4, 'email' => 5, 'avatar_path' => 6, 'password_reset_token' => 7, 'email_confirm_token' => 8, 'email_confirmed_at' => 9, 'deleted_at' => 10, 'created_at' => 11, 'updated_at' => 12, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'PermissionType' => 1, 'BelongerId' => 2, 'BelongerType' => 3, 'PackId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'permissionType' => 1, 'belongerId' => 2, 'belongerType' => 3, 'packId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID => 0, PackPermissionTableMap::COL_PERMISSION_TYPE => 1, PackPermissionTableMap::COL_BELONGER_ID => 2, PackPermissionTableMap::COL_BELONGER_TYPE => 3, PackPermissionTableMap::COL_PACK_ID => 4, PackPermissionTableMap::COL_DELETED_AT => 5, PackPermissionTableMap::COL_CREATED_AT => 6, PackPermissionTableMap::COL_UPDATED_AT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'permission_type' => 1, 'belonger_id' => 2, 'belonger_type' => 3, 'pack_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
+
+    /** The enumerated values for this table */
+    protected static $enumValueSets = array(
+                PackPermissionTableMap::COL_PERMISSION_TYPE => array(
+                            self::COL_PERMISSION_TYPE_VIEW,
+            self::COL_PERMISSION_TYPE_EDIT,
+            self::COL_PERMISSION_TYPE_REMOVE,
+        ),
+                PackPermissionTableMap::COL_BELONGER_TYPE => array(
+                            self::COL_BELONGER_TYPE_GROUP,
+            self::COL_BELONGER_TYPE_USER,
+        ),
+    );
+
+    /**
+     * Gets the list of values for all ENUM and SET columns
+     * @return array
+     */
+    public static function getValueSets()
+    {
+      return static::$enumValueSets;
+    }
+
+    /**
+     * Gets the list of values for an ENUM or SET column
+     * @param string $colname
+     * @return array list of possible values for the column
+     */
+    public static function getValueSet($colname)
+    {
+        $valueSets = self::getValueSets();
+
+        return $valueSets[$colname];
+    }
 
     /**
      * Initialize the table attributes and columns
@@ -179,23 +197,28 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('user');
-        $this->setPhpName('User');
+        $this->setName('pack_permission');
+        $this->setPhpName('PackPermission');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Models\\User');
+        $this->setClassName('\\Models\\PackPermission');
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('username', 'Username', 'VARCHAR', true, 32, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', false, 50, null);
-        $this->addColumn('surname', 'Surname', 'VARCHAR', false, 50, null);
-        $this->addColumn('password', 'Password', 'VARCHAR', true, 60, null);
-        $this->addColumn('email', 'Email', 'VARCHAR', true, 70, null);
-        $this->addColumn('avatar_path', 'AvatarPath', 'VARCHAR', false, 70, null);
-        $this->addColumn('password_reset_token', 'PasswordResetToken', 'VARCHAR', false, 64, null);
-        $this->addColumn('email_confirm_token', 'EmailConfirmToken', 'VARCHAR', false, 64, null);
-        $this->addColumn('email_confirmed_at', 'EmailConfirmedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('permission_type', 'PermissionType', 'ENUM', true, null, null);
+        $this->getColumn('permission_type')->setValueSet(array (
+  0 => 'view',
+  1 => 'edit',
+  2 => 'remove',
+));
+        $this->addForeignKey('belonger_id', 'BelongerId', 'INTEGER', 'user', 'id', true, null, null);
+        $this->addForeignKey('belonger_id', 'BelongerId', 'INTEGER', 'group', 'id', true, null, null);
+        $this->addColumn('belonger_type', 'BelongerType', 'ENUM', true, null, null);
+        $this->getColumn('belonger_type')->setValueSet(array (
+  0 => 'group',
+  1 => 'user',
+));
+        $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
@@ -206,41 +229,27 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Identity', '\\Models\\Identity', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, 'Identities', false);
-        $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':belonger_id',
     1 => ':id',
   ),
-), null, null, 'PackPermissions', false);
-        $this->addRelation('GroupPermission', '\\Models\\GroupPermission', RelationMap::ONE_TO_MANY, array (
+), null, null, null, false);
+        $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':belonger_id',
     1 => ':id',
   ),
-), null, null, 'GroupPermissions', false);
-        $this->addRelation('Pack', '\\Models\\Pack', RelationMap::ONE_TO_MANY, array (
+), null, null, null, false);
+        $this->addRelation('Pack', '\\Models\\Pack', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, 'Packs', false);
-        $this->addRelation('Group', '\\Models\\Group', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, 'Groups', false);
+), null, null, null, false);
     } // buildRelations()
 
     /**
@@ -253,7 +262,6 @@ class UserTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-            'validate' => array('rule1' => array ('column' => 'username','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal username length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'username','validator' => 'NotBlank','options' => array ('message' => 'Username should not be blank.',),), 'rule3' => array ('column' => 'username','validator' => 'Uniqueness','options' => array ('message' => 'Username already exists.',),), 'rule4' => array ('column' => 'username','validator' => 'Regex','options' => array ('pattern' => '/^[a-zA-Z0-9]*$/','match' => true,'message' => 'Username must contain only alphanumeric characters.',),), 'rule5' => array ('column' => 'email','validator' => 'Length','options' => array ('max' => 70,'maxMessage' => 'Maximal email address length is {{ limit }} characters.',),), 'rule6' => array ('column' => 'email','validator' => 'NotBlank','options' => array ('message' => 'Email address should not be blank.',),), 'rule7' => array ('column' => 'email','validator' => 'Uniqueness','options' => array ('message' => 'Email address is already used.',),), 'rule8' => array ('column' => 'email','validator' => 'Email','options' => array ('message' => 'Entered email address must be valid.',),), 'rule9' => array ('column' => 'password','validator' => 'Length','options' => array ('min' => 6,'max' => 60,'minMessage' => 'Password must contain at least {{ limit }} characters.','maxMessage' => 'Maximal password length is {{ limit }} characters.',),), 'rule10' => array ('column' => 'password','validator' => 'NotBlank','options' => array ('message' => 'Password should not be blank.',),), 'rule11' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal name length is {{ limit }} characters.',),), 'rule12' => array ('column' => 'surname','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal surname length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
 
@@ -314,7 +322,7 @@ class UserTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserTableMap::CLASS_DEFAULT : UserTableMap::OM_CLASS;
+        return $withPrefix ? PackPermissionTableMap::CLASS_DEFAULT : PackPermissionTableMap::OM_CLASS;
     }
 
     /**
@@ -328,22 +336,22 @@ class UserTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (User object, last column rank)
+     * @return array           (PackPermission object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+        $key = PackPermissionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = PackPermissionTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + PackPermissionTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserTableMap::OM_CLASS;
-            /** @var User $obj */
+            $cls = PackPermissionTableMap::OM_CLASS;
+            /** @var PackPermission $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserTableMap::addInstanceToPool($obj, $key);
+            PackPermissionTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -366,18 +374,18 @@ class UserTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+            $key = PackPermissionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = PackPermissionTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var User $obj */
+                /** @var PackPermission $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserTableMap::addInstanceToPool($obj, $key);
+                PackPermissionTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -398,30 +406,20 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_SURNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(UserTableMap::COL_AVATAR_PATH);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD_RESET_TOKEN);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_CONFIRM_TOKEN);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_CONFIRMED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_DELETED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_ID);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_PERMISSION_TYPE);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_BELONGER_ID);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_BELONGER_TYPE);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_PACK_ID);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_DELETED_AT);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.username');
-            $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.surname');
-            $criteria->addSelectColumn($alias . '.password');
-            $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.avatar_path');
-            $criteria->addSelectColumn($alias . '.password_reset_token');
-            $criteria->addSelectColumn($alias . '.email_confirm_token');
-            $criteria->addSelectColumn($alias . '.email_confirmed_at');
+            $criteria->addSelectColumn($alias . '.permission_type');
+            $criteria->addSelectColumn($alias . '.belonger_id');
+            $criteria->addSelectColumn($alias . '.belonger_type');
+            $criteria->addSelectColumn($alias . '.pack_id');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
@@ -437,7 +435,7 @@ class UserTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME)->getTable(UserTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(PackPermissionTableMap::DATABASE_NAME)->getTable(PackPermissionTableMap::TABLE_NAME);
     }
 
     /**
@@ -445,16 +443,16 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(PackPermissionTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(PackPermissionTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new PackPermissionTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a User or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a PackPermission or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or User object or primary key or array of primary keys
+     * @param mixed               $values Criteria or PackPermission object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -465,27 +463,27 @@ class UserTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PackPermissionTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Models\User) { // it's a model object
+        } elseif ($values instanceof \Models\PackPermission) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(PackPermissionTableMap::DATABASE_NAME);
+            $criteria->add(PackPermissionTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = PackPermissionQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            UserTableMap::clearInstancePool();
+            PackPermissionTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                UserTableMap::removeInstanceFromPool($singleval);
+                PackPermissionTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -493,20 +491,20 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the user table.
+     * Deletes all rows from the pack_permission table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserQuery::create()->doDeleteAll($con);
+        return PackPermissionQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a User or Criteria object.
+     * Performs an INSERT on the database, given a PackPermission or Criteria object.
      *
-     * @param mixed               $criteria Criteria or User object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or PackPermission object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -515,22 +513,22 @@ class UserTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PackPermissionTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from User object
+            $criteria = $criteria->buildCriteria(); // build Criteria from PackPermission object
         }
 
-        if ($criteria->containsKey(UserTableMap::COL_ID) && $criteria->keyContainsValue(UserTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::COL_ID.')');
+        if ($criteria->containsKey(PackPermissionTableMap::COL_ID) && $criteria->keyContainsValue(PackPermissionTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PackPermissionTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = PackPermissionQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -539,7 +537,7 @@ class UserTableMap extends TableMap
         });
     }
 
-} // UserTableMap
+} // PackPermissionTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserTableMap::buildTableMap();
+PackPermissionTableMap::buildTableMap();

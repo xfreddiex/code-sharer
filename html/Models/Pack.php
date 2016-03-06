@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Base\Pack as BasePack;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Skeleton subclass for representing a row from the 'pack' table.
@@ -16,5 +17,10 @@ use Models\Base\Pack as BasePack;
  */
 class Pack extends BasePack
 {
+	public function preSave(ConnectionInterface $con = null){
+		return $this->validate();
+	}
+
+	
 
 }

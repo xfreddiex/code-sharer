@@ -11,13 +11,24 @@ class UserController extends BaseController{
 
 	public function __construct(){
 		parent::__construct();
-		$this->data["userLogged"] = false;
 		$this->data["userAuthorized"] = false;
 		$this->addBefore("update", array("authorization"));
 	}
 
+	protected function user($params){
+		$this->data["user"] = UserQuery::create()->findOneByUsername($params[0]);
+		if($this->data["user"] == $this->data["loggedUser"])
+			redirect("/profile");
+		if($this->data["user"])
+			$this->viewFile($this->template);
+		else{
+			$this->sendFlashMessage('User "'.$params[0].'" does not exists.', "error");
+			redirect("/");
+		}
+	}
+
 	protected function profile(){
-		if($this->data["userLogged"]){
+		if($this->data["loggedUser"]){
 			$this->viewFile($this->template);	
 		}
 		else{
@@ -27,7 +38,7 @@ class UserController extends BaseController{
 	}
 
 	protected function settings(){
-		if($this->data["userLogged"]){
+		if($this->data["loggedUser"]){
 			$this->viewFile($this->template);	
 		}
 		else{
@@ -42,7 +53,7 @@ class UserController extends BaseController{
 
 	protected function update(){
 		if($this->data["userAuthorized"]){
-			$user = $this->data["user"];
+			$user = $this->data["loggedUser"];
 			if(isset($_POST["newName"]))
 				$user->setName($_POST["newName"]);
 			if(isset($_POST["newSurname"]))
@@ -70,14 +81,14 @@ class UserController extends BaseController{
 	}
 
 	protected function updateAvatar(){
-		if(isset($_POST["newAvatar"]) && $this->data["userLogged"]){
+		if(isset($_POST["newAvatar"]) && $this->data["loggedUser"]){
 			$data = explode(',', $_POST["newAvatar"]);
 			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
 				$img = imagecreatefromstring(base64_decode($data[1]));
-				$nameToDelete = $this->data["user"]->getAvatarPath();
+				$nameToDelete = $this->data["loggedUser"]->getAvatarPath();
 				var_dump($nameToDelete);
 				$name = md5(uniqid()).".png";
-				$this->data["user"]->setAvatarPath($name)->save();
+				$this->data["loggedUser"]->setAvatarPath($name)->save();
 
 				$dir = "Includes/images/avatars/250x250/";
 				if($nameToDelete)
@@ -90,7 +101,7 @@ class UserController extends BaseController{
 				imagepng(resizeImg($img, 40, 40), $dir.$name);
 
 				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
-				//redirect($this->data["referersURI"]);
+				redirect($this->data["referersURI"]);
 			}
 			else
 				setHTTPStatusCode("400");
@@ -100,7 +111,7 @@ class UserController extends BaseController{
 	}
 
 	protected function authorization(){
-		$this->data["userAuthorized"] = ($this->data["userLogged"] && isset($_POST["authorizationPassword"]) && $this->data["user"]->checkPassword($_POST["authorizationPassword"]));
+		$this->data["userAuthorized"] = ($this->data["loggedUser"] && isset($_POST["authorizationPassword"]) && $this->data["loggedUser"]->checkPassword($_POST["authorizationPassword"]));
 	}
 
 	protected function signUp(){
@@ -111,6 +122,7 @@ class UserController extends BaseController{
 				"Username" => $_POST["username"], 
 				"Password" => $_POST["password"]
 			));
+			
 			if($user->save() <= 0){
     			$failures = $user->getValidationFailures();
 				if(count($failures) > 0){
@@ -214,33 +226,4 @@ class UserController extends BaseController{
 			setHTTPStatusCode("400");
 	}
 
-	protected function usernameExistsJSON(){
-		setContentType("json");
-		if(isset($_GET["username"])){
-			$this->viewString(json_encode(array("usernameExists" => $this->usernameExists($_GET["username"]))));
-			return;
-		}
-		setHTTPStatusCode("400");
-	}
-
-	protected function emailExistsJSON(){
-		setContentType("json");
-		if(isset($_GET["email"])){
-			$this->viewString(json_encode(array("emailExists" => $this->emailExists($_GET["email"]))));
-			return;
-		}
-		setHTTPStatusCode("400");
-	}
-
-	protected function usernameExists($username){
-		return UserQuery::create()
-			->filterByUsername($username)
-			->count() != 0;
-	}
-
-	protected function emailExists($email){
-		return UserQuery::create()
-			->filterByEmail($email)
-			->count() != 0;
-	}
 }
