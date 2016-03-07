@@ -29,6 +29,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
+use Propel\Runtime\Validator\Constraints\Uniqueness;
 use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -2394,6 +2395,7 @@ abstract class Pack implements ActiveRecordInterface
         $metadata->addPropertyConstraint('name', new Length(array ('max' => 32,'maxMessage' => 'Maximal pack name length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('name', new Regex(array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Pack name should not contain whitespaces.',)));
         $metadata->addPropertyConstraint('name', new NotBlank(array ('message' => 'Pack name should not be blank.',)));
+        $metadata->addPropertyConstraint('Array', new Uniqueness(array ('message' => 'You already have pack with this name.',)));
         $metadata->addPropertyConstraint('description', new Length(array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',)));
     }
 

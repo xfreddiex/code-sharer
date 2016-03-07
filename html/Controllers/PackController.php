@@ -8,6 +8,10 @@ use Models\Group;
 use Models\GroupQuery;
 use Models\Pack;
 use Models\PackQuery;
+use Models\UserPermission;
+use Models\UserPermissionQuery;
+use Models\GroupPermission;
+use Models\GroupPermissionQuery;
 
 class PackController extends BaseController{
 
@@ -15,12 +19,11 @@ class PackController extends BaseController{
 		parent::__construct();
 	}
 
-	protected function pack($params){
-		$this->data["pack"] = PackQuery::create()->findPK($params[0]);
+	protected function show($params){
+		$this->data["pack"] = PackQuery::create()->useOwnerQuery()->filterByUsername($params["username"])->endUse()->filterByName($params["packname"])->findOne();
 		if($this->data["pack"]){
-			echo "gg";
+			$this->viewFile($this->template);
 		}
-
 	}
 
 	protected function newPack(){	
@@ -46,7 +49,7 @@ class PackController extends BaseController{
 				if(isset($_POST["description"]))
 					$pack->setDescription($_POST["description"]);
 				if(isset($_POST["tags"])){
-					$tags = array_map("trim", explode("|", $_POST["tags"]));
+					$tags = array_map("trim", explode(",", $_POST["tags"]));
 					$pack->setTags($tags);
 				}
 
@@ -107,32 +110,4 @@ class PackController extends BaseController{
 			setHTTPStatusCode("400");
 	}
 
-	protected function updatePackPermissions(){
-		if($this->data["loggedUser"]){
-			$user = $this->data["loggedUser"];
-			if(isset($_POST["newName"]))
-				$user->setName($_POST["newName"]);
-			if(isset($_POST["newSurname"]))
-				$user->setSurname($_POST["newSurname"]);
-			if(isset($_POST["newEmail"]) && $_POST["newEmail"])
-				$user->setEmail($_POST["newEmail"]);
-			if(isset($_POST["newPassword"]) && $_POST["newPassword"])
-				$user->setPassword($_POST["newPassword"]);
-
-			if($user->save() <= 0){
-    			$failures = $user->getValidationFailures();
-				if(count($failures) > 0){
-					foreach($failures as $failure){
-						$this->sendFlashMessage("User data has not been changeg. ".$failure->getMessage(), "error");
-					}
-				}
-			}
-			else
-				$this->sendFlashMessage("User data has been successfuly updated.", "success");
-		}
-		else{
-			$this->sendFlashMessage("You have not been authorized to change user data.", "error");
-		}
-		redirect(getReferersURIEnd());
-	}
 }

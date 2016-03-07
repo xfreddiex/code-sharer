@@ -115,6 +115,11 @@
             <reference local="user_id" foreign="id"/>
         </foreign-key>
 
+        <unique>
+            <unique-column name="user_id" />
+            <unique-column name="name" />
+        </unique>
+
         <behavior name="validate">
             <parameter name="rule1" value='{column: name, validator: Length, options: {max : 32, maxMessage: "Maximal pack name length is {{ limit }} characters."}}' />
             <parameter name="rule2" value='{column: name, validator: Regex, options: {pattern: "/^[^\\s]*$/", match: true, message: "Pack name should not contain whitespaces."}}' />

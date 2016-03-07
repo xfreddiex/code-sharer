@@ -1,12 +1,15 @@
 <div  class="new-pack-wrapper">
 	<div class="container">
-		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<?php $this->viewFile('/Views/miscellaneous/flash_message.phtml'); ?>
 		<h1>Add new pack</h1>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<div class="row">
-					<form action="/create-pack" method="POST" class="form-horizontal" id="new-pack-form">
-						<div class="col-sm-6">
+
+		<form action="/create-pack" method="POST" class="form-horizontal" id="new-pack-form">
+			
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h2>Pack information</h2>
+						</div>
+						<div class="panel-body">
 							<div class="form-group">
 								<label for="name" class="col-sm-3 control-label">Pack name</label>
 								<div class="col-sm-9">
@@ -37,18 +40,16 @@
 									Sets your pack to private.
 								</p>
 							</div>
-							<div class="form-group">
-								<div class="col-sm-offset-8 col-sm-4">
-									<button type="submit" class="btn btn-success btn-block">Save</button>
-								</div>
-							</div>
-						</form>
+						</div>
 					</div>
-					<div class="col-sm-6">
+			<hr />
+					<div class="form-group">
+						<div class="col-sm-offset-8 col-sm-4">
+							<button type="submit" class="btn btn-success btn-block">Save</button>
+						</div>
 					</div>
-				</div>
-			</div>
-		</div>
+		</form>
+
 	</div>
 
 </div>

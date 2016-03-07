@@ -1,0 +1,58 @@
+<div  class="pack-wrapper">
+	<div class="container">
+		<?php $this->viewFile('/Views/miscellaneous/flash_message.phtml'); ?>
+		<h1><?=$pack->getName()?></h1>
+		<div class="row">
+			<div class="col-sm-12 col-md-4 col-lg-3">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-sm-5 text-right">
+								<p class="text-rigth">Owner</p>
+							</div>
+							<div class="col-sm-7">
+								<strong><?=$pack->getOwner()->getUsername()?></strong>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-5 text-rigth">
+								<p class="text-right">Created</p>
+							</div>
+							<div class="col-sm-7">
+								<strong><?=$pack->getCreatedAt("j M o")?></strong>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-5 text-right">
+								<p class="text-rigth">Updated</p>
+							</div>
+							<div class="col-sm-7">
+								<strong><?=$pack->getUpdatedAt("j M o")?></strong>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-12 col-md-8 col-lg-9">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2>Description</h2>
+					</div>
+					<div class="panel-body">
+						<p><?=$pack->getDescription()?></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default" id="user-info">
+			<div class="panel-heading">
+				<h2>Files</h2>
+			</div>
+			<div class="panel-body">
+				
+			</div>
+		</div>
+	</div>
+
+</div>

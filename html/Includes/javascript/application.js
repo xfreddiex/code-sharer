@@ -3,7 +3,7 @@ $(document).ready(function(){
 	var settingsValidator = new Validator($("#settings-form"), "/user-validate-one");
 	var newPackValidator = new Validator($("#new-pack-form"), "/pack-validate-one");
 
-	$("textarea").click(function(){
+	/*$("textarea").click(function(){
 		$("h1").text($('textarea[name="tags"]').val());
-	});
+	});*/
 });

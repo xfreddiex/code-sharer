@@ -24,7 +24,8 @@ class Router{
 				for($i = 0; $i < count($route_uri); $i++){
 					
 					if(preg_match('/\[.+\]/', $route_uri[$i])){
-						array_push($route["params"], $uri[$i]);
+						$paramName = rtrim(ltrim($route_uri[$i], "["), "]");
+						$route["params"][$paramName] = $uri[$i];
 					}
 					else if($route_uri[$i] != $uri[$i])
 						$ok = false;

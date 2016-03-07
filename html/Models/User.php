@@ -51,12 +51,12 @@ class User extends BaseUser
 	}
 
 	public function getAvatar250(){
-		$dir = "Includes/images/avatars/250x250/";
+		$dir = "/Includes/images/avatars/250x250/";
 		return $dir.(file_exists($dir.$this->avatar_path) && is_file($dir.$this->avatar_path) ? $this->avatar_path : "default.png");
 	}
 
 	public function getAvatar40(){
-		$dir = "Includes/images/avatars/40x40/";
+		$dir = "/Includes/images/avatars/40x40/";
 		return $dir.(file_exists($dir.$this->avatar_path) && is_file($dir.$this->avatar_path) ? $this->avatar_path : "default.png");
 	}
 }

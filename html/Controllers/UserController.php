@@ -15,7 +15,7 @@ class UserController extends BaseController{
 		$this->addBefore("update", array("authorization"));
 	}
 
-	protected function user($params){
+	protected function show($params){
 		$this->data["user"] = UserQuery::create()->findOneByUsername($params[0]);
 		if($this->data["user"] == $this->data["loggedUser"])
 			redirect("/profile");
@@ -63,7 +63,7 @@ class UserController extends BaseController{
 			if(isset($_POST["newPassword"]) && $_POST["newPassword"])
 				$user->setPassword($_POST["newPassword"]);
 
-			if($user->save() <= 0){
+			if($user->save()){
     			$failures = $user->getValidationFailures();
 				if(count($failures) > 0){
 					foreach($failures as $failure){
@@ -90,12 +90,12 @@ class UserController extends BaseController{
 				$name = md5(uniqid()).".png";
 				$this->data["loggedUser"]->setAvatarPath($name)->save();
 
-				$dir = "Includes/images/avatars/250x250/";
+				$dir = "/Includes/images/avatars/250x250/";
 				if($nameToDelete)
 					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 250, 250), $dir.$name);
 		
-				$dir = "Includes/images/avatars/40x40/";
+				$dir = "/Includes/images/avatars/40x40/";
 				if($nameToDelete)
 					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 40, 40), $dir.$name);
@@ -123,7 +123,7 @@ class UserController extends BaseController{
 				"Password" => $_POST["password"]
 			));
 			
-			if($user->save() <= 0){
+			if($user->save()){
     			$failures = $user->getValidationFailures();
 				if(count($failures) > 0){
 					foreach($failures as $failure){

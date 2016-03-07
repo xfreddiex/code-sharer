@@ -33,10 +33,13 @@ h1{
 	font-size: 32px;
 	font-weight: bold;
 	margin-top: 0px;
+	margin-bottom: 15px;
 }
 h2{
 	font-size: 22px;
 	font-weight: bold;
+	margin: 0px;
+	margin-bottom: 10px;
 }
 h3{
 	font-size: 16px;
@@ -53,6 +56,18 @@ p{
 .link:hover{
 	color: #014450;
 	text-decoration: none;
+}
+hr{
+	border-top: 2px solid #f0f0f0;
+}
+.text-center{
+	text-align: center !important;
+}
+.text-left{
+	text-align: left !important;
+}
+.text-right{
+	text-align: right !important;
 }
 
 /*----*/
@@ -263,7 +278,7 @@ p{
 .panel{
 	border-radius: 4px;
 	box-shadow: none;
-	h2{
+	.panel-heading h2{
 		margin: 0px;
 	}
 }
