@@ -130,7 +130,7 @@ abstract class Group implements ActiveRecordInterface
     /**
      * @var        ChildUser
      */
-    protected $aOwner;
+    protected $aUser;
 
     /**
      * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
@@ -614,8 +614,8 @@ abstract class Group implements ActiveRecordInterface
             $this->modifiedColumns[GroupTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aOwner !== null && $this->aOwner->getId() !== $v) {
-            $this->aOwner = null;
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+            $this->aUser = null;
         }
 
         return $this;
@@ -779,8 +779,8 @@ abstract class Group implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aOwner !== null && $this->user_id !== $this->aOwner->getId()) {
-            $this->aOwner = null;
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+            $this->aUser = null;
         }
     } // ensureConsistency
 
@@ -821,7 +821,7 @@ abstract class Group implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aOwner = null;
+            $this->aUser = null;
             $this->collPackPermissions = null;
 
             $this->collGroupPermissions = null;
@@ -942,11 +942,11 @@ abstract class Group implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aOwner !== null) {
-                if ($this->aOwner->isModified() || $this->aOwner->isNew()) {
-                    $affectedRows += $this->aOwner->save($con);
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
                 }
-                $this->setOwner($this->aOwner);
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1222,7 +1222,7 @@ abstract class Group implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aOwner) {
+            if (null !== $this->aUser) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
@@ -1235,7 +1235,7 @@ abstract class Group implements ActiveRecordInterface
                         $key = 'User';
                 }
 
-                $result[$key] = $this->aOwner->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collPackPermissions) {
 
@@ -1588,7 +1588,7 @@ abstract class Group implements ActiveRecordInterface
      * @return $this|\Models\Group The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setOwner(ChildUser $v = null)
+    public function setUser(ChildUser $v = null)
     {
         if ($v === null) {
             $this->setUserId(NULL);
@@ -1596,7 +1596,7 @@ abstract class Group implements ActiveRecordInterface
             $this->setUserId($v->getId());
         }
 
-        $this->aOwner = $v;
+        $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
@@ -1616,20 +1616,20 @@ abstract class Group implements ActiveRecordInterface
      * @return ChildUser The associated ChildUser object.
      * @throws PropelException
      */
-    public function getOwner(ConnectionInterface $con = null)
+    public function getUser(ConnectionInterface $con = null)
     {
-        if ($this->aOwner === null && ($this->user_id !== null)) {
-            $this->aOwner = ChildUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aOwner->addGroups($this);
+                $this->aUser->addGroups($this);
              */
         }
 
-        return $this->aOwner;
+        return $this->aUser;
     }
 
 
@@ -2183,8 +2183,8 @@ abstract class Group implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aOwner) {
-            $this->aOwner->removeGroup($this);
+        if (null !== $this->aUser) {
+            $this->aUser->removeGroup($this);
         }
         $this->id = null;
         $this->name = null;
@@ -2226,7 +2226,7 @@ abstract class Group implements ActiveRecordInterface
 
         $this->collPackPermissions = null;
         $this->collGroupPermissions = null;
-        $this->aOwner = null;
+        $this->aUser = null;
     }
 
     /**

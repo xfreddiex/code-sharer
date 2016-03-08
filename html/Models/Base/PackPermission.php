@@ -76,11 +76,11 @@ abstract class PackPermission implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the permission_type field.
+     * The value for the type field.
      *
      * @var        int
      */
-    protected $permission_type;
+    protected $type;
 
     /**
      * The value for the belonger_id field.
@@ -383,22 +383,22 @@ abstract class PackPermission implements ActiveRecordInterface
     }
 
     /**
-     * Get the [permission_type] column value.
+     * Get the [type] column value.
      *
      * @return string
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function getPermissionType()
+    public function getType()
     {
-        if (null === $this->permission_type) {
+        if (null === $this->type) {
             return null;
         }
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_PERMISSION_TYPE);
-        if (!isset($valueSet[$this->permission_type])) {
-            throw new PropelException('Unknown stored enum key: ' . $this->permission_type);
+        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_TYPE);
+        if (!isset($valueSet[$this->type])) {
+            throw new PropelException('Unknown stored enum key: ' . $this->type);
         }
 
-        return $valueSet[$this->permission_type];
+        return $valueSet[$this->type];
     }
 
     /**
@@ -521,29 +521,29 @@ abstract class PackPermission implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [permission_type] column.
+     * Set the value of [type] column.
      *
      * @param  string $v new value
      * @return $this|\Models\PackPermission The current object (for fluent API support)
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function setPermissionType($v)
+    public function setType($v)
     {
         if ($v !== null) {
-            $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_PERMISSION_TYPE);
+            $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_TYPE);
             if (!in_array($v, $valueSet)) {
                 throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $v));
             }
             $v = array_search($v, $valueSet);
         }
 
-        if ($this->permission_type !== $v) {
-            $this->permission_type = $v;
-            $this->modifiedColumns[PackPermissionTableMap::COL_PERMISSION_TYPE] = true;
+        if ($this->type !== $v) {
+            $this->type = $v;
+            $this->modifiedColumns[PackPermissionTableMap::COL_TYPE] = true;
         }
 
         return $this;
-    } // setPermissionType()
+    } // setType()
 
     /**
      * Set the value of [belonger_id] column.
@@ -721,8 +721,8 @@ abstract class PackPermission implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : PackPermissionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PackPermissionTableMap::translateFieldName('PermissionType', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->permission_type = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PackPermissionTableMap::translateFieldName('Type', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->type = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PackPermissionTableMap::translateFieldName('BelongerId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->belonger_id = (null !== $col) ? (int) $col : null;
@@ -1008,8 +1008,8 @@ abstract class PackPermission implements ActiveRecordInterface
         if ($this->isColumnModified(PackPermissionTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(PackPermissionTableMap::COL_PERMISSION_TYPE)) {
-            $modifiedColumns[':p' . $index++]  = 'permission_type';
+        if ($this->isColumnModified(PackPermissionTableMap::COL_TYPE)) {
+            $modifiedColumns[':p' . $index++]  = 'type';
         }
         if ($this->isColumnModified(PackPermissionTableMap::COL_BELONGER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'belonger_id';
@@ -1043,8 +1043,8 @@ abstract class PackPermission implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'permission_type':
-                        $stmt->bindValue($identifier, $this->permission_type, PDO::PARAM_INT);
+                    case 'type':
+                        $stmt->bindValue($identifier, $this->type, PDO::PARAM_INT);
                         break;
                     case 'belonger_id':
                         $stmt->bindValue($identifier, $this->belonger_id, PDO::PARAM_INT);
@@ -1130,7 +1130,7 @@ abstract class PackPermission implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getPermissionType();
+                return $this->getType();
                 break;
             case 2:
                 return $this->getBelongerId();
@@ -1181,7 +1181,7 @@ abstract class PackPermission implements ActiveRecordInterface
         $keys = PackPermissionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getPermissionType(),
+            $keys[1] => $this->getType(),
             $keys[2] => $this->getBelongerId(),
             $keys[3] => $this->getBelongerType(),
             $keys[4] => $this->getPackId(),
@@ -1290,11 +1290,11 @@ abstract class PackPermission implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_PERMISSION_TYPE);
+                $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_TYPE);
                 if (isset($valueSet[$value])) {
                     $value = $valueSet[$value];
                 }
-                $this->setPermissionType($value);
+                $this->setType($value);
                 break;
             case 2:
                 $this->setBelongerId($value);
@@ -1348,7 +1348,7 @@ abstract class PackPermission implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setPermissionType($arr[$keys[1]]);
+            $this->setType($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setBelongerId($arr[$keys[2]]);
@@ -1412,8 +1412,8 @@ abstract class PackPermission implements ActiveRecordInterface
         if ($this->isColumnModified(PackPermissionTableMap::COL_ID)) {
             $criteria->add(PackPermissionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(PackPermissionTableMap::COL_PERMISSION_TYPE)) {
-            $criteria->add(PackPermissionTableMap::COL_PERMISSION_TYPE, $this->permission_type);
+        if ($this->isColumnModified(PackPermissionTableMap::COL_TYPE)) {
+            $criteria->add(PackPermissionTableMap::COL_TYPE, $this->type);
         }
         if ($this->isColumnModified(PackPermissionTableMap::COL_BELONGER_ID)) {
             $criteria->add(PackPermissionTableMap::COL_BELONGER_ID, $this->belonger_id);
@@ -1519,7 +1519,7 @@ abstract class PackPermission implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setPermissionType($this->getPermissionType());
+        $copyObj->setType($this->getType());
         $copyObj->setBelongerId($this->getBelongerId());
         $copyObj->setBelongerType($this->getBelongerType());
         $copyObj->setPackId($this->getPackId());
@@ -1724,7 +1724,7 @@ abstract class PackPermission implements ActiveRecordInterface
             $this->aPack->removePackPermission($this);
         }
         $this->id = null;
-        $this->permission_type = null;
+        $this->type = null;
         $this->belonger_id = null;
         $this->belonger_type = null;
         $this->pack_id = null;

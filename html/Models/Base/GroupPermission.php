@@ -74,11 +74,11 @@ abstract class GroupPermission implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the permission_type field.
+     * The value for the type field.
      *
      * @var        int
      */
-    protected $permission_type;
+    protected $type;
 
     /**
      * The value for the user_id field.
@@ -369,22 +369,22 @@ abstract class GroupPermission implements ActiveRecordInterface
     }
 
     /**
-     * Get the [permission_type] column value.
+     * Get the [type] column value.
      *
      * @return string
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function getPermissionType()
+    public function getType()
     {
-        if (null === $this->permission_type) {
+        if (null === $this->type) {
             return null;
         }
-        $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_PERMISSION_TYPE);
-        if (!isset($valueSet[$this->permission_type])) {
-            throw new PropelException('Unknown stored enum key: ' . $this->permission_type);
+        $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_TYPE);
+        if (!isset($valueSet[$this->type])) {
+            throw new PropelException('Unknown stored enum key: ' . $this->type);
         }
 
-        return $valueSet[$this->permission_type];
+        return $valueSet[$this->type];
     }
 
     /**
@@ -488,29 +488,29 @@ abstract class GroupPermission implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [permission_type] column.
+     * Set the value of [type] column.
      *
      * @param  string $v new value
      * @return $this|\Models\GroupPermission The current object (for fluent API support)
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function setPermissionType($v)
+    public function setType($v)
     {
         if ($v !== null) {
-            $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_PERMISSION_TYPE);
+            $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_TYPE);
             if (!in_array($v, $valueSet)) {
                 throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $v));
             }
             $v = array_search($v, $valueSet);
         }
 
-        if ($this->permission_type !== $v) {
-            $this->permission_type = $v;
-            $this->modifiedColumns[GroupPermissionTableMap::COL_PERMISSION_TYPE] = true;
+        if ($this->type !== $v) {
+            $this->type = $v;
+            $this->modifiedColumns[GroupPermissionTableMap::COL_TYPE] = true;
         }
 
         return $this;
-    } // setPermissionType()
+    } // setType()
 
     /**
      * Set the value of [user_id] column.
@@ -659,8 +659,8 @@ abstract class GroupPermission implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : GroupPermissionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : GroupPermissionTableMap::translateFieldName('PermissionType', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->permission_type = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : GroupPermissionTableMap::translateFieldName('Type', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->type = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : GroupPermissionTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
@@ -932,8 +932,8 @@ abstract class GroupPermission implements ActiveRecordInterface
         if ($this->isColumnModified(GroupPermissionTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(GroupPermissionTableMap::COL_PERMISSION_TYPE)) {
-            $modifiedColumns[':p' . $index++]  = 'permission_type';
+        if ($this->isColumnModified(GroupPermissionTableMap::COL_TYPE)) {
+            $modifiedColumns[':p' . $index++]  = 'type';
         }
         if ($this->isColumnModified(GroupPermissionTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
@@ -964,8 +964,8 @@ abstract class GroupPermission implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'permission_type':
-                        $stmt->bindValue($identifier, $this->permission_type, PDO::PARAM_INT);
+                    case 'type':
+                        $stmt->bindValue($identifier, $this->type, PDO::PARAM_INT);
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
@@ -1048,7 +1048,7 @@ abstract class GroupPermission implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getPermissionType();
+                return $this->getType();
                 break;
             case 2:
                 return $this->getUserId();
@@ -1096,7 +1096,7 @@ abstract class GroupPermission implements ActiveRecordInterface
         $keys = GroupPermissionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getPermissionType(),
+            $keys[1] => $this->getType(),
             $keys[2] => $this->getUserId(),
             $keys[3] => $this->getGroupId(),
             $keys[4] => $this->getDeletedAt(),
@@ -1189,11 +1189,11 @@ abstract class GroupPermission implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_PERMISSION_TYPE);
+                $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_TYPE);
                 if (isset($valueSet[$value])) {
                     $value = $valueSet[$value];
                 }
-                $this->setPermissionType($value);
+                $this->setType($value);
                 break;
             case 2:
                 $this->setUserId($value);
@@ -1240,7 +1240,7 @@ abstract class GroupPermission implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setPermissionType($arr[$keys[1]]);
+            $this->setType($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setUserId($arr[$keys[2]]);
@@ -1301,8 +1301,8 @@ abstract class GroupPermission implements ActiveRecordInterface
         if ($this->isColumnModified(GroupPermissionTableMap::COL_ID)) {
             $criteria->add(GroupPermissionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(GroupPermissionTableMap::COL_PERMISSION_TYPE)) {
-            $criteria->add(GroupPermissionTableMap::COL_PERMISSION_TYPE, $this->permission_type);
+        if ($this->isColumnModified(GroupPermissionTableMap::COL_TYPE)) {
+            $criteria->add(GroupPermissionTableMap::COL_TYPE, $this->type);
         }
         if ($this->isColumnModified(GroupPermissionTableMap::COL_USER_ID)) {
             $criteria->add(GroupPermissionTableMap::COL_USER_ID, $this->user_id);
@@ -1405,7 +1405,7 @@ abstract class GroupPermission implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setPermissionType($this->getPermissionType());
+        $copyObj->setType($this->getType());
         $copyObj->setUserId($this->getUserId());
         $copyObj->setGroupId($this->getGroupId());
         $copyObj->setDeletedAt($this->getDeletedAt());
@@ -1555,7 +1555,7 @@ abstract class GroupPermission implements ActiveRecordInterface
             $this->aGroup->removeGroupPermission($this);
         }
         $this->id = null;
-        $this->permission_type = null;
+        $this->type = null;
         $this->user_id = null;
         $this->group_id = null;
         $this->deleted_at = null;

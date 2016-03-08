@@ -20,7 +20,6 @@ class Router{
 			if(count($route_uri) == count($uri)){
 				$route["params"] = array();
 				$ok = true;
-				
 				for($i = 0; $i < count($route_uri); $i++){
 					
 					if(preg_match('/\[.+\]/', $route_uri[$i])){

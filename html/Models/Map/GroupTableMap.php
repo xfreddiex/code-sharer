@@ -176,7 +176,7 @@ class GroupTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Owner', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':user_id',

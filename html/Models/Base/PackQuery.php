@@ -48,15 +48,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildPackQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildPackQuery leftJoinOwner($relationAlias = null) Adds a LEFT JOIN clause to the query using the Owner relation
- * @method     ChildPackQuery rightJoinOwner($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Owner relation
- * @method     ChildPackQuery innerJoinOwner($relationAlias = null) Adds a INNER JOIN clause to the query using the Owner relation
+ * @method     ChildPackQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildPackQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildPackQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method     ChildPackQuery joinWithOwner($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Owner relation
+ * @method     ChildPackQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
  *
- * @method     ChildPackQuery leftJoinWithOwner() Adds a LEFT JOIN clause and with to the query using the Owner relation
- * @method     ChildPackQuery rightJoinWithOwner() Adds a RIGHT JOIN clause and with to the query using the Owner relation
- * @method     ChildPackQuery innerJoinWithOwner() Adds a INNER JOIN clause and with to the query using the Owner relation
+ * @method     ChildPackQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildPackQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildPackQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
  * @method     ChildPackQuery leftJoinPackPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the PackPermission relation
  * @method     ChildPackQuery rightJoinPackPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PackPermission relation
@@ -434,7 +434,7 @@ abstract class PackQuery extends ModelCriteria
      * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
-     * @see       filterByOwner()
+     * @see       filterByUser()
      *
      * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
@@ -687,7 +687,7 @@ abstract class PackQuery extends ModelCriteria
      *
      * @return ChildPackQuery The current query, for fluid interface
      */
-    public function filterByOwner($user, $comparison = null)
+    public function filterByUser($user, $comparison = null)
     {
         if ($user instanceof \Models\User) {
             return $this
@@ -700,22 +700,22 @@ abstract class PackQuery extends ModelCriteria
             return $this
                 ->addUsingAlias(PackTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByOwner() only accepts arguments of type \Models\User or Collection');
+            throw new PropelException('filterByUser() only accepts arguments of type \Models\User or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Owner relation
+     * Adds a JOIN clause to the query using the User relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildPackQuery The current query, for fluid interface
      */
-    public function joinOwner($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Owner');
+        $relationMap = $tableMap->getRelation('User');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -730,14 +730,14 @@ abstract class PackQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Owner');
+            $this->addJoinObject($join, 'User');
         }
 
         return $this;
     }
 
     /**
-     * Use the Owner relation User object
+     * Use the User relation User object
      *
      * @see useQuery()
      *
@@ -747,11 +747,11 @@ abstract class PackQuery extends ModelCriteria
      *
      * @return \Models\UserQuery A secondary query class using the current class as primary query
      */
-    public function useOwnerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinOwner($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Owner', '\Models\UserQuery');
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', '\Models\UserQuery');
     }
 
     /**

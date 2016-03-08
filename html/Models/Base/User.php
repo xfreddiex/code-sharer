@@ -2881,7 +2881,7 @@ abstract class User implements ActiveRecordInterface
                 $this->initPacks();
             } else {
                 $collPacks = ChildPackQuery::create(null, $criteria)
-                    ->filterByOwner($this)
+                    ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -2935,7 +2935,7 @@ abstract class User implements ActiveRecordInterface
         $this->packsScheduledForDeletion = $packsToDelete;
 
         foreach ($packsToDelete as $packRemoved) {
-            $packRemoved->setOwner(null);
+            $packRemoved->setUser(null);
         }
 
         $this->collPacks = null;
@@ -2976,7 +2976,7 @@ abstract class User implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByOwner($this)
+                ->filterByUser($this)
                 ->count($con);
         }
 
@@ -3014,7 +3014,7 @@ abstract class User implements ActiveRecordInterface
     protected function doAddPack(ChildPack $pack)
     {
         $this->collPacks[]= $pack;
-        $pack->setOwner($this);
+        $pack->setUser($this);
     }
 
     /**
@@ -3031,7 +3031,7 @@ abstract class User implements ActiveRecordInterface
                 $this->packsScheduledForDeletion->clear();
             }
             $this->packsScheduledForDeletion[]= clone $pack;
-            $pack->setOwner(null);
+            $pack->setUser(null);
         }
 
         return $this;
@@ -3106,7 +3106,7 @@ abstract class User implements ActiveRecordInterface
                 $this->initGroups();
             } else {
                 $collGroups = ChildGroupQuery::create(null, $criteria)
-                    ->filterByOwner($this)
+                    ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -3160,7 +3160,7 @@ abstract class User implements ActiveRecordInterface
         $this->groupsScheduledForDeletion = $groupsToDelete;
 
         foreach ($groupsToDelete as $groupRemoved) {
-            $groupRemoved->setOwner(null);
+            $groupRemoved->setUser(null);
         }
 
         $this->collGroups = null;
@@ -3201,7 +3201,7 @@ abstract class User implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByOwner($this)
+                ->filterByUser($this)
                 ->count($con);
         }
 
@@ -3239,7 +3239,7 @@ abstract class User implements ActiveRecordInterface
     protected function doAddGroup(ChildGroup $group)
     {
         $this->collGroups[]= $group;
-        $group->setOwner($this);
+        $group->setUser($this);
     }
 
     /**
@@ -3256,7 +3256,7 @@ abstract class User implements ActiveRecordInterface
                 $this->groupsScheduledForDeletion->clear();
             }
             $this->groupsScheduledForDeletion[]= clone $group;
-            $group->setOwner(null);
+            $group->setUser(null);
         }
 
         return $this;

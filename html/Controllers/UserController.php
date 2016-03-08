@@ -12,39 +12,30 @@ class UserController extends BaseController{
 	public function __construct(){
 		parent::__construct();
 		$this->data["userAuthorized"] = false;
-		$this->addBefore("update", array("authorization"));
+		$this->addBefore("update", array("userLogged", "userAuthorized"));
+		$this->addBefore("profile", array("userLogged"));
+		$this->addBefore("settings", array("userLogged"));
+		$this->addBefore("updateAvatar", array("userLogged"));
 	}
 
 	protected function show($params){
-		$this->data["user"] = UserQuery::create()->findOneByUsername($params[0]);
+		$this->data["user"] = UserQuery::create()->findOneByUsername($params["username"]);
 		if($this->data["user"] == $this->data["loggedUser"])
-			redirect("/profile");
+			$this->redirect("/profile");
 		if($this->data["user"])
 			$this->viewFile($this->template);
 		else{
-			$this->sendFlashMessage('User "'.$params[0].'" does not exists.', "error");
-			redirect("/");
+			$this->sendFlashMessage('User "'.$params["username"].'" does not exists.', "error");
+			$this->redirect("/");
 		}
 	}
 
 	protected function profile(){
-		if($this->data["loggedUser"]){
-			$this->viewFile($this->template);	
-		}
-		else{
-			$this->sendFlashMessage("To view your profile you must be signed in.", "error");
-			redirect("/");
-		}
+		$this->viewFile($this->template);	
 	}
 
 	protected function settings(){
-		if($this->data["loggedUser"]){
-			$this->viewFile($this->template);	
-		}
-		else{
-			$this->sendFlashMessage("To change settings you must be signed in.", "error");
-			redirect("/");
-		}
+		$this->viewFile($this->template);	
 	}
 
 	protected function delete(){
@@ -52,66 +43,55 @@ class UserController extends BaseController{
 	}
 
 	protected function update(){
-		if($this->data["userAuthorized"]){
-			$user = $this->data["loggedUser"];
-			if(isset($_POST["newName"]))
-				$user->setName($_POST["newName"]);
-			if(isset($_POST["newSurname"]))
-				$user->setSurname($_POST["newSurname"]);
-			if(isset($_POST["newEmail"]) && $_POST["newEmail"])
-				$user->setEmail($_POST["newEmail"]);
-			if(isset($_POST["newPassword"]) && $_POST["newPassword"])
-				$user->setPassword($_POST["newPassword"]);
+		$user = $this->data["loggedUser"];
+		if(isset($_POST["newName"]))
+			$user->setName($_POST["newName"]);
+		if(isset($_POST["newSurname"]))
+			$user->setSurname($_POST["newSurname"]);
+		if(isset($_POST["newEmail"]) && $_POST["newEmail"])
+			$user->setEmail($_POST["newEmail"]);
+		if(isset($_POST["newPassword"]) && $_POST["newPassword"])
+			$user->setPassword($_POST["newPassword"]);
 
-			if($user->save()){
-    			$failures = $user->getValidationFailures();
-				if(count($failures) > 0){
-					foreach($failures as $failure){
-						$this->sendFlashMessage("User data has not been changeg. ".$failure->getMessage(), "error");
-					}
+		if($user->save()){
+    		$failures = $user->getValidationFailures();
+			if(count($failures) > 0){
+				foreach($failures as $failure){
+					$this->sendFlashMessage("User data has not been changeg. ".$failure->getMessage(), "error");
 				}
 			}
-			else
-				$this->sendFlashMessage("User data has been successfuly updated.", "success");
 		}
-		else{
-			$this->sendFlashMessage("You have not been authorized to change user data.", "error");
-		}
-		redirect(getReferersURIEnd());
+		else
+			$this->sendFlashMessage("User data has been successfuly updated.", "success");
 	}
 
 	protected function updateAvatar(){
-		if(isset($_POST["newAvatar"]) && $this->data["loggedUser"]){
+		if(isset($_POST["newAvatar"])){
 			$data = explode(',', $_POST["newAvatar"]);
 			if(count($data) == 2 && $data[0] == "data:image/png;base64" && base64_decode($data[1])){
 				$img = imagecreatefromstring(base64_decode($data[1]));
 				$nameToDelete = $this->data["loggedUser"]->getAvatarPath();
-				var_dump($nameToDelete);
 				$name = md5(uniqid()).".png";
 				$this->data["loggedUser"]->setAvatarPath($name)->save();
 
-				$dir = "/Includes/images/avatars/250x250/";
-				if($nameToDelete)
+				$dir = "Includes/images/avatars/250x250/";
+				if(is_file($dir.$nameToDelete))
 					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 250, 250), $dir.$name);
 		
-				$dir = "/Includes/images/avatars/40x40/";
-				if($nameToDelete)
+				$dir = "Includes/images/avatars/40x40/";
+				if(is_file($dir.$nameToDelete))
 					unlink($dir.$nameToDelete);
 				imagepng(resizeImg($img, 40, 40), $dir.$name);
 
 				$this->sendFlashMessage("Your avatar has been successfuly changed. ", "success");
-				redirect($this->data["referersURI"]);
+				$this->redirect($this->data["referersURI"]);
 			}
 			else
 				setHTTPStatusCode("400");
 		}	
 		else		
 			setHTTPStatusCode("400");
-	}
-
-	protected function authorization(){
-		$this->data["userAuthorized"] = ($this->data["loggedUser"] && isset($_POST["authorizationPassword"]) && $this->data["loggedUser"]->checkPassword($_POST["authorizationPassword"]));
 	}
 
 	protected function signUp(){
@@ -133,7 +113,7 @@ class UserController extends BaseController{
 			}
 			else
 				$this->sendFlashMessage("You have been successfuly signed up.", "success");
-			redirect("/");
+			$this->redirect("/");
 		}
 		else
 			setHTTPStatusCode("400");
@@ -166,7 +146,7 @@ class UserController extends BaseController{
 			}
 			else
 				$this->sendFlashMessage("You have not been signed in. You entered wrong password.", "error");
-			redirect($this->data["referersURI"]);
+			$this->redirect($this->data["referersURI"]);
 		}
 		else
 			setHTTPStatusCode("400");
@@ -182,7 +162,7 @@ class UserController extends BaseController{
 				setcookie("identityToken", "", time() - 86400);
 			}
 		}
-		redirect("/");
+		$this->redirect("/");
 	}
 
 	protected function validateOne(){

@@ -55,11 +55,11 @@ abstract class Controller{
 
 	protected function before($method){
 		foreach($this->beforeAll as $beforeAllMethod){
-			$this->$beforeAllMethod();
+			$this->$beforeAllMethod($method);
 		}
 		if(isset($this->before[$method])){
 			foreach($this->before[$method] as $beforeMethod){
-				$this->$beforeMethod();
+				$this->$beforeMethod($method);
 			}
 		}
 	}
@@ -116,5 +116,12 @@ abstract class Controller{
 
 	protected function addAfterAll($afterAllMethod){
 		$this->afterAll[] = $afterAllMethod;
-	}		
+	}	
+
+	protected function redirect($url){
+		$url = trim($url, "/");
+		header("Location: /$url");
+		header("Connection: close");
+		exit;
+	}
 }

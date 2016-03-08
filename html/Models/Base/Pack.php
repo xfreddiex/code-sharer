@@ -29,7 +29,6 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
-use Propel\Runtime\Validator\Constraints\Uniqueness;
 use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -157,7 +156,7 @@ abstract class Pack implements ActiveRecordInterface
     /**
      * @var        ChildUser
      */
-    protected $aOwner;
+    protected $aUser;
 
     /**
      * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
@@ -687,8 +686,8 @@ abstract class Pack implements ActiveRecordInterface
             $this->modifiedColumns[PackTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aOwner !== null && $this->aOwner->getId() !== $v) {
-            $this->aOwner = null;
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+            $this->aUser = null;
         }
 
         return $this;
@@ -907,8 +906,8 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aOwner !== null && $this->user_id !== $this->aOwner->getId()) {
-            $this->aOwner = null;
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+            $this->aUser = null;
         }
     } // ensureConsistency
 
@@ -949,7 +948,7 @@ abstract class Pack implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aOwner = null;
+            $this->aUser = null;
             $this->collPackPermissions = null;
 
             $this->collFiles = null;
@@ -1070,11 +1069,11 @@ abstract class Pack implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aOwner !== null) {
-                if ($this->aOwner->isModified() || $this->aOwner->isNew()) {
-                    $affectedRows += $this->aOwner->save($con);
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
                 }
-                $this->setOwner($this->aOwner);
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1360,7 +1359,7 @@ abstract class Pack implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aOwner) {
+            if (null !== $this->aUser) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
@@ -1373,7 +1372,7 @@ abstract class Pack implements ActiveRecordInterface
                         $key = 'User';
                 }
 
-                $result[$key] = $this->aOwner->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collPackPermissions) {
 
@@ -1740,7 +1739,7 @@ abstract class Pack implements ActiveRecordInterface
      * @return $this|\Models\Pack The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setOwner(ChildUser $v = null)
+    public function setUser(ChildUser $v = null)
     {
         if ($v === null) {
             $this->setUserId(NULL);
@@ -1748,7 +1747,7 @@ abstract class Pack implements ActiveRecordInterface
             $this->setUserId($v->getId());
         }
 
-        $this->aOwner = $v;
+        $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
@@ -1768,20 +1767,20 @@ abstract class Pack implements ActiveRecordInterface
      * @return ChildUser The associated ChildUser object.
      * @throws PropelException
      */
-    public function getOwner(ConnectionInterface $con = null)
+    public function getUser(ConnectionInterface $con = null)
     {
-        if ($this->aOwner === null && ($this->user_id !== null)) {
-            $this->aOwner = ChildUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aOwner->addPacks($this);
+                $this->aUser->addPacks($this);
              */
         }
 
-        return $this->aOwner;
+        return $this->aUser;
     }
 
 
@@ -2310,8 +2309,8 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aOwner) {
-            $this->aOwner->removePack($this);
+        if (null !== $this->aUser) {
+            $this->aUser->removePack($this);
         }
         $this->id = null;
         $this->name = null;
@@ -2355,7 +2354,7 @@ abstract class Pack implements ActiveRecordInterface
 
         $this->collPackPermissions = null;
         $this->collFiles = null;
-        $this->aOwner = null;
+        $this->aUser = null;
     }
 
     /**
@@ -2395,7 +2394,6 @@ abstract class Pack implements ActiveRecordInterface
         $metadata->addPropertyConstraint('name', new Length(array ('max' => 32,'maxMessage' => 'Maximal pack name length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('name', new Regex(array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Pack name should not contain whitespaces.',)));
         $metadata->addPropertyConstraint('name', new NotBlank(array ('message' => 'Pack name should not be blank.',)));
-        $metadata->addPropertyConstraint('Array', new Uniqueness(array ('message' => 'You already have pack with this name.',)));
         $metadata->addPropertyConstraint('description', new Length(array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',)));
     }
 
@@ -2428,9 +2426,9 @@ abstract class Pack implements ActiveRecordInterface
             // foreign key reference.
 
             // If validate() method exists, the validate-behavior is configured for related object
-            if (method_exists($this->aOwner, 'validate')) {
-                if (!$this->aOwner->validate($validator)) {
-                    $failureMap->addAll($this->aOwner->getValidationFailures());
+            if (method_exists($this->aUser, 'validate')) {
+                if (!$this->aUser->validate($validator)) {
+                    $failureMap->addAll($this->aUser->getValidationFailures());
                 }
             }
 

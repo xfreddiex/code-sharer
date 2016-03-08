@@ -60,7 +60,7 @@
 
     <table name="pack_permission" phpName="PackPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="permission_type" type="enum" valueSet="view, edit, remove" required="true"/>
+        <column name="type" type="enum" valueSet="view, edit, remove" required="true"/>
         <column name="belonger_id" type="integer" required="true"/>
         <column name="belonger_type" type="enum" valueSet="group, user" required="true"/>
         <column name="pack_id" type="integer" required="true"/>
@@ -83,7 +83,7 @@
 
     <table name="group_permission" phpName="GroupPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="permission_type" type="enum" valueSet="member, admin" required="true"/>
+        <column name="type" type="enum" valueSet="member, admin" required="true"/>
         <column name="user_id" type="integer" required="true"/>
         <column name="group_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
@@ -111,7 +111,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Pack">
+        <foreign-key foreignTable="user" phpName="User" refPhpName="Pack">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
 
@@ -156,7 +156,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Group">
+        <foreign-key foreignTable="user" phpName="User" refPhpName="Group">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
 

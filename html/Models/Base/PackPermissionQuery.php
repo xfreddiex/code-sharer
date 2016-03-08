@@ -21,7 +21,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildPackPermissionQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildPackPermissionQuery orderByPermissionType($order = Criteria::ASC) Order by the permission_type column
+ * @method     ChildPackPermissionQuery orderByType($order = Criteria::ASC) Order by the type column
  * @method     ChildPackPermissionQuery orderByBelongerId($order = Criteria::ASC) Order by the belonger_id column
  * @method     ChildPackPermissionQuery orderByBelongerType($order = Criteria::ASC) Order by the belonger_type column
  * @method     ChildPackPermissionQuery orderByPackId($order = Criteria::ASC) Order by the pack_id column
@@ -30,7 +30,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermissionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildPackPermissionQuery groupById() Group by the id column
- * @method     ChildPackPermissionQuery groupByPermissionType() Group by the permission_type column
+ * @method     ChildPackPermissionQuery groupByType() Group by the type column
  * @method     ChildPackPermissionQuery groupByBelongerId() Group by the belonger_id column
  * @method     ChildPackPermissionQuery groupByBelongerType() Group by the belonger_type column
  * @method     ChildPackPermissionQuery groupByPackId() Group by the pack_id column
@@ -82,7 +82,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission findOneOrCreate(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query, or a new ChildPackPermission object populated from the query conditions when no match is found
  *
  * @method     ChildPackPermission findOneById(int $id) Return the first ChildPackPermission filtered by the id column
- * @method     ChildPackPermission findOneByPermissionType(int $permission_type) Return the first ChildPackPermission filtered by the permission_type column
+ * @method     ChildPackPermission findOneByType(int $type) Return the first ChildPackPermission filtered by the type column
  * @method     ChildPackPermission findOneByBelongerId(int $belonger_id) Return the first ChildPackPermission filtered by the belonger_id column
  * @method     ChildPackPermission findOneByBelongerType(int $belonger_type) Return the first ChildPackPermission filtered by the belonger_type column
  * @method     ChildPackPermission findOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column
@@ -94,7 +94,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission requireOne(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildPackPermission requireOneById(int $id) Return the first ChildPackPermission filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByPermissionType(int $permission_type) Return the first ChildPackPermission filtered by the permission_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPackPermission requireOneByType(int $type) Return the first ChildPackPermission filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByBelongerId(int $belonger_id) Return the first ChildPackPermission filtered by the belonger_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByBelongerType(int $belonger_type) Return the first ChildPackPermission filtered by the belonger_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -104,7 +104,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildPackPermission[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildPackPermission objects based on current ModelCriteria
  * @method     ChildPackPermission[]|ObjectCollection findById(int $id) Return ChildPackPermission objects filtered by the id column
- * @method     ChildPackPermission[]|ObjectCollection findByPermissionType(int $permission_type) Return ChildPackPermission objects filtered by the permission_type column
+ * @method     ChildPackPermission[]|ObjectCollection findByType(int $type) Return ChildPackPermission objects filtered by the type column
  * @method     ChildPackPermission[]|ObjectCollection findByBelongerId(int $belonger_id) Return ChildPackPermission objects filtered by the belonger_id column
  * @method     ChildPackPermission[]|ObjectCollection findByBelongerType(int $belonger_type) Return ChildPackPermission objects filtered by the belonger_type column
  * @method     ChildPackPermission[]|ObjectCollection findByPackId(int $pack_id) Return ChildPackPermission objects filtered by the pack_id column
@@ -203,7 +203,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, permission_type, belonger_id, belonger_type, pack_id, deleted_at, created_at, updated_at FROM pack_permission WHERE id = :p0';
+        $sql = 'SELECT id, type, belonger_id, belonger_type, pack_id, deleted_at, created_at, updated_at FROM pack_permission WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -335,36 +335,36 @@ abstract class PackPermissionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the permission_type column
+     * Filter the query on the type column
      *
-     * @param     mixed $permissionType The value to use as filter
+     * @param     mixed $type The value to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function filterByPermissionType($permissionType = null, $comparison = null)
+    public function filterByType($type = null, $comparison = null)
     {
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_PERMISSION_TYPE);
-        if (is_scalar($permissionType)) {
-            if (!in_array($permissionType, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $permissionType));
+        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_TYPE);
+        if (is_scalar($type)) {
+            if (!in_array($type, $valueSet)) {
+                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $type));
             }
-            $permissionType = array_search($permissionType, $valueSet);
-        } elseif (is_array($permissionType)) {
+            $type = array_search($type, $valueSet);
+        } elseif (is_array($type)) {
             $convertedValues = array();
-            foreach ($permissionType as $value) {
+            foreach ($type as $value) {
                 if (!in_array($value, $valueSet)) {
                     throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
                 }
                 $convertedValues []= array_search($value, $valueSet);
             }
-            $permissionType = $convertedValues;
+            $type = $convertedValues;
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(PackPermissionTableMap::COL_PERMISSION_TYPE, $permissionType, $comparison);
+        return $this->addUsingAlias(PackPermissionTableMap::COL_TYPE, $type, $comparison);
     }
 
     /**

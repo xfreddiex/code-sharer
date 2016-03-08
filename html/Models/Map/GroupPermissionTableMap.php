@@ -77,9 +77,9 @@ class GroupPermissionTableMap extends TableMap
     const COL_ID = 'group_permission.id';
 
     /**
-     * the column name for the permission_type field
+     * the column name for the type field
      */
-    const COL_PERMISSION_TYPE = 'group_permission.permission_type';
+    const COL_TYPE = 'group_permission.type';
 
     /**
      * the column name for the user_id field
@@ -111,9 +111,9 @@ class GroupPermissionTableMap extends TableMap
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
 
-    /** The enumerated values for the permission_type field */
-    const COL_PERMISSION_TYPE_MEMBER = 'member';
-    const COL_PERMISSION_TYPE_ADMIN = 'admin';
+    /** The enumerated values for the type field */
+    const COL_TYPE_MEMBER = 'member';
+    const COL_TYPE_ADMIN = 'admin';
 
     /**
      * holds an array of fieldnames
@@ -122,10 +122,10 @@ class GroupPermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'PermissionType', 'UserId', 'GroupId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'permissionType', 'userId', 'groupId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID, GroupPermissionTableMap::COL_PERMISSION_TYPE, GroupPermissionTableMap::COL_USER_ID, GroupPermissionTableMap::COL_GROUP_ID, GroupPermissionTableMap::COL_DELETED_AT, GroupPermissionTableMap::COL_CREATED_AT, GroupPermissionTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'permission_type', 'user_id', 'group_id', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Type', 'UserId', 'GroupId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'type', 'userId', 'groupId', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID, GroupPermissionTableMap::COL_TYPE, GroupPermissionTableMap::COL_USER_ID, GroupPermissionTableMap::COL_GROUP_ID, GroupPermissionTableMap::COL_DELETED_AT, GroupPermissionTableMap::COL_CREATED_AT, GroupPermissionTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'type', 'user_id', 'group_id', 'deleted_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -136,18 +136,18 @@ class GroupPermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'PermissionType' => 1, 'UserId' => 2, 'GroupId' => 3, 'DeletedAt' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'permissionType' => 1, 'userId' => 2, 'groupId' => 3, 'deletedAt' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID => 0, GroupPermissionTableMap::COL_PERMISSION_TYPE => 1, GroupPermissionTableMap::COL_USER_ID => 2, GroupPermissionTableMap::COL_GROUP_ID => 3, GroupPermissionTableMap::COL_DELETED_AT => 4, GroupPermissionTableMap::COL_CREATED_AT => 5, GroupPermissionTableMap::COL_UPDATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'permission_type' => 1, 'user_id' => 2, 'group_id' => 3, 'deleted_at' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Type' => 1, 'UserId' => 2, 'GroupId' => 3, 'DeletedAt' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'type' => 1, 'userId' => 2, 'groupId' => 3, 'deletedAt' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID => 0, GroupPermissionTableMap::COL_TYPE => 1, GroupPermissionTableMap::COL_USER_ID => 2, GroupPermissionTableMap::COL_GROUP_ID => 3, GroupPermissionTableMap::COL_DELETED_AT => 4, GroupPermissionTableMap::COL_CREATED_AT => 5, GroupPermissionTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'type' => 1, 'user_id' => 2, 'group_id' => 3, 'deleted_at' => 4, 'created_at' => 5, 'updated_at' => 6, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /** The enumerated values for this table */
     protected static $enumValueSets = array(
-                GroupPermissionTableMap::COL_PERMISSION_TYPE => array(
-                            self::COL_PERMISSION_TYPE_MEMBER,
-            self::COL_PERMISSION_TYPE_ADMIN,
+                GroupPermissionTableMap::COL_TYPE => array(
+                            self::COL_TYPE_MEMBER,
+            self::COL_TYPE_ADMIN,
         ),
     );
 
@@ -190,8 +190,8 @@ class GroupPermissionTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('permission_type', 'PermissionType', 'ENUM', true, null, null);
-        $this->getColumn('permission_type')->setValueSet(array (
+        $this->addColumn('type', 'Type', 'ENUM', true, null, null);
+        $this->getColumn('type')->setValueSet(array (
   0 => 'member',
   1 => 'admin',
 ));
@@ -378,7 +378,7 @@ class GroupPermissionTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(GroupPermissionTableMap::COL_ID);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_PERMISSION_TYPE);
+            $criteria->addSelectColumn(GroupPermissionTableMap::COL_TYPE);
             $criteria->addSelectColumn(GroupPermissionTableMap::COL_USER_ID);
             $criteria->addSelectColumn(GroupPermissionTableMap::COL_GROUP_ID);
             $criteria->addSelectColumn(GroupPermissionTableMap::COL_DELETED_AT);
@@ -386,7 +386,7 @@ class GroupPermissionTableMap extends TableMap
             $criteria->addSelectColumn(GroupPermissionTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.permission_type');
+            $criteria->addSelectColumn($alias . '.type');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.group_id');
             $criteria->addSelectColumn($alias . '.deleted_at');

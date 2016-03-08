@@ -6,6 +6,8 @@ use Models\User;
 use Models\UserQuery;
 use Models\Identity;
 use Models\IdentityQuery;
+use Models\Pack;
+use Models\PackQuery;
  
 abstract class BaseController extends Controller{
 
@@ -42,5 +44,34 @@ abstract class BaseController extends Controller{
 				}
 			}
 		}
+		return true;
+	}
+
+	protected function userLogged(){
+		if(!($this->data["loggedUser"])){
+			$this->sendFlashMessage("You must be signed in.", "error");
+			$this->redirect("/");
+		}
+		return true;
+	}
+
+	protected function userAuthorized(){
+		if(!(isset($_POST["authorizationPassword"]) && $this->data["loggedUser"]->checkPassword($_POST["authorizationPassword"]))){
+			$this->sendFlashMessage("You have not been authorized.", "error");
+			$this->redirect("/");
+		}
+		return true;
+	}
+
+	protected function loadPack(){
+		$this->data["pack"] = null;
+		if(isset($_POST["packId"])){
+			$this->data["pack"] = PackQuery::create()->findPK($_POST["packId"]);
+		}
+		if(!$this->data["pack"]){
+			$this->sendFlashMessage("Pack does not exist.", "error");
+			$this->redirect("/");	
+		}
+		return true;
 	}
 }

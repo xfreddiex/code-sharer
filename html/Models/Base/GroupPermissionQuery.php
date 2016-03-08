@@ -21,7 +21,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildGroupPermissionQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildGroupPermissionQuery orderByPermissionType($order = Criteria::ASC) Order by the permission_type column
+ * @method     ChildGroupPermissionQuery orderByType($order = Criteria::ASC) Order by the type column
  * @method     ChildGroupPermissionQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildGroupPermissionQuery orderByGroupId($order = Criteria::ASC) Order by the group_id column
  * @method     ChildGroupPermissionQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
@@ -29,7 +29,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupPermissionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildGroupPermissionQuery groupById() Group by the id column
- * @method     ChildGroupPermissionQuery groupByPermissionType() Group by the permission_type column
+ * @method     ChildGroupPermissionQuery groupByType() Group by the type column
  * @method     ChildGroupPermissionQuery groupByUserId() Group by the user_id column
  * @method     ChildGroupPermissionQuery groupByGroupId() Group by the group_id column
  * @method     ChildGroupPermissionQuery groupByDeletedAt() Group by the deleted_at column
@@ -70,7 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupPermission findOneOrCreate(ConnectionInterface $con = null) Return the first ChildGroupPermission matching the query, or a new ChildGroupPermission object populated from the query conditions when no match is found
  *
  * @method     ChildGroupPermission findOneById(int $id) Return the first ChildGroupPermission filtered by the id column
- * @method     ChildGroupPermission findOneByPermissionType(int $permission_type) Return the first ChildGroupPermission filtered by the permission_type column
+ * @method     ChildGroupPermission findOneByType(int $type) Return the first ChildGroupPermission filtered by the type column
  * @method     ChildGroupPermission findOneByUserId(int $user_id) Return the first ChildGroupPermission filtered by the user_id column
  * @method     ChildGroupPermission findOneByGroupId(int $group_id) Return the first ChildGroupPermission filtered by the group_id column
  * @method     ChildGroupPermission findOneByDeletedAt(string $deleted_at) Return the first ChildGroupPermission filtered by the deleted_at column
@@ -81,7 +81,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupPermission requireOne(ConnectionInterface $con = null) Return the first ChildGroupPermission matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildGroupPermission requireOneById(int $id) Return the first ChildGroupPermission filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroupPermission requireOneByPermissionType(int $permission_type) Return the first ChildGroupPermission filtered by the permission_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGroupPermission requireOneByType(int $type) Return the first ChildGroupPermission filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroupPermission requireOneByUserId(int $user_id) Return the first ChildGroupPermission filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroupPermission requireOneByGroupId(int $group_id) Return the first ChildGroupPermission filtered by the group_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroupPermission requireOneByDeletedAt(string $deleted_at) Return the first ChildGroupPermission filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -90,7 +90,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildGroupPermission[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildGroupPermission objects based on current ModelCriteria
  * @method     ChildGroupPermission[]|ObjectCollection findById(int $id) Return ChildGroupPermission objects filtered by the id column
- * @method     ChildGroupPermission[]|ObjectCollection findByPermissionType(int $permission_type) Return ChildGroupPermission objects filtered by the permission_type column
+ * @method     ChildGroupPermission[]|ObjectCollection findByType(int $type) Return ChildGroupPermission objects filtered by the type column
  * @method     ChildGroupPermission[]|ObjectCollection findByUserId(int $user_id) Return ChildGroupPermission objects filtered by the user_id column
  * @method     ChildGroupPermission[]|ObjectCollection findByGroupId(int $group_id) Return ChildGroupPermission objects filtered by the group_id column
  * @method     ChildGroupPermission[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildGroupPermission objects filtered by the deleted_at column
@@ -188,7 +188,7 @@ abstract class GroupPermissionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, permission_type, user_id, group_id, deleted_at, created_at, updated_at FROM group_permission WHERE id = :p0';
+        $sql = 'SELECT id, type, user_id, group_id, deleted_at, created_at, updated_at FROM group_permission WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -320,36 +320,36 @@ abstract class GroupPermissionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the permission_type column
+     * Filter the query on the type column
      *
-     * @param     mixed $permissionType The value to use as filter
+     * @param     mixed $type The value to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildGroupPermissionQuery The current query, for fluid interface
      */
-    public function filterByPermissionType($permissionType = null, $comparison = null)
+    public function filterByType($type = null, $comparison = null)
     {
-        $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_PERMISSION_TYPE);
-        if (is_scalar($permissionType)) {
-            if (!in_array($permissionType, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $permissionType));
+        $valueSet = GroupPermissionTableMap::getValueSet(GroupPermissionTableMap::COL_TYPE);
+        if (is_scalar($type)) {
+            if (!in_array($type, $valueSet)) {
+                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $type));
             }
-            $permissionType = array_search($permissionType, $valueSet);
-        } elseif (is_array($permissionType)) {
+            $type = array_search($type, $valueSet);
+        } elseif (is_array($type)) {
             $convertedValues = array();
-            foreach ($permissionType as $value) {
+            foreach ($type as $value) {
                 if (!in_array($value, $valueSet)) {
                     throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
                 }
                 $convertedValues []= array_search($value, $valueSet);
             }
-            $permissionType = $convertedValues;
+            $type = $convertedValues;
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(GroupPermissionTableMap::COL_PERMISSION_TYPE, $permissionType, $comparison);
+        return $this->addUsingAlias(GroupPermissionTableMap::COL_TYPE, $type, $comparison);
     }
 
     /**

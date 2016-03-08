@@ -8,13 +8,6 @@ function getReferersURIEnd(){
 	return (isset($uri["path"]) ? $uri["path"] : "").(isset($uri["query"]) ? "?".$uri["query"] : "").(isset($uri["fragment"]) ? "#".$uri["fragment"] : "");
 }
 
-function redirect($url){
-	$url = trim($url, "/");
-	header("Location: /$url");
-	header("Connection: close");
-	exit;
-}
-
 function setHTTPStatusCode($code){
 	$HTTPStatusCodes = array(
 		"400" => "400 Bad Request",
@@ -36,9 +29,9 @@ function setContentType($type){
 }
 
 function resizeImg($img, $width, $height){
-		$widthOrig = imagesx($img);
-		$heightOrig = imagesy($img);
-		$imgNew = imagecreatetruecolor($width, $height);
-		imagecopyresampled($imgNew, $img, 0, 0, 0, 0, $width, $height, $widthOrig, $heightOrig);
-		return $imgNew;
-	}
+	$widthOrig = imagesx($img);
+	$heightOrig = imagesy($img);
+	$imgNew = imagecreatetruecolor($width, $height);
+	imagecopyresampled($imgNew, $img, 0, 0, 0, 0, $width, $height, $widthOrig, $heightOrig);
+	return $imgNew;
+}

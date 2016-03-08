@@ -26,17 +26,11 @@ class PackController extends BaseController{
 		}
 	}
 
-	protected function newPack(){	
-		if($this->data["loggedUser"]){
-			$this->viewFile($this->template);	
-		}
-		else{
-			$this->sendFlashMessage("To add new pack you must be signed in.", "error");
-			redirect("/");
-		}
+	protected function new(){	
+		$this->viewFile($this->template);
 	}
 
-	protected function createPack(){
+	protected function create(){
 		if($this->data["loggedUser"]){
 			if(isset($_POST["name"])){
 				$pack = new Pack();
@@ -63,14 +57,14 @@ class PackController extends BaseController{
 				}
 				else
 					$this->sendFlashMessage("You have successfuly created new pack.", "success");
-				redirect($this->data["referersURI"]);
+				$this->redirect($this->data["referersURI"]);
 			}
 			else
 				setHTTPStatusCode("400");
 		}
 		else{
 			$this->sendFlashMessage("To add a pack you must be signed in.", "error");
-			redirect("/");
+			$this->redirect("/");
 		}
 	}
 
