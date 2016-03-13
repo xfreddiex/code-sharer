@@ -26,9 +26,9 @@ abstract class Controller{
 
 	public function __call($method, $params){
 		if(method_exists($this, $method)){
-			$this->before($method);
+			$this->before(array("method" => $method, "params" => $params[0]));
 			$this->$method($params[0]);
-			$this->after($method);
+			$this->after(array("method" => $method, "params" => $params[0]));
 		}
 	}
 
@@ -53,24 +53,24 @@ abstract class Controller{
 		echo $string;
 	}
 
-	protected function before($method){
+	protected function before($args){
 		foreach($this->beforeAll as $beforeAllMethod){
-			$this->$beforeAllMethod($method);
+			$this->$beforeAllMethod($args);
 		}
-		if(isset($this->before[$method])){
-			foreach($this->before[$method] as $beforeMethod){
-				$this->$beforeMethod($method);
+		if(isset($this->before[$args["method"]])){
+			foreach($this->before[$args["method"]] as $beforeMethod){
+				$this->$beforeMethod($args);
 			}
 		}
 	}
 
-	protected function after($method){
+	protected function after($args){
 		foreach($this->afterAll as $afterAllMethod){
-			$this->$afterAllMethod();
+			$this->$afterAllMethod($args);
 		}
-		if(isset($this->after[$method])){
-			foreach($this->after[$method] as $afterMethod){
-				$this->$afterMethod();
+		if(isset($this->after[$args["method"]])){
+			foreach($this->after[$args["method"]] as $afterMethod){
+				$this->$afterMethod($args);
 			}
 		}
 	}

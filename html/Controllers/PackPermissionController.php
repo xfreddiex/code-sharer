@@ -19,16 +19,16 @@ class PackPermissionController extends BaseController{
 		parent::__construct();
 
 		$this->addBefore("update", array("userLogged", "userAuthorized", "loadPack"));
+		$this->addBefore("show", array("userLogged", "loadPack"));
 	}
 
-	private function update(){
-		var_dump($_POST["group".$i."id"]);
+	protected function update(){
 		for($i = 0; ; $i++){ 
 			
 			if(isset($_POST["user".$i."username"])){
 				$user = UserQuery::create()->findOneByUsername($_POST["user".$i."username"]);
 				if($user){
-					$permission = PackPermissionQuery::create()->filterByBelongerType("user")->filterByUser($user)->filterByPack($this->data["pack"])->findOne();
+					$permission = PackPermissionQuery::create()->filterByUser($user)->filterByPack($this->data["pack"])->findOne();
 					if(!$permission)
 						$permission = new PackPermission();
 					if(isset($_POST["user".$i."remove"]))
@@ -42,7 +42,6 @@ class PackPermissionController extends BaseController{
 						continue;
 					}
 					$permission->setPack($this->data["pack"]);
-					$permission->setBelongerType("user");
 					$permission->setUser($user);
 					$permission->save();
 				}
@@ -59,7 +58,7 @@ class PackPermissionController extends BaseController{
 			if(isset($_POST["group".$i."id"])){
 				$group = GroupQuery::create()->findPK($_POST["group".$i."id"]);
 				if($group){
-					$permission = PackPermissionQuery::create()->filterByBelongerType("group")->filterByGroup($group)->filterByPack($this->data["pack"])->findOne();
+					$permission = PackPermissionQuery::create()->filterByGroup($group)->filterByPack($this->data["pack"])->findOne();
 					if(!$permission)
 						$permission = new PackPermission();
 					if(isset($_POST["group".$i."remove"]))
@@ -73,7 +72,6 @@ class PackPermissionController extends BaseController{
 						continue;
 					}
 					$permission->setPack($this->data["pack"]);
-					$permission->setBelongerType("group");
 					$permission->setGroup($group);
 					$permission->save();
 				}

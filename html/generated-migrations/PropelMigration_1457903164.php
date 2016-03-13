@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457254105.
- * Generated on 2016-03-06 09:48:25 by xfreddiex
+ * up to version 1457903164.
+ * Generated on 2016-03-13 22:06:04 by xfreddiex
  */
-class PropelMigration_1457254105
+class PropelMigration_1457903164
 {
     public $comment = '';
 
@@ -43,18 +43,11 @@ class PropelMigration_1457254105
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE `permission`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `permission_type` TINYINT NOT NULL,
-    `belonger_id` INTEGER NOT NULL,
-    `belonger_type` TINYINT NOT NULL,
-    `target_id` INTEGER NOT NULL,
-    `deleted_at` DATETIME,
-    `created_at` DATETIME,
-    `updated_at` DATETIME,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER SET=\'utf8\' COLLATE=\'utf8_unicode_ci\';
+ALTER TABLE `user_group`
+
+  ADD `id` INTEGER NOT NULL AUTO_INCREMENT AFTER `group_id`,
+
+  ADD PRIMARY KEY (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -76,7 +69,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `permission`;
+ALTER TABLE `user_group`
+
+  DROP PRIMARY KEY,
+
+  DROP `id`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

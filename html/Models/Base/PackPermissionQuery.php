@@ -21,18 +21,18 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildPackPermissionQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildPackPermissionQuery orderByType($order = Criteria::ASC) Order by the type column
- * @method     ChildPackPermissionQuery orderByBelongerId($order = Criteria::ASC) Order by the belonger_id column
- * @method     ChildPackPermissionQuery orderByBelongerType($order = Criteria::ASC) Order by the belonger_type column
+ * @method     ChildPackPermissionQuery orderByValue($order = Criteria::ASC) Order by the value column
+ * @method     ChildPackPermissionQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildPackPermissionQuery orderByGroupId($order = Criteria::ASC) Order by the group_id column
  * @method     ChildPackPermissionQuery orderByPackId($order = Criteria::ASC) Order by the pack_id column
  * @method     ChildPackPermissionQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildPackPermissionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildPackPermissionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildPackPermissionQuery groupById() Group by the id column
- * @method     ChildPackPermissionQuery groupByType() Group by the type column
- * @method     ChildPackPermissionQuery groupByBelongerId() Group by the belonger_id column
- * @method     ChildPackPermissionQuery groupByBelongerType() Group by the belonger_type column
+ * @method     ChildPackPermissionQuery groupByValue() Group by the value column
+ * @method     ChildPackPermissionQuery groupByUserId() Group by the user_id column
+ * @method     ChildPackPermissionQuery groupByGroupId() Group by the group_id column
  * @method     ChildPackPermissionQuery groupByPackId() Group by the pack_id column
  * @method     ChildPackPermissionQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildPackPermissionQuery groupByCreatedAt() Group by the created_at column
@@ -82,9 +82,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission findOneOrCreate(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query, or a new ChildPackPermission object populated from the query conditions when no match is found
  *
  * @method     ChildPackPermission findOneById(int $id) Return the first ChildPackPermission filtered by the id column
- * @method     ChildPackPermission findOneByType(int $type) Return the first ChildPackPermission filtered by the type column
- * @method     ChildPackPermission findOneByBelongerId(int $belonger_id) Return the first ChildPackPermission filtered by the belonger_id column
- * @method     ChildPackPermission findOneByBelongerType(int $belonger_type) Return the first ChildPackPermission filtered by the belonger_type column
+ * @method     ChildPackPermission findOneByValue(int $value) Return the first ChildPackPermission filtered by the value column
+ * @method     ChildPackPermission findOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column
+ * @method     ChildPackPermission findOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column
  * @method     ChildPackPermission findOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column
  * @method     ChildPackPermission findOneByDeletedAt(string $deleted_at) Return the first ChildPackPermission filtered by the deleted_at column
  * @method     ChildPackPermission findOneByCreatedAt(string $created_at) Return the first ChildPackPermission filtered by the created_at column
@@ -94,9 +94,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission requireOne(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildPackPermission requireOneById(int $id) Return the first ChildPackPermission filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByType(int $type) Return the first ChildPackPermission filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByBelongerId(int $belonger_id) Return the first ChildPackPermission filtered by the belonger_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByBelongerType(int $belonger_type) Return the first ChildPackPermission filtered by the belonger_type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPackPermission requireOneByValue(int $value) Return the first ChildPackPermission filtered by the value column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPackPermission requireOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPackPermission requireOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByDeletedAt(string $deleted_at) Return the first ChildPackPermission filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByCreatedAt(string $created_at) Return the first ChildPackPermission filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -104,9 +104,9 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildPackPermission[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildPackPermission objects based on current ModelCriteria
  * @method     ChildPackPermission[]|ObjectCollection findById(int $id) Return ChildPackPermission objects filtered by the id column
- * @method     ChildPackPermission[]|ObjectCollection findByType(int $type) Return ChildPackPermission objects filtered by the type column
- * @method     ChildPackPermission[]|ObjectCollection findByBelongerId(int $belonger_id) Return ChildPackPermission objects filtered by the belonger_id column
- * @method     ChildPackPermission[]|ObjectCollection findByBelongerType(int $belonger_type) Return ChildPackPermission objects filtered by the belonger_type column
+ * @method     ChildPackPermission[]|ObjectCollection findByValue(int $value) Return ChildPackPermission objects filtered by the value column
+ * @method     ChildPackPermission[]|ObjectCollection findByUserId(int $user_id) Return ChildPackPermission objects filtered by the user_id column
+ * @method     ChildPackPermission[]|ObjectCollection findByGroupId(int $group_id) Return ChildPackPermission objects filtered by the group_id column
  * @method     ChildPackPermission[]|ObjectCollection findByPackId(int $pack_id) Return ChildPackPermission objects filtered by the pack_id column
  * @method     ChildPackPermission[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildPackPermission objects filtered by the deleted_at column
  * @method     ChildPackPermission[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildPackPermission objects filtered by the created_at column
@@ -203,7 +203,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, type, belonger_id, belonger_type, pack_id, deleted_at, created_at, updated_at FROM pack_permission WHERE id = :p0';
+        $sql = 'SELECT id, value, user_id, group_id, pack_id, deleted_at, created_at, updated_at FROM pack_permission WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -335,53 +335,51 @@ abstract class PackPermissionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the type column
+     * Filter the query on the value column
      *
-     * @param     mixed $type The value to use as filter
+     * @param     mixed $value The value to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function filterByType($type = null, $comparison = null)
+    public function filterByValue($value = null, $comparison = null)
     {
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_TYPE);
-        if (is_scalar($type)) {
-            if (!in_array($type, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $type));
+        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_VALUE);
+        if (is_scalar($value)) {
+            if (!in_array($value, $valueSet)) {
+                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
             }
-            $type = array_search($type, $valueSet);
-        } elseif (is_array($type)) {
+            $value = array_search($value, $valueSet);
+        } elseif (is_array($value)) {
             $convertedValues = array();
-            foreach ($type as $value) {
+            foreach ($value as $value) {
                 if (!in_array($value, $valueSet)) {
                     throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
                 }
                 $convertedValues []= array_search($value, $valueSet);
             }
-            $type = $convertedValues;
+            $value = $convertedValues;
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(PackPermissionTableMap::COL_TYPE, $type, $comparison);
+        return $this->addUsingAlias(PackPermissionTableMap::COL_VALUE, $value, $comparison);
     }
 
     /**
-     * Filter the query on the belonger_id column
+     * Filter the query on the user_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByBelongerId(1234); // WHERE belonger_id = 1234
-     * $query->filterByBelongerId(array(12, 34)); // WHERE belonger_id IN (12, 34)
-     * $query->filterByBelongerId(array('min' => 12)); // WHERE belonger_id > 12
+     * $query->filterByUserId(1234); // WHERE user_id = 1234
+     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
+     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
      * @see       filterByUser()
      *
-     * @see       filterByGroup()
-     *
-     * @param     mixed $belongerId The value to use as filter.
+     * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -389,16 +387,16 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function filterByBelongerId($belongerId = null, $comparison = null)
+    public function filterByUserId($userId = null, $comparison = null)
     {
-        if (is_array($belongerId)) {
+        if (is_array($userId)) {
             $useMinMax = false;
-            if (isset($belongerId['min'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $belongerId['min'], Criteria::GREATER_EQUAL);
+            if (isset($userId['min'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($belongerId['max'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $belongerId['max'], Criteria::LESS_EQUAL);
+            if (isset($userId['max'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -409,40 +407,50 @@ abstract class PackPermissionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $belongerId, $comparison);
+        return $this->addUsingAlias(PackPermissionTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
-     * Filter the query on the belonger_type column
+     * Filter the query on the group_id column
      *
-     * @param     mixed $belongerType The value to use as filter
+     * Example usage:
+     * <code>
+     * $query->filterByGroupId(1234); // WHERE group_id = 1234
+     * $query->filterByGroupId(array(12, 34)); // WHERE group_id IN (12, 34)
+     * $query->filterByGroupId(array('min' => 12)); // WHERE group_id > 12
+     * </code>
+     *
+     * @see       filterByGroup()
+     *
+     * @param     mixed $groupId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function filterByBelongerType($belongerType = null, $comparison = null)
+    public function filterByGroupId($groupId = null, $comparison = null)
     {
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_BELONGER_TYPE);
-        if (is_scalar($belongerType)) {
-            if (!in_array($belongerType, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $belongerType));
+        if (is_array($groupId)) {
+            $useMinMax = false;
+            if (isset($groupId['min'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_GROUP_ID, $groupId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
             }
-            $belongerType = array_search($belongerType, $valueSet);
-        } elseif (is_array($belongerType)) {
-            $convertedValues = array();
-            foreach ($belongerType as $value) {
-                if (!in_array($value, $valueSet)) {
-                    throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
-                }
-                $convertedValues []= array_search($value, $valueSet);
+            if (isset($groupId['max'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_GROUP_ID, $groupId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
             }
-            $belongerType = $convertedValues;
+            if ($useMinMax) {
+                return $this;
+            }
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(PackPermissionTableMap::COL_BELONGER_TYPE, $belongerType, $comparison);
+        return $this->addUsingAlias(PackPermissionTableMap::COL_GROUP_ID, $groupId, $comparison);
     }
 
     /**
@@ -631,14 +639,14 @@ abstract class PackPermissionQuery extends ModelCriteria
     {
         if ($user instanceof \Models\User) {
             return $this
-                ->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $user->getId(), $comparison);
+                ->addUsingAlias(PackPermissionTableMap::COL_USER_ID, $user->getId(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(PackPermissionTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type \Models\User or Collection');
         }
@@ -652,7 +660,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('User');
@@ -687,7 +695,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * @return \Models\UserQuery A secondary query class using the current class as primary query
      */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinUser($relationAlias, $joinType)
@@ -708,14 +716,14 @@ abstract class PackPermissionQuery extends ModelCriteria
     {
         if ($group instanceof \Models\Group) {
             return $this
-                ->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $group->getId(), $comparison);
+                ->addUsingAlias(PackPermissionTableMap::COL_GROUP_ID, $group->getId(), $comparison);
         } elseif ($group instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(PackPermissionTableMap::COL_BELONGER_ID, $group->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(PackPermissionTableMap::COL_GROUP_ID, $group->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByGroup() only accepts arguments of type \Models\Group or Collection');
         }
@@ -729,7 +737,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
-    public function joinGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinGroup($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Group');
@@ -764,7 +772,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * @return \Models\GroupQuery A secondary query class using the current class as primary query
      */
-    public function useGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useGroupQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinGroup($relationAlias, $joinType)

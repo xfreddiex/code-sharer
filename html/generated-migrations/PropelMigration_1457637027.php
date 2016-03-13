@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457259518.
- * Generated on 2016-03-06 11:18:38 by xfreddiex
+ * up to version 1457637027.
+ * Generated on 2016-03-10 20:10:27 by xfreddiex
  */
-class PropelMigration_1457259518
+class PropelMigration_1457637027
 {
     public $comment = '';
 
@@ -43,54 +43,47 @@ class PropelMigration_1457259518
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `permission`;
+DROP TABLE IF EXISTS `team`;
 
-ALTER TABLE `pack`
+ALTER TABLE `group_permission`
 
-  CHANGE `tags` `tags` TEXT;
+  DROP FOREIGN KEY `group_permission_fk_6fa21b`,
 
-CREATE TABLE `pack_permission`
+  DROP INDEX `group_permission_fi_6fa21b`,
+
+  ADD INDEX `group_permission_fi_3a4cbf` (`group_id`),
+
+  ADD CONSTRAINT `group_permission_fk_3a4cbf`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `group_of_users` (`id`);
+
+ALTER TABLE `pack_permission`
+
+  DROP FOREIGN KEY `pack_permission_fk_6fa21b`,
+
+  DROP INDEX `pack_permission_fi_6fa21b`,
+
+  ADD INDEX `pack_permission_fi_3a4cbf` (`group_id`),
+
+  ADD CONSTRAINT `pack_permission_fk_3a4cbf`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `group_of_users` (`id`);
+
+CREATE TABLE `group_of_users`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `permission_type` TINYINT NOT NULL,
-    `belonger_id` INTEGER NOT NULL,
-    `belonger_type` TINYINT NOT NULL,
-    `pack_id` INTEGER NOT NULL,
-    `deleted_at` DATETIME,
-    `created_at` DATETIME,
-    `updated_at` DATETIME,
-    PRIMARY KEY (`id`),
-    INDEX `pack_permission_fi_49d0f8` (`belonger_id`),
-    INDEX `pack_permission_fi_c61110` (`pack_id`),
-    CONSTRAINT `pack_permission_fk_49d0f8`
-        FOREIGN KEY (`belonger_id`)
-        REFERENCES `user` (`id`),
-    CONSTRAINT `pack_permission_fk_21351b`
-        FOREIGN KEY (`belonger_id`)
-        REFERENCES `group` (`id`),
-    CONSTRAINT `pack_permission_fk_c61110`
-        FOREIGN KEY (`pack_id`)
-        REFERENCES `pack` (`id`)
-) ENGINE=InnoDB CHARACTER SET=\'utf8\' COLLATE=\'utf8_unicode_ci\';
-
-CREATE TABLE `group_permission`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `permission_type` TINYINT NOT NULL,
+    `name` VARCHAR(32) NOT NULL,
+    `description` VARCHAR(256),
+    `private` TINYINT(1) NOT NULL,
     `user_id` INTEGER NOT NULL,
-    `group_id` INTEGER NOT NULL,
     `deleted_at` DATETIME,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    INDEX `group_permission_fi_29554a` (`user_id`),
-    INDEX `group_permission_fi_0278b4` (`group_id`),
-    CONSTRAINT `group_permission_fk_29554a`
+    INDEX `group_of_users_fi_29554a` (`user_id`),
+    CONSTRAINT `group_of_users_fk_29554a`
         FOREIGN KEY (`user_id`)
-        REFERENCES `user` (`id`),
-    CONSTRAINT `group_permission_fk_0278b4`
-        FOREIGN KEY (`group_id`)
-        REFERENCES `group` (`id`)
+        REFERENCES `user` (`id`)
 ) ENGINE=InnoDB CHARACTER SET=\'utf8\' COLLATE=\'utf8_unicode_ci\';
 
 # This restores the fkey checks, after having unset them earlier
@@ -113,31 +106,46 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `pack_permission`;
+DROP TABLE IF EXISTS `group_of_users`;
 
-DROP TABLE IF EXISTS `group_permission`;
+ALTER TABLE `group_permission`
 
-ALTER TABLE `pack`
+  DROP FOREIGN KEY `group_permission_fk_3a4cbf`,
 
-  CHANGE `tags` `tags` VARCHAR(200);
+  DROP INDEX `group_permission_fi_3a4cbf`,
 
-CREATE TABLE `permission`
+  ADD INDEX `group_permission_fi_6fa21b` (`group_id`),
+
+  ADD CONSTRAINT `group_permission_fk_6fa21b`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `team` (`id`);
+
+ALTER TABLE `pack_permission`
+
+  DROP FOREIGN KEY `pack_permission_fk_3a4cbf`,
+
+  DROP INDEX `pack_permission_fi_3a4cbf`,
+
+  ADD INDEX `pack_permission_fi_6fa21b` (`group_id`),
+
+  ADD CONSTRAINT `pack_permission_fk_6fa21b`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `team` (`id`);
+
+CREATE TABLE `team`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `permission_type` TINYINT NOT NULL,
-    `belonger_id` INTEGER NOT NULL,
-    `belonger_type` TINYINT NOT NULL,
-    `target_id` INTEGER NOT NULL,
+    `name` VARCHAR(32) NOT NULL,
+    `description` VARCHAR(256),
+    `private` TINYINT(1) NOT NULL,
+    `user_id` INTEGER NOT NULL,
     `deleted_at` DATETIME,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    INDEX `permission_fi_49d0f8` (`belonger_id`),
-    CONSTRAINT `permission_fk_21351b`
-        FOREIGN KEY (`belonger_id`)
-        REFERENCES `group` (`id`),
-    CONSTRAINT `permission_fk_49d0f8`
-        FOREIGN KEY (`belonger_id`)
+    INDEX `team_fi_29554a` (`user_id`),
+    CONSTRAINT `team_fk_29554a`
+        FOREIGN KEY (`user_id`)
         REFERENCES `user` (`id`)
 ) ENGINE=InnoDB;
 

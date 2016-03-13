@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'group' table.
+ * This class defines the structure of the 'group_of_users' table.
  *
  *
  *
@@ -44,7 +44,7 @@ class GroupTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'group';
+    const TABLE_NAME = 'group_of_users';
 
     /**
      * The related Propel class for this table
@@ -74,42 +74,42 @@ class GroupTableMap extends TableMap
     /**
      * the column name for the id field
      */
-    const COL_ID = 'group.id';
+    const COL_ID = 'group_of_users.id';
 
     /**
      * the column name for the name field
      */
-    const COL_NAME = 'group.name';
+    const COL_NAME = 'group_of_users.name';
 
     /**
      * the column name for the description field
      */
-    const COL_DESCRIPTION = 'group.description';
+    const COL_DESCRIPTION = 'group_of_users.description';
 
     /**
      * the column name for the private field
      */
-    const COL_PRIVATE = 'group.private';
+    const COL_PRIVATE = 'group_of_users.private';
 
     /**
-     * the column name for the user_id field
+     * the column name for the owner_id field
      */
-    const COL_USER_ID = 'group.user_id';
+    const COL_OWNER_ID = 'group_of_users.owner_id';
 
     /**
      * the column name for the deleted_at field
      */
-    const COL_DELETED_AT = 'group.deleted_at';
+    const COL_DELETED_AT = 'group_of_users.deleted_at';
 
     /**
      * the column name for the created_at field
      */
-    const COL_CREATED_AT = 'group.created_at';
+    const COL_CREATED_AT = 'group_of_users.created_at';
 
     /**
      * the column name for the updated_at field
      */
-    const COL_UPDATED_AT = 'group.updated_at';
+    const COL_UPDATED_AT = 'group_of_users.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -123,10 +123,10 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'UserId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'userId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_PRIVATE, GroupTableMap::COL_USER_ID, GroupTableMap::COL_DELETED_AT, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'user_id', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'OwnerId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'ownerId', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_PRIVATE, GroupTableMap::COL_OWNER_ID, GroupTableMap::COL_DELETED_AT, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'owner_id', 'deleted_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -137,10 +137,10 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'UserId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'userId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_PRIVATE => 3, GroupTableMap::COL_USER_ID => 4, GroupTableMap::COL_DELETED_AT => 5, GroupTableMap::COL_CREATED_AT => 6, GroupTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'user_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'OwnerId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'ownerId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_PRIVATE => 3, GroupTableMap::COL_OWNER_ID => 4, GroupTableMap::COL_DELETED_AT => 5, GroupTableMap::COL_CREATED_AT => 6, GroupTableMap::COL_UPDATED_AT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'owner_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -154,7 +154,7 @@ class GroupTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('group');
+        $this->setName('group_of_users');
         $this->setPhpName('Group');
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Models\\Group');
@@ -162,10 +162,10 @@ class GroupTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 50, null);
-        $this->addColumn('description', 'Description', 'VARCHAR', false, 250, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 32, null);
+        $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
         $this->addColumn('private', 'Private', 'BOOLEAN', true, 1, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
+        $this->addForeignKey('owner_id', 'OwnerId', 'INTEGER', 'user', 'id', true, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
@@ -176,27 +176,27 @@ class GroupTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Owner', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':owner_id',
     1 => ':id',
   ),
 ), null, null, null, false);
         $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':belonger_id',
+    0 => ':group_id',
     1 => ':id',
   ),
 ), null, null, 'PackPermissions', false);
-        $this->addRelation('GroupPermission', '\\Models\\GroupPermission', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('UserGroup', '\\Models\\UserGroup', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':group_id',
     1 => ':id',
   ),
-), null, null, 'GroupPermissions', false);
+), null, null, 'UserGroups', false);
     } // buildRelations()
 
     /**
@@ -209,6 +209,7 @@ class GroupTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal group name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'Group name should not be blank.',),), 'rule3' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
 
@@ -357,7 +358,7 @@ class GroupTableMap extends TableMap
             $criteria->addSelectColumn(GroupTableMap::COL_NAME);
             $criteria->addSelectColumn(GroupTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(GroupTableMap::COL_PRIVATE);
-            $criteria->addSelectColumn(GroupTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(GroupTableMap::COL_OWNER_ID);
             $criteria->addSelectColumn(GroupTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(GroupTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(GroupTableMap::COL_UPDATED_AT);
@@ -366,7 +367,7 @@ class GroupTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.private');
-            $criteria->addSelectColumn($alias . '.user_id');
+            $criteria->addSelectColumn($alias . '.owner_id');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
@@ -438,7 +439,7 @@ class GroupTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the group table.
+     * Deletes all rows from the group_of_users table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).

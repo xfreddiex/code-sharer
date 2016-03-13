@@ -60,19 +60,19 @@
 
     <table name="pack_permission" phpName="PackPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="type" type="enum" valueSet="view, edit, remove" required="true"/>
-        <column name="belonger_id" type="integer" required="true"/>
-        <column name="belonger_type" type="enum" valueSet="group, user" required="true"/>
+        <column name="value" type="enum" valueSet="1, 2, 3" required="true"/>
+        <column name="user_id" type="integer"/>
+        <column name="group_id" type="integer"/>
         <column name="pack_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         
         <behavior name="timestampable" />
         
         <foreign-key foreignTable="user" phpName="User" refPhpName="PackPermission">
-            <reference local="belonger_id" foreign="id"/>
+            <reference local="user_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="group" phpName="Group" refPhpName="PackPermission">
-            <reference local="belonger_id" foreign="id"/>
+        <foreign-key foreignTable="group_of_users" phpName="Group" refPhpName="PackPermission">
+            <reference local="group_id" foreign="id"/>
         </foreign-key>
 
         <foreign-key foreignTable="pack" phpName="Pack" refPhpName="PackPermission">
@@ -81,22 +81,19 @@
 
     </table>
 
-    <table name="group_permission" phpName="GroupPermission">
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="type" type="enum" valueSet="member, admin" required="true"/>
+    <table name="user_group" isCrossRef="true">
         <column name="user_id" type="integer" required="true"/>
         <column name="group_id" type="integer" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
         
-        <behavior name="timestampable" />
-        
-        <foreign-key foreignTable="user" phpName="User" refPhpName="GroupPermission">
+        <foreign-key foreignTable="user">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
 
-        <foreign-key foreignTable="group" phpName="Group" refPhpName="GroupPermission">
+        <foreign-key foreignTable="group_of_users">
             <reference local="group_id" foreign="id"/>
         </foreign-key>
+
+        <behavior name="auto_add_pk" />
 
     </table>
 
@@ -146,19 +143,25 @@
     
     </table>
 
-    <table name="group" phpName="Group">
+    <table name="group_of_users" phpName="Group">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="name" type="varchar" size="50" required="true"/>
-        <column name="description" type="varchar" size="250" required="false"/>
+        <column name="name" type="varchar" size="32" required="true"/>
+        <column name="description" type="varchar" size="256" required="false"/>
         <column name="private" type="boolean" required="true"/>
-        <column name="user_id" type="integer" required="true"/>
+        <column name="owner_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="User" refPhpName="Group">
-            <reference local="user_id" foreign="id"/>
+        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Group">
+            <reference local="owner_id" foreign="id"/>
         </foreign-key>
+
+        <behavior name="validate">
+            <parameter name="rule1" value='{column: name, validator: Length, options: {max : 32, maxMessage: "Maximal group name length is {{ limit }} characters."}}' />
+            <parameter name="rule2" value='{column: name, validator: NotBlank, options: {message: "Group name should not be blank."}}' />
+            <parameter name="rule3" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal pack description length is {{ limit }} characters."}}' />
+        </behavior>
 
     </table>
 

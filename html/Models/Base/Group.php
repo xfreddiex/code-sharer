@@ -6,16 +6,16 @@ use \DateTime;
 use \Exception;
 use \PDO;
 use Models\Group as ChildGroup;
-use Models\GroupPermission as ChildGroupPermission;
-use Models\GroupPermissionQuery as ChildGroupPermissionQuery;
 use Models\GroupQuery as ChildGroupQuery;
 use Models\PackPermission as ChildPackPermission;
 use Models\PackPermissionQuery as ChildPackPermissionQuery;
 use Models\User as ChildUser;
+use Models\UserGroup as ChildUserGroup;
+use Models\UserGroupQuery as ChildUserGroupQuery;
 use Models\UserQuery as ChildUserQuery;
-use Models\Map\GroupPermissionTableMap;
 use Models\Map\GroupTableMap;
 use Models\Map\PackPermissionTableMap;
+use Models\Map\UserGroupTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -29,9 +29,20 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
+use Symfony\Component\Translation\IdentityTranslator;
+use Symfony\Component\Validator\ConstraintValidatorFactory;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Context\ExecutionContextFactory;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
+use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Base class that represents a row from the 'group' table.
+ * Base class that represents a row from the 'group_of_users' table.
  *
  *
  *
@@ -100,11 +111,11 @@ abstract class Group implements ActiveRecordInterface
     protected $private;
 
     /**
-     * The value for the user_id field.
+     * The value for the owner_id field.
      *
      * @var        int
      */
-    protected $user_id;
+    protected $owner_id;
 
     /**
      * The value for the deleted_at field.
@@ -130,7 +141,7 @@ abstract class Group implements ActiveRecordInterface
     /**
      * @var        ChildUser
      */
-    protected $aUser;
+    protected $aOwner;
 
     /**
      * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
@@ -139,10 +150,10 @@ abstract class Group implements ActiveRecordInterface
     protected $collPackPermissionsPartial;
 
     /**
-     * @var        ObjectCollection|ChildGroupPermission[] Collection to store aggregation of ChildGroupPermission objects.
+     * @var        ObjectCollection|ChildUserGroup[] Collection to store aggregation of ChildUserGroup objects.
      */
-    protected $collGroupPermissions;
-    protected $collGroupPermissionsPartial;
+    protected $collUserGroups;
+    protected $collUserGroupsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -152,6 +163,23 @@ abstract class Group implements ActiveRecordInterface
      */
     protected $alreadyInSave = false;
 
+    // validate behavior
+
+    /**
+     * Flag to prevent endless validation loop, if this object is referenced
+     * by another object which falls in this transaction.
+     * @var        boolean
+     */
+    protected $alreadyInValidation = false;
+
+    /**
+     * ConstraintViolationList object
+     *
+     * @see     http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolationList.html
+     * @var     ConstraintViolationList
+     */
+    protected $validationFailures;
+
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildPackPermission[]
@@ -160,9 +188,9 @@ abstract class Group implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildGroupPermission[]
+     * @var ObjectCollection|ChildUserGroup[]
      */
-    protected $groupPermissionsScheduledForDeletion = null;
+    protected $userGroupsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\Group object.
@@ -440,13 +468,13 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
-     * Get the [user_id] column value.
+     * Get the [owner_id] column value.
      *
      * @return int
      */
-    public function getUserId()
+    public function getOwnerId()
     {
-        return $this->user_id;
+        return $this->owner_id;
     }
 
     /**
@@ -598,28 +626,28 @@ abstract class Group implements ActiveRecordInterface
     } // setPrivate()
 
     /**
-     * Set the value of [user_id] column.
+     * Set the value of [owner_id] column.
      *
      * @param int $v new value
      * @return $this|\Models\Group The current object (for fluent API support)
      */
-    public function setUserId($v)
+    public function setOwnerId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[GroupTableMap::COL_USER_ID] = true;
+        if ($this->owner_id !== $v) {
+            $this->owner_id = $v;
+            $this->modifiedColumns[GroupTableMap::COL_OWNER_ID] = true;
         }
 
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
+        if ($this->aOwner !== null && $this->aOwner->getId() !== $v) {
+            $this->aOwner = null;
         }
 
         return $this;
-    } // setUserId()
+    } // setOwnerId()
 
     /**
      * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
@@ -729,8 +757,8 @@ abstract class Group implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GroupTableMap::translateFieldName('Private', TableMap::TYPE_PHPNAME, $indexType)];
             $this->private = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('OwnerId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->owner_id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GroupTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
@@ -779,8 +807,8 @@ abstract class Group implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
+        if ($this->aOwner !== null && $this->owner_id !== $this->aOwner->getId()) {
+            $this->aOwner = null;
         }
     } // ensureConsistency
 
@@ -821,10 +849,10 @@ abstract class Group implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
+            $this->aOwner = null;
             $this->collPackPermissions = null;
 
-            $this->collGroupPermissions = null;
+            $this->collUserGroups = null;
 
         } // if (deep)
     }
@@ -942,11 +970,11 @@ abstract class Group implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
+            if ($this->aOwner !== null) {
+                if ($this->aOwner->isModified() || $this->aOwner->isNew()) {
+                    $affectedRows += $this->aOwner->save($con);
                 }
-                $this->setUser($this->aUser);
+                $this->setOwner($this->aOwner);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -962,9 +990,10 @@ abstract class Group implements ActiveRecordInterface
 
             if ($this->packPermissionsScheduledForDeletion !== null) {
                 if (!$this->packPermissionsScheduledForDeletion->isEmpty()) {
-                    \Models\PackPermissionQuery::create()
-                        ->filterByPrimaryKeys($this->packPermissionsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
+                    foreach ($this->packPermissionsScheduledForDeletion as $packPermission) {
+                        // need to save related object because we set the relation to null
+                        $packPermission->save($con);
+                    }
                     $this->packPermissionsScheduledForDeletion = null;
                 }
             }
@@ -977,17 +1006,17 @@ abstract class Group implements ActiveRecordInterface
                 }
             }
 
-            if ($this->groupPermissionsScheduledForDeletion !== null) {
-                if (!$this->groupPermissionsScheduledForDeletion->isEmpty()) {
-                    \Models\GroupPermissionQuery::create()
-                        ->filterByPrimaryKeys($this->groupPermissionsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->userGroupsScheduledForDeletion !== null) {
+                if (!$this->userGroupsScheduledForDeletion->isEmpty()) {
+                    \Models\UserGroupQuery::create()
+                        ->filterByPrimaryKeys($this->userGroupsScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->groupPermissionsScheduledForDeletion = null;
+                    $this->userGroupsScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collGroupPermissions !== null) {
-                foreach ($this->collGroupPermissions as $referrerFK) {
+            if ($this->collUserGroups !== null) {
+                foreach ($this->collUserGroups as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1032,8 +1061,8 @@ abstract class Group implements ActiveRecordInterface
         if ($this->isColumnModified(GroupTableMap::COL_PRIVATE)) {
             $modifiedColumns[':p' . $index++]  = 'private';
         }
-        if ($this->isColumnModified(GroupTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
+        if ($this->isColumnModified(GroupTableMap::COL_OWNER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'owner_id';
         }
         if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'deleted_at';
@@ -1046,7 +1075,7 @@ abstract class Group implements ActiveRecordInterface
         }
 
         $sql = sprintf(
-            'INSERT INTO group (%s) VALUES (%s)',
+            'INSERT INTO group_of_users (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1067,8 +1096,8 @@ abstract class Group implements ActiveRecordInterface
                     case 'private':
                         $stmt->bindValue($identifier, (int) $this->private, PDO::PARAM_INT);
                         break;
-                    case 'user_id':
-                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
+                    case 'owner_id':
+                        $stmt->bindValue($identifier, $this->owner_id, PDO::PARAM_INT);
                         break;
                     case 'deleted_at':
                         $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1154,7 +1183,7 @@ abstract class Group implements ActiveRecordInterface
                 return $this->getPrivate();
                 break;
             case 4:
-                return $this->getUserId();
+                return $this->getOwnerId();
                 break;
             case 5:
                 return $this->getDeletedAt();
@@ -1199,7 +1228,7 @@ abstract class Group implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getDescription(),
             $keys[3] => $this->getPrivate(),
-            $keys[4] => $this->getUserId(),
+            $keys[4] => $this->getOwnerId(),
             $keys[5] => $this->getDeletedAt(),
             $keys[6] => $this->getCreatedAt(),
             $keys[7] => $this->getUpdatedAt(),
@@ -1222,7 +1251,7 @@ abstract class Group implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
+            if (null !== $this->aOwner) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
@@ -1235,7 +1264,7 @@ abstract class Group implements ActiveRecordInterface
                         $key = 'User';
                 }
 
-                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aOwner->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collPackPermissions) {
 
@@ -1252,20 +1281,20 @@ abstract class Group implements ActiveRecordInterface
 
                 $result[$key] = $this->collPackPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collGroupPermissions) {
+            if (null !== $this->collUserGroups) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'groupPermissions';
+                        $key = 'userGroups';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'group_permissions';
+                        $key = 'user_groups';
                         break;
                     default:
-                        $key = 'GroupPermissions';
+                        $key = 'UserGroups';
                 }
 
-                $result[$key] = $this->collGroupPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collUserGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1314,7 +1343,7 @@ abstract class Group implements ActiveRecordInterface
                 $this->setPrivate($value);
                 break;
             case 4:
-                $this->setUserId($value);
+                $this->setOwnerId($value);
                 break;
             case 5:
                 $this->setDeletedAt($value);
@@ -1364,7 +1393,7 @@ abstract class Group implements ActiveRecordInterface
             $this->setPrivate($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUserId($arr[$keys[4]]);
+            $this->setOwnerId($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
             $this->setDeletedAt($arr[$keys[5]]);
@@ -1428,8 +1457,8 @@ abstract class Group implements ActiveRecordInterface
         if ($this->isColumnModified(GroupTableMap::COL_PRIVATE)) {
             $criteria->add(GroupTableMap::COL_PRIVATE, $this->private);
         }
-        if ($this->isColumnModified(GroupTableMap::COL_USER_ID)) {
-            $criteria->add(GroupTableMap::COL_USER_ID, $this->user_id);
+        if ($this->isColumnModified(GroupTableMap::COL_OWNER_ID)) {
+            $criteria->add(GroupTableMap::COL_OWNER_ID, $this->owner_id);
         }
         if ($this->isColumnModified(GroupTableMap::COL_DELETED_AT)) {
             $criteria->add(GroupTableMap::COL_DELETED_AT, $this->deleted_at);
@@ -1529,7 +1558,7 @@ abstract class Group implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setPrivate($this->getPrivate());
-        $copyObj->setUserId($this->getUserId());
+        $copyObj->setOwnerId($this->getOwnerId());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -1545,9 +1574,9 @@ abstract class Group implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getGroupPermissions() as $relObj) {
+            foreach ($this->getUserGroups() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addGroupPermission($relObj->copy($deepCopy));
+                    $copyObj->addUserGroup($relObj->copy($deepCopy));
                 }
             }
 
@@ -1588,15 +1617,15 @@ abstract class Group implements ActiveRecordInterface
      * @return $this|\Models\Group The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function setOwner(ChildUser $v = null)
     {
         if ($v === null) {
-            $this->setUserId(NULL);
+            $this->setOwnerId(NULL);
         } else {
-            $this->setUserId($v->getId());
+            $this->setOwnerId($v->getId());
         }
 
-        $this->aUser = $v;
+        $this->aOwner = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
@@ -1616,20 +1645,20 @@ abstract class Group implements ActiveRecordInterface
      * @return ChildUser The associated ChildUser object.
      * @throws PropelException
      */
-    public function getUser(ConnectionInterface $con = null)
+    public function getOwner(ConnectionInterface $con = null)
     {
-        if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aOwner === null && ($this->owner_id !== null)) {
+            $this->aOwner = ChildUserQuery::create()->findPk($this->owner_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addGroups($this);
+                $this->aOwner->addGroups($this);
              */
         }
 
-        return $this->aUser;
+        return $this->aOwner;
     }
 
 
@@ -1646,8 +1675,8 @@ abstract class Group implements ActiveRecordInterface
         if ('PackPermission' == $relationName) {
             return $this->initPackPermissions();
         }
-        if ('GroupPermission' == $relationName) {
-            return $this->initGroupPermissions();
+        if ('UserGroup' == $relationName) {
+            return $this->initUserGroups();
         }
     }
 
@@ -1869,7 +1898,7 @@ abstract class Group implements ActiveRecordInterface
                 $this->packPermissionsScheduledForDeletion = clone $this->collPackPermissions;
                 $this->packPermissionsScheduledForDeletion->clear();
             }
-            $this->packPermissionsScheduledForDeletion[]= clone $packPermission;
+            $this->packPermissionsScheduledForDeletion[]= $packPermission;
             $packPermission->setGroup(null);
         }
 
@@ -1927,31 +1956,31 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collGroupPermissions collection
+     * Clears out the collUserGroups collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addGroupPermissions()
+     * @see        addUserGroups()
      */
-    public function clearGroupPermissions()
+    public function clearUserGroups()
     {
-        $this->collGroupPermissions = null; // important to set this to NULL since that means it is uninitialized
+        $this->collUserGroups = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collGroupPermissions collection loaded partially.
+     * Reset is the collUserGroups collection loaded partially.
      */
-    public function resetPartialGroupPermissions($v = true)
+    public function resetPartialUserGroups($v = true)
     {
-        $this->collGroupPermissionsPartial = $v;
+        $this->collUserGroupsPartial = $v;
     }
 
     /**
-     * Initializes the collGroupPermissions collection.
+     * Initializes the collUserGroups collection.
      *
-     * By default this just sets the collGroupPermissions collection to an empty array (like clearcollGroupPermissions());
+     * By default this just sets the collUserGroups collection to an empty array (like clearcollUserGroups());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1960,20 +1989,20 @@ abstract class Group implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initGroupPermissions($overrideExisting = true)
+    public function initUserGroups($overrideExisting = true)
     {
-        if (null !== $this->collGroupPermissions && !$overrideExisting) {
+        if (null !== $this->collUserGroups && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = GroupPermissionTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collGroupPermissions = new $collectionClassName;
-        $this->collGroupPermissions->setModel('\Models\GroupPermission');
+        $this->collUserGroups = new $collectionClassName;
+        $this->collUserGroups->setModel('\Models\UserGroup');
     }
 
     /**
-     * Gets an array of ChildGroupPermission objects which contain a foreign key that references this object.
+     * Gets an array of ChildUserGroup objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1983,108 +2012,108 @@ abstract class Group implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildGroupPermission[] List of ChildGroupPermission objects
+     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
      * @throws PropelException
      */
-    public function getGroupPermissions(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getUserGroups(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collGroupPermissionsPartial && !$this->isNew();
-        if (null === $this->collGroupPermissions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collGroupPermissions) {
+        $partial = $this->collUserGroupsPartial && !$this->isNew();
+        if (null === $this->collUserGroups || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserGroups) {
                 // return empty collection
-                $this->initGroupPermissions();
+                $this->initUserGroups();
             } else {
-                $collGroupPermissions = ChildGroupPermissionQuery::create(null, $criteria)
+                $collUserGroups = ChildUserGroupQuery::create(null, $criteria)
                     ->filterByGroup($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collGroupPermissionsPartial && count($collGroupPermissions)) {
-                        $this->initGroupPermissions(false);
+                    if (false !== $this->collUserGroupsPartial && count($collUserGroups)) {
+                        $this->initUserGroups(false);
 
-                        foreach ($collGroupPermissions as $obj) {
-                            if (false == $this->collGroupPermissions->contains($obj)) {
-                                $this->collGroupPermissions->append($obj);
+                        foreach ($collUserGroups as $obj) {
+                            if (false == $this->collUserGroups->contains($obj)) {
+                                $this->collUserGroups->append($obj);
                             }
                         }
 
-                        $this->collGroupPermissionsPartial = true;
+                        $this->collUserGroupsPartial = true;
                     }
 
-                    return $collGroupPermissions;
+                    return $collUserGroups;
                 }
 
-                if ($partial && $this->collGroupPermissions) {
-                    foreach ($this->collGroupPermissions as $obj) {
+                if ($partial && $this->collUserGroups) {
+                    foreach ($this->collUserGroups as $obj) {
                         if ($obj->isNew()) {
-                            $collGroupPermissions[] = $obj;
+                            $collUserGroups[] = $obj;
                         }
                     }
                 }
 
-                $this->collGroupPermissions = $collGroupPermissions;
-                $this->collGroupPermissionsPartial = false;
+                $this->collUserGroups = $collUserGroups;
+                $this->collUserGroupsPartial = false;
             }
         }
 
-        return $this->collGroupPermissions;
+        return $this->collUserGroups;
     }
 
     /**
-     * Sets a collection of ChildGroupPermission objects related by a one-to-many relationship
+     * Sets a collection of ChildUserGroup objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $groupPermissions A Propel collection.
+     * @param      Collection $userGroups A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildGroup The current object (for fluent API support)
      */
-    public function setGroupPermissions(Collection $groupPermissions, ConnectionInterface $con = null)
+    public function setUserGroups(Collection $userGroups, ConnectionInterface $con = null)
     {
-        /** @var ChildGroupPermission[] $groupPermissionsToDelete */
-        $groupPermissionsToDelete = $this->getGroupPermissions(new Criteria(), $con)->diff($groupPermissions);
+        /** @var ChildUserGroup[] $userGroupsToDelete */
+        $userGroupsToDelete = $this->getUserGroups(new Criteria(), $con)->diff($userGroups);
 
 
-        $this->groupPermissionsScheduledForDeletion = $groupPermissionsToDelete;
+        $this->userGroupsScheduledForDeletion = $userGroupsToDelete;
 
-        foreach ($groupPermissionsToDelete as $groupPermissionRemoved) {
-            $groupPermissionRemoved->setGroup(null);
+        foreach ($userGroupsToDelete as $userGroupRemoved) {
+            $userGroupRemoved->setGroup(null);
         }
 
-        $this->collGroupPermissions = null;
-        foreach ($groupPermissions as $groupPermission) {
-            $this->addGroupPermission($groupPermission);
+        $this->collUserGroups = null;
+        foreach ($userGroups as $userGroup) {
+            $this->addUserGroup($userGroup);
         }
 
-        $this->collGroupPermissions = $groupPermissions;
-        $this->collGroupPermissionsPartial = false;
+        $this->collUserGroups = $userGroups;
+        $this->collUserGroupsPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related GroupPermission objects.
+     * Returns the number of related UserGroup objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related GroupPermission objects.
+     * @return int             Count of related UserGroup objects.
      * @throws PropelException
      */
-    public function countGroupPermissions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countUserGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collGroupPermissionsPartial && !$this->isNew();
-        if (null === $this->collGroupPermissions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collGroupPermissions) {
+        $partial = $this->collUserGroupsPartial && !$this->isNew();
+        if (null === $this->collUserGroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserGroups) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getGroupPermissions());
+                return count($this->getUserGroups());
             }
 
-            $query = ChildGroupPermissionQuery::create(null, $criteria);
+            $query = ChildUserGroupQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -2094,28 +2123,28 @@ abstract class Group implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collGroupPermissions);
+        return count($this->collUserGroups);
     }
 
     /**
-     * Method called to associate a ChildGroupPermission object to this object
-     * through the ChildGroupPermission foreign key attribute.
+     * Method called to associate a ChildUserGroup object to this object
+     * through the ChildUserGroup foreign key attribute.
      *
-     * @param  ChildGroupPermission $l ChildGroupPermission
+     * @param  ChildUserGroup $l ChildUserGroup
      * @return $this|\Models\Group The current object (for fluent API support)
      */
-    public function addGroupPermission(ChildGroupPermission $l)
+    public function addUserGroup(ChildUserGroup $l)
     {
-        if ($this->collGroupPermissions === null) {
-            $this->initGroupPermissions();
-            $this->collGroupPermissionsPartial = true;
+        if ($this->collUserGroups === null) {
+            $this->initUserGroups();
+            $this->collUserGroupsPartial = true;
         }
 
-        if (!$this->collGroupPermissions->contains($l)) {
-            $this->doAddGroupPermission($l);
+        if (!$this->collUserGroups->contains($l)) {
+            $this->doAddUserGroup($l);
 
-            if ($this->groupPermissionsScheduledForDeletion and $this->groupPermissionsScheduledForDeletion->contains($l)) {
-                $this->groupPermissionsScheduledForDeletion->remove($this->groupPermissionsScheduledForDeletion->search($l));
+            if ($this->userGroupsScheduledForDeletion and $this->userGroupsScheduledForDeletion->contains($l)) {
+                $this->userGroupsScheduledForDeletion->remove($this->userGroupsScheduledForDeletion->search($l));
             }
         }
 
@@ -2123,29 +2152,29 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildGroupPermission $groupPermission The ChildGroupPermission object to add.
+     * @param ChildUserGroup $userGroup The ChildUserGroup object to add.
      */
-    protected function doAddGroupPermission(ChildGroupPermission $groupPermission)
+    protected function doAddUserGroup(ChildUserGroup $userGroup)
     {
-        $this->collGroupPermissions[]= $groupPermission;
-        $groupPermission->setGroup($this);
+        $this->collUserGroups[]= $userGroup;
+        $userGroup->setGroup($this);
     }
 
     /**
-     * @param  ChildGroupPermission $groupPermission The ChildGroupPermission object to remove.
+     * @param  ChildUserGroup $userGroup The ChildUserGroup object to remove.
      * @return $this|ChildGroup The current object (for fluent API support)
      */
-    public function removeGroupPermission(ChildGroupPermission $groupPermission)
+    public function removeUserGroup(ChildUserGroup $userGroup)
     {
-        if ($this->getGroupPermissions()->contains($groupPermission)) {
-            $pos = $this->collGroupPermissions->search($groupPermission);
-            $this->collGroupPermissions->remove($pos);
-            if (null === $this->groupPermissionsScheduledForDeletion) {
-                $this->groupPermissionsScheduledForDeletion = clone $this->collGroupPermissions;
-                $this->groupPermissionsScheduledForDeletion->clear();
+        if ($this->getUserGroups()->contains($userGroup)) {
+            $pos = $this->collUserGroups->search($userGroup);
+            $this->collUserGroups->remove($pos);
+            if (null === $this->userGroupsScheduledForDeletion) {
+                $this->userGroupsScheduledForDeletion = clone $this->collUserGroups;
+                $this->userGroupsScheduledForDeletion->clear();
             }
-            $this->groupPermissionsScheduledForDeletion[]= clone $groupPermission;
-            $groupPermission->setGroup(null);
+            $this->userGroupsScheduledForDeletion[]= clone $userGroup;
+            $userGroup->setGroup(null);
         }
 
         return $this;
@@ -2157,7 +2186,7 @@ abstract class Group implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Group is new, it will return
      * an empty collection; or if this Group has previously
-     * been saved, it will retrieve related GroupPermissions from storage.
+     * been saved, it will retrieve related UserGroups from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -2166,14 +2195,14 @@ abstract class Group implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildGroupPermission[] List of ChildGroupPermission objects
+     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
      */
-    public function getGroupPermissionsJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getUserGroupsJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildGroupPermissionQuery::create(null, $criteria);
+        $query = ChildUserGroupQuery::create(null, $criteria);
         $query->joinWith('User', $joinBehavior);
 
-        return $this->getGroupPermissions($query, $con);
+        return $this->getUserGroups($query, $con);
     }
 
     /**
@@ -2183,14 +2212,14 @@ abstract class Group implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aUser) {
-            $this->aUser->removeGroup($this);
+        if (null !== $this->aOwner) {
+            $this->aOwner->removeGroup($this);
         }
         $this->id = null;
         $this->name = null;
         $this->description = null;
         $this->private = null;
-        $this->user_id = null;
+        $this->owner_id = null;
         $this->deleted_at = null;
         $this->created_at = null;
         $this->updated_at = null;
@@ -2217,16 +2246,16 @@ abstract class Group implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collGroupPermissions) {
-                foreach ($this->collGroupPermissions as $o) {
+            if ($this->collUserGroups) {
+                foreach ($this->collUserGroups as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
         $this->collPackPermissions = null;
-        $this->collGroupPermissions = null;
-        $this->aUser = null;
+        $this->collUserGroups = null;
+        $this->aOwner = null;
     }
 
     /**
@@ -2251,6 +2280,101 @@ abstract class Group implements ActiveRecordInterface
         $this->modifiedColumns[GroupTableMap::COL_UPDATED_AT] = true;
 
         return $this;
+    }
+
+    // validate behavior
+
+    /**
+     * Configure validators constraints. The Validator object uses this method
+     * to perform object validation.
+     *
+     * @param ClassMetadata $metadata
+     */
+    static public function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('name', new Length(array ('max' => 32,'maxMessage' => 'Maximal group name length is {{ limit }} characters.',)));
+        $metadata->addPropertyConstraint('name', new NotBlank(array ('message' => 'Group name should not be blank.',)));
+        $metadata->addPropertyConstraint('description', new Length(array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',)));
+    }
+
+    /**
+     * Validates the object and all objects related to this table.
+     *
+     * @see        getValidationFailures()
+     * @param      ValidatorInterface|null $validator A Validator class instance
+     * @return     boolean Whether all objects pass validation.
+     */
+    public function validate(ValidatorInterface $validator = null)
+    {
+        if (null === $validator) {
+            $validator = new RecursiveValidator(
+                new ExecutionContextFactory(new IdentityTranslator()),
+                new LazyLoadingMetadataFactory(new StaticMethodLoader()),
+                new ConstraintValidatorFactory()
+            );
+        }
+
+        $failureMap = new ConstraintViolationList();
+
+        if (!$this->alreadyInValidation) {
+            $this->alreadyInValidation = true;
+            $retval = null;
+
+            // We call the validate method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            // If validate() method exists, the validate-behavior is configured for related object
+            if (method_exists($this->aOwner, 'validate')) {
+                if (!$this->aOwner->validate($validator)) {
+                    $failureMap->addAll($this->aOwner->getValidationFailures());
+                }
+            }
+
+            $retval = $validator->validate($this);
+            if (count($retval) > 0) {
+                $failureMap->addAll($retval);
+            }
+
+            if (null !== $this->collPackPermissions) {
+                foreach ($this->collPackPermissions as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collUserGroups) {
+                foreach ($this->collUserGroups as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+
+            $this->alreadyInValidation = false;
+        }
+
+        $this->validationFailures = $failureMap;
+
+        return (Boolean) (!(count($this->validationFailures) > 0));
+
+    }
+
+    /**
+     * Gets any ConstraintViolation objects that resulted from last call to validate().
+     *
+     *
+     * @return     object ConstraintViolationList
+     * @see        validate()
+     */
+    public function getValidationFailures()
+    {
+        return $this->validationFailures;
     }
 
     /**

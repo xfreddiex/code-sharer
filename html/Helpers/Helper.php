@@ -11,6 +11,7 @@ function getReferersURIEnd(){
 function setHTTPStatusCode($code){
 	$HTTPStatusCodes = array(
 		"400" => "400 Bad Request",
+		"401" => "401 Unauthorized",
 		"404" => "404 Not Found",
 		"405" => "405 Method Not Allowed",
 		"406" => "406 Not Acceptable"

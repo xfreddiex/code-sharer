@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457267109.
- * Generated on 2016-03-06 13:25:09 by xfreddiex
+ * up to version 1457471273.
+ * Generated on 2016-03-08 22:07:53 by xfreddiex
  */
-class PropelMigration_1457267109
+class PropelMigration_1457471273
 {
     public $comment = '';
 
@@ -43,11 +43,29 @@ class PropelMigration_1457267109
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack`
+ALTER TABLE `pack_permission`
 
-  CHANGE `name` `name` VARCHAR(32) NOT NULL,
+  DROP FOREIGN KEY `pack_permission_fk_21351b`,
 
-  CHANGE `description` `description` VARCHAR(256);
+  DROP FOREIGN KEY `pack_permission_fk_49d0f8`,
+
+  DROP INDEX `pack_permission_fi_49d0f8`,
+
+  CHANGE `belonger_id` `user_id` INTEGER NOT NULL,
+
+  ADD `group_id` INTEGER NOT NULL AFTER `user_id`,
+
+  ADD INDEX `pack_permission_fi_29554a` (`user_id`),
+
+  ADD INDEX `pack_permission_fi_0278b4` (`group_id`),
+
+  ADD CONSTRAINT `pack_permission_fk_29554a`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `user` (`id`),
+
+  ADD CONSTRAINT `pack_permission_fk_0278b4`
+    FOREIGN KEY (`group_id`)
+    REFERENCES `group` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -69,11 +87,29 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack`
+ALTER TABLE `pack_permission`
 
-  CHANGE `name` `name` VARCHAR(50) NOT NULL,
+  DROP FOREIGN KEY `pack_permission_fk_29554a`,
 
-  CHANGE `description` `description` VARCHAR(250);
+  DROP FOREIGN KEY `pack_permission_fk_0278b4`,
+
+  DROP INDEX `pack_permission_fi_29554a`,
+
+  DROP INDEX `pack_permission_fi_0278b4`,
+
+  CHANGE `user_id` `belonger_id` INTEGER NOT NULL,
+
+  DROP `group_id`,
+
+  ADD INDEX `pack_permission_fi_49d0f8` (`belonger_id`),
+
+  ADD CONSTRAINT `pack_permission_fk_21351b`
+    FOREIGN KEY (`belonger_id`)
+    REFERENCES `group` (`id`),
+
+  ADD CONSTRAINT `pack_permission_fk_49d0f8`
+    FOREIGN KEY (`belonger_id`)
+    REFERENCES `user` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

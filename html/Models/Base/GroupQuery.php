@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'group' table.
+ * Base class that represents a query for the 'group_of_users' table.
  *
  *
  *
@@ -24,7 +24,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildGroupQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildGroupQuery orderByPrivate($order = Criteria::ASC) Order by the private column
- * @method     ChildGroupQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildGroupQuery orderByOwnerId($order = Criteria::ASC) Order by the owner_id column
  * @method     ChildGroupQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildGroupQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildGroupQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -33,7 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery groupByName() Group by the name column
  * @method     ChildGroupQuery groupByDescription() Group by the description column
  * @method     ChildGroupQuery groupByPrivate() Group by the private column
- * @method     ChildGroupQuery groupByUserId() Group by the user_id column
+ * @method     ChildGroupQuery groupByOwnerId() Group by the owner_id column
  * @method     ChildGroupQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildGroupQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildGroupQuery groupByUpdatedAt() Group by the updated_at column
@@ -46,15 +46,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildGroupQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildGroupQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method     ChildGroupQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method     ChildGroupQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method     ChildGroupQuery leftJoinOwner($relationAlias = null) Adds a LEFT JOIN clause to the query using the Owner relation
+ * @method     ChildGroupQuery rightJoinOwner($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Owner relation
+ * @method     ChildGroupQuery innerJoinOwner($relationAlias = null) Adds a INNER JOIN clause to the query using the Owner relation
  *
- * @method     ChildGroupQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ * @method     ChildGroupQuery joinWithOwner($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Owner relation
  *
- * @method     ChildGroupQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
- * @method     ChildGroupQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
- * @method     ChildGroupQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ * @method     ChildGroupQuery leftJoinWithOwner() Adds a LEFT JOIN clause and with to the query using the Owner relation
+ * @method     ChildGroupQuery rightJoinWithOwner() Adds a RIGHT JOIN clause and with to the query using the Owner relation
+ * @method     ChildGroupQuery innerJoinWithOwner() Adds a INNER JOIN clause and with to the query using the Owner relation
  *
  * @method     ChildGroupQuery leftJoinPackPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the PackPermission relation
  * @method     ChildGroupQuery rightJoinPackPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PackPermission relation
@@ -66,17 +66,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery rightJoinWithPackPermission() Adds a RIGHT JOIN clause and with to the query using the PackPermission relation
  * @method     ChildGroupQuery innerJoinWithPackPermission() Adds a INNER JOIN clause and with to the query using the PackPermission relation
  *
- * @method     ChildGroupQuery leftJoinGroupPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the GroupPermission relation
- * @method     ChildGroupQuery rightJoinGroupPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GroupPermission relation
- * @method     ChildGroupQuery innerJoinGroupPermission($relationAlias = null) Adds a INNER JOIN clause to the query using the GroupPermission relation
+ * @method     ChildGroupQuery leftJoinUserGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserGroup relation
+ * @method     ChildGroupQuery rightJoinUserGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserGroup relation
+ * @method     ChildGroupQuery innerJoinUserGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the UserGroup relation
  *
- * @method     ChildGroupQuery joinWithGroupPermission($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the GroupPermission relation
+ * @method     ChildGroupQuery joinWithUserGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserGroup relation
  *
- * @method     ChildGroupQuery leftJoinWithGroupPermission() Adds a LEFT JOIN clause and with to the query using the GroupPermission relation
- * @method     ChildGroupQuery rightJoinWithGroupPermission() Adds a RIGHT JOIN clause and with to the query using the GroupPermission relation
- * @method     ChildGroupQuery innerJoinWithGroupPermission() Adds a INNER JOIN clause and with to the query using the GroupPermission relation
+ * @method     ChildGroupQuery leftJoinWithUserGroup() Adds a LEFT JOIN clause and with to the query using the UserGroup relation
+ * @method     ChildGroupQuery rightJoinWithUserGroup() Adds a RIGHT JOIN clause and with to the query using the UserGroup relation
+ * @method     ChildGroupQuery innerJoinWithUserGroup() Adds a INNER JOIN clause and with to the query using the UserGroup relation
  *
- * @method     \Models\UserQuery|\Models\PackPermissionQuery|\Models\GroupPermissionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Models\UserQuery|\Models\PackPermissionQuery|\Models\UserGroupQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildGroup findOne(ConnectionInterface $con = null) Return the first ChildGroup matching the query
  * @method     ChildGroup findOneOrCreate(ConnectionInterface $con = null) Return the first ChildGroup matching the query, or a new ChildGroup object populated from the query conditions when no match is found
@@ -85,7 +85,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup findOneByName(string $name) Return the first ChildGroup filtered by the name column
  * @method     ChildGroup findOneByDescription(string $description) Return the first ChildGroup filtered by the description column
  * @method     ChildGroup findOneByPrivate(boolean $private) Return the first ChildGroup filtered by the private column
- * @method     ChildGroup findOneByUserId(int $user_id) Return the first ChildGroup filtered by the user_id column
+ * @method     ChildGroup findOneByOwnerId(int $owner_id) Return the first ChildGroup filtered by the owner_id column
  * @method     ChildGroup findOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column
  * @method     ChildGroup findOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column
  * @method     ChildGroup findOneByUpdatedAt(string $updated_at) Return the first ChildGroup filtered by the updated_at column *
@@ -97,7 +97,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup requireOneByName(string $name) Return the first ChildGroup filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByDescription(string $description) Return the first ChildGroup filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByPrivate(boolean $private) Return the first ChildGroup filtered by the private column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroup requireOneByUserId(int $user_id) Return the first ChildGroup filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildGroup requireOneByOwnerId(int $owner_id) Return the first ChildGroup filtered by the owner_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByUpdatedAt(string $updated_at) Return the first ChildGroup filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -107,7 +107,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup[]|ObjectCollection findByName(string $name) Return ChildGroup objects filtered by the name column
  * @method     ChildGroup[]|ObjectCollection findByDescription(string $description) Return ChildGroup objects filtered by the description column
  * @method     ChildGroup[]|ObjectCollection findByPrivate(boolean $private) Return ChildGroup objects filtered by the private column
- * @method     ChildGroup[]|ObjectCollection findByUserId(int $user_id) Return ChildGroup objects filtered by the user_id column
+ * @method     ChildGroup[]|ObjectCollection findByOwnerId(int $owner_id) Return ChildGroup objects filtered by the owner_id column
  * @method     ChildGroup[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildGroup objects filtered by the deleted_at column
  * @method     ChildGroup[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildGroup objects filtered by the created_at column
  * @method     ChildGroup[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildGroup objects filtered by the updated_at column
@@ -203,7 +203,7 @@ abstract class GroupQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, private, user_id, deleted_at, created_at, updated_at FROM group WHERE id = :p0';
+        $sql = 'SELECT id, name, description, private, owner_id, deleted_at, created_at, updated_at FROM group_of_users WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -420,18 +420,18 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_id column
+     * Filter the query on the owner_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUserId(1234); // WHERE user_id = 1234
-     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
-     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
+     * $query->filterByOwnerId(1234); // WHERE owner_id = 1234
+     * $query->filterByOwnerId(array(12, 34)); // WHERE owner_id IN (12, 34)
+     * $query->filterByOwnerId(array('min' => 12)); // WHERE owner_id > 12
      * </code>
      *
-     * @see       filterByUser()
+     * @see       filterByOwner()
      *
-     * @param     mixed $userId The value to use as filter.
+     * @param     mixed $ownerId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -439,16 +439,16 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return $this|ChildGroupQuery The current query, for fluid interface
      */
-    public function filterByUserId($userId = null, $comparison = null)
+    public function filterByOwnerId($ownerId = null, $comparison = null)
     {
-        if (is_array($userId)) {
+        if (is_array($ownerId)) {
             $useMinMax = false;
-            if (isset($userId['min'])) {
-                $this->addUsingAlias(GroupTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+            if (isset($ownerId['min'])) {
+                $this->addUsingAlias(GroupTableMap::COL_OWNER_ID, $ownerId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($userId['max'])) {
-                $this->addUsingAlias(GroupTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+            if (isset($ownerId['max'])) {
+                $this->addUsingAlias(GroupTableMap::COL_OWNER_ID, $ownerId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -459,7 +459,7 @@ abstract class GroupQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(GroupTableMap::COL_USER_ID, $userId, $comparison);
+        return $this->addUsingAlias(GroupTableMap::COL_OWNER_ID, $ownerId, $comparison);
     }
 
     /**
@@ -601,35 +601,35 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return ChildGroupQuery The current query, for fluid interface
      */
-    public function filterByUser($user, $comparison = null)
+    public function filterByOwner($user, $comparison = null)
     {
         if ($user instanceof \Models\User) {
             return $this
-                ->addUsingAlias(GroupTableMap::COL_USER_ID, $user->getId(), $comparison);
+                ->addUsingAlias(GroupTableMap::COL_OWNER_ID, $user->getId(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(GroupTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(GroupTableMap::COL_OWNER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByUser() only accepts arguments of type \Models\User or Collection');
+            throw new PropelException('filterByOwner() only accepts arguments of type \Models\User or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the User relation
+     * Adds a JOIN clause to the query using the Owner relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildGroupQuery The current query, for fluid interface
      */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinOwner($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
+        $relationMap = $tableMap->getRelation('Owner');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -644,14 +644,14 @@ abstract class GroupQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'User');
+            $this->addJoinObject($join, 'Owner');
         }
 
         return $this;
     }
 
     /**
-     * Use the User relation User object
+     * Use the Owner relation User object
      *
      * @see useQuery()
      *
@@ -661,11 +661,11 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return \Models\UserQuery A secondary query class using the current class as primary query
      */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useOwnerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', '\Models\UserQuery');
+            ->joinOwner($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Owner', '\Models\UserQuery');
     }
 
     /**
@@ -680,7 +680,7 @@ abstract class GroupQuery extends ModelCriteria
     {
         if ($packPermission instanceof \Models\PackPermission) {
             return $this
-                ->addUsingAlias(GroupTableMap::COL_ID, $packPermission->getBelongerId(), $comparison);
+                ->addUsingAlias(GroupTableMap::COL_ID, $packPermission->getGroupId(), $comparison);
         } elseif ($packPermission instanceof ObjectCollection) {
             return $this
                 ->usePackPermissionQuery()
@@ -699,7 +699,7 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return $this|ChildGroupQuery The current query, for fluid interface
      */
-    public function joinPackPermission($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinPackPermission($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('PackPermission');
@@ -734,7 +734,7 @@ abstract class GroupQuery extends ModelCriteria
      *
      * @return \Models\PackPermissionQuery A secondary query class using the current class as primary query
      */
-    public function usePackPermissionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function usePackPermissionQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinPackPermission($relationAlias, $joinType)
@@ -742,40 +742,40 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Models\GroupPermission object
+     * Filter the query by a related \Models\UserGroup object
      *
-     * @param \Models\GroupPermission|ObjectCollection $groupPermission the related object to use as filter
+     * @param \Models\UserGroup|ObjectCollection $userGroup the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildGroupQuery The current query, for fluid interface
      */
-    public function filterByGroupPermission($groupPermission, $comparison = null)
+    public function filterByUserGroup($userGroup, $comparison = null)
     {
-        if ($groupPermission instanceof \Models\GroupPermission) {
+        if ($userGroup instanceof \Models\UserGroup) {
             return $this
-                ->addUsingAlias(GroupTableMap::COL_ID, $groupPermission->getGroupId(), $comparison);
-        } elseif ($groupPermission instanceof ObjectCollection) {
+                ->addUsingAlias(GroupTableMap::COL_ID, $userGroup->getGroupId(), $comparison);
+        } elseif ($userGroup instanceof ObjectCollection) {
             return $this
-                ->useGroupPermissionQuery()
-                ->filterByPrimaryKeys($groupPermission->getPrimaryKeys())
+                ->useUserGroupQuery()
+                ->filterByPrimaryKeys($userGroup->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByGroupPermission() only accepts arguments of type \Models\GroupPermission or Collection');
+            throw new PropelException('filterByUserGroup() only accepts arguments of type \Models\UserGroup or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the GroupPermission relation
+     * Adds a JOIN clause to the query using the UserGroup relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildGroupQuery The current query, for fluid interface
      */
-    public function joinGroupPermission($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinUserGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('GroupPermission');
+        $relationMap = $tableMap->getRelation('UserGroup');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -790,14 +790,14 @@ abstract class GroupQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'GroupPermission');
+            $this->addJoinObject($join, 'UserGroup');
         }
 
         return $this;
     }
 
     /**
-     * Use the GroupPermission relation GroupPermission object
+     * Use the UserGroup relation UserGroup object
      *
      * @see useQuery()
      *
@@ -805,13 +805,13 @@ abstract class GroupQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Models\GroupPermissionQuery A secondary query class using the current class as primary query
+     * @return \Models\UserGroupQuery A secondary query class using the current class as primary query
      */
-    public function useGroupPermissionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useUserGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinGroupPermission($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'GroupPermission', '\Models\GroupPermissionQuery');
+            ->joinUserGroup($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserGroup', '\Models\UserGroupQuery');
     }
 
     /**
@@ -831,7 +831,7 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
-     * Deletes all rows from the group table.
+     * Deletes all rows from the group_of_users table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).

@@ -77,19 +77,19 @@ class PackPermissionTableMap extends TableMap
     const COL_ID = 'pack_permission.id';
 
     /**
-     * the column name for the type field
+     * the column name for the value field
      */
-    const COL_TYPE = 'pack_permission.type';
+    const COL_VALUE = 'pack_permission.value';
 
     /**
-     * the column name for the belonger_id field
+     * the column name for the user_id field
      */
-    const COL_BELONGER_ID = 'pack_permission.belonger_id';
+    const COL_USER_ID = 'pack_permission.user_id';
 
     /**
-     * the column name for the belonger_type field
+     * the column name for the group_id field
      */
-    const COL_BELONGER_TYPE = 'pack_permission.belonger_type';
+    const COL_GROUP_ID = 'pack_permission.group_id';
 
     /**
      * the column name for the pack_id field
@@ -116,14 +116,10 @@ class PackPermissionTableMap extends TableMap
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
 
-    /** The enumerated values for the type field */
-    const COL_TYPE_VIEW = 'view';
-    const COL_TYPE_EDIT = 'edit';
-    const COL_TYPE_REMOVE = 'remove';
-
-    /** The enumerated values for the belonger_type field */
-    const COL_BELONGER_TYPE_GROUP = 'group';
-    const COL_BELONGER_TYPE_USER = 'user';
+    /** The enumerated values for the value field */
+    const COL_VALUE_1 = '1';
+    const COL_VALUE_2 = '2';
+    const COL_VALUE_3 = '3';
 
     /**
      * holds an array of fieldnames
@@ -132,10 +128,10 @@ class PackPermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Type', 'BelongerId', 'BelongerType', 'PackId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'type', 'belongerId', 'belongerType', 'packId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID, PackPermissionTableMap::COL_TYPE, PackPermissionTableMap::COL_BELONGER_ID, PackPermissionTableMap::COL_BELONGER_TYPE, PackPermissionTableMap::COL_PACK_ID, PackPermissionTableMap::COL_DELETED_AT, PackPermissionTableMap::COL_CREATED_AT, PackPermissionTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'type', 'belonger_id', 'belonger_type', 'pack_id', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Value', 'UserId', 'GroupId', 'PackId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'value', 'userId', 'groupId', 'packId', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID, PackPermissionTableMap::COL_VALUE, PackPermissionTableMap::COL_USER_ID, PackPermissionTableMap::COL_GROUP_ID, PackPermissionTableMap::COL_PACK_ID, PackPermissionTableMap::COL_DELETED_AT, PackPermissionTableMap::COL_CREATED_AT, PackPermissionTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'value', 'user_id', 'group_id', 'pack_id', 'deleted_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -146,23 +142,19 @@ class PackPermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Type' => 1, 'BelongerId' => 2, 'BelongerType' => 3, 'PackId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'type' => 1, 'belongerId' => 2, 'belongerType' => 3, 'packId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID => 0, PackPermissionTableMap::COL_TYPE => 1, PackPermissionTableMap::COL_BELONGER_ID => 2, PackPermissionTableMap::COL_BELONGER_TYPE => 3, PackPermissionTableMap::COL_PACK_ID => 4, PackPermissionTableMap::COL_DELETED_AT => 5, PackPermissionTableMap::COL_CREATED_AT => 6, PackPermissionTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'type' => 1, 'belonger_id' => 2, 'belonger_type' => 3, 'pack_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Value' => 1, 'UserId' => 2, 'GroupId' => 3, 'PackId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'value' => 1, 'userId' => 2, 'groupId' => 3, 'packId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID => 0, PackPermissionTableMap::COL_VALUE => 1, PackPermissionTableMap::COL_USER_ID => 2, PackPermissionTableMap::COL_GROUP_ID => 3, PackPermissionTableMap::COL_PACK_ID => 4, PackPermissionTableMap::COL_DELETED_AT => 5, PackPermissionTableMap::COL_CREATED_AT => 6, PackPermissionTableMap::COL_UPDATED_AT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'value' => 1, 'user_id' => 2, 'group_id' => 3, 'pack_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /** The enumerated values for this table */
     protected static $enumValueSets = array(
-                PackPermissionTableMap::COL_TYPE => array(
-                            self::COL_TYPE_VIEW,
-            self::COL_TYPE_EDIT,
-            self::COL_TYPE_REMOVE,
-        ),
-                PackPermissionTableMap::COL_BELONGER_TYPE => array(
-                            self::COL_BELONGER_TYPE_GROUP,
-            self::COL_BELONGER_TYPE_USER,
+                PackPermissionTableMap::COL_VALUE => array(
+                            self::COL_VALUE_1,
+            self::COL_VALUE_2,
+            self::COL_VALUE_3,
         ),
     );
 
@@ -205,19 +197,14 @@ class PackPermissionTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('type', 'Type', 'ENUM', true, null, null);
-        $this->getColumn('type')->setValueSet(array (
-  0 => 'view',
-  1 => 'edit',
-  2 => 'remove',
+        $this->addColumn('value', 'Value', 'ENUM', true, null, null);
+        $this->getColumn('value')->setValueSet(array (
+  0 => '1',
+  1 => '2',
+  2 => '3',
 ));
-        $this->addForeignKey('belonger_id', 'BelongerId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addForeignKey('belonger_id', 'BelongerId', 'INTEGER', 'group', 'id', true, null, null);
-        $this->addColumn('belonger_type', 'BelongerType', 'ENUM', true, null, null);
-        $this->getColumn('belonger_type')->setValueSet(array (
-  0 => 'group',
-  1 => 'user',
-));
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', false, null, null);
+        $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', false, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -232,14 +219,14 @@ class PackPermissionTableMap extends TableMap
         $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':belonger_id',
+    0 => ':user_id',
     1 => ':id',
   ),
 ), null, null, null, false);
         $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':belonger_id',
+    0 => ':group_id',
     1 => ':id',
   ),
 ), null, null, null, false);
@@ -407,18 +394,18 @@ class PackPermissionTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(PackPermissionTableMap::COL_ID);
-            $criteria->addSelectColumn(PackPermissionTableMap::COL_TYPE);
-            $criteria->addSelectColumn(PackPermissionTableMap::COL_BELONGER_ID);
-            $criteria->addSelectColumn(PackPermissionTableMap::COL_BELONGER_TYPE);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_VALUE);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(PackPermissionTableMap::COL_GROUP_ID);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_PACK_ID);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.type');
-            $criteria->addSelectColumn($alias . '.belonger_id');
-            $criteria->addSelectColumn($alias . '.belonger_type');
+            $criteria->addSelectColumn($alias . '.value');
+            $criteria->addSelectColumn($alias . '.user_id');
+            $criteria->addSelectColumn($alias . '.group_id');
             $criteria->addSelectColumn($alias . '.pack_id');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');

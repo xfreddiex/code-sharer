@@ -94,7 +94,7 @@ class UserController extends BaseController{
 			setHTTPStatusCode("400");
 	}
 
-	protected function signUp(){
+	protected function create(){
 		if(isset($_POST["email"]) && isset($_POST["username"]) && isset($_POST["password"])){
 			$user = new User();
 			$user->fromArray(array(

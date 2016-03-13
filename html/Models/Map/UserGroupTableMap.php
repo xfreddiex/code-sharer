@@ -2,8 +2,8 @@
 
 namespace Models\Map;
 
-use Models\GroupPermission;
-use Models\GroupPermissionQuery;
+use Models\UserGroup;
+use Models\UserGroupQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'group_permission' table.
+ * This class defines the structure of the 'user_group' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class GroupPermissionTableMap extends TableMap
+class UserGroupTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class GroupPermissionTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Models.Map.GroupPermissionTableMap';
+    const CLASS_NAME = 'Models.Map.UserGroupTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class GroupPermissionTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'group_permission';
+    const TABLE_NAME = 'user_group';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Models\\GroupPermission';
+    const OM_CLASS = '\\Models\\UserGroup';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Models.GroupPermission';
+    const CLASS_DEFAULT = 'Models.UserGroup';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,51 +69,27 @@ class GroupPermissionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
-
-    /**
-     * the column name for the id field
-     */
-    const COL_ID = 'group_permission.id';
-
-    /**
-     * the column name for the type field
-     */
-    const COL_TYPE = 'group_permission.type';
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the user_id field
      */
-    const COL_USER_ID = 'group_permission.user_id';
+    const COL_USER_ID = 'user_group.user_id';
 
     /**
      * the column name for the group_id field
      */
-    const COL_GROUP_ID = 'group_permission.group_id';
+    const COL_GROUP_ID = 'user_group.group_id';
 
     /**
-     * the column name for the deleted_at field
+     * the column name for the id field
      */
-    const COL_DELETED_AT = 'group_permission.deleted_at';
-
-    /**
-     * the column name for the created_at field
-     */
-    const COL_CREATED_AT = 'group_permission.created_at';
-
-    /**
-     * the column name for the updated_at field
-     */
-    const COL_UPDATED_AT = 'group_permission.updated_at';
+    const COL_ID = 'user_group.id';
 
     /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
-
-    /** The enumerated values for the type field */
-    const COL_TYPE_MEMBER = 'member';
-    const COL_TYPE_ADMIN = 'admin';
 
     /**
      * holds an array of fieldnames
@@ -122,11 +98,11 @@ class GroupPermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Type', 'UserId', 'GroupId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'type', 'userId', 'groupId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID, GroupPermissionTableMap::COL_TYPE, GroupPermissionTableMap::COL_USER_ID, GroupPermissionTableMap::COL_GROUP_ID, GroupPermissionTableMap::COL_DELETED_AT, GroupPermissionTableMap::COL_CREATED_AT, GroupPermissionTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'type', 'user_id', 'group_id', 'deleted_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('UserId', 'GroupId', 'Id', ),
+        self::TYPE_CAMELNAME     => array('userId', 'groupId', 'id', ),
+        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID, UserGroupTableMap::COL_GROUP_ID, UserGroupTableMap::COL_ID, ),
+        self::TYPE_FIELDNAME     => array('user_id', 'group_id', 'id', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -136,41 +112,12 @@ class GroupPermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Type' => 1, 'UserId' => 2, 'GroupId' => 3, 'DeletedAt' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'type' => 1, 'userId' => 2, 'groupId' => 3, 'deletedAt' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(GroupPermissionTableMap::COL_ID => 0, GroupPermissionTableMap::COL_TYPE => 1, GroupPermissionTableMap::COL_USER_ID => 2, GroupPermissionTableMap::COL_GROUP_ID => 3, GroupPermissionTableMap::COL_DELETED_AT => 4, GroupPermissionTableMap::COL_CREATED_AT => 5, GroupPermissionTableMap::COL_UPDATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'type' => 1, 'user_id' => 2, 'group_id' => 3, 'deleted_at' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('UserId' => 0, 'GroupId' => 1, 'Id' => 2, ),
+        self::TYPE_CAMELNAME     => array('userId' => 0, 'groupId' => 1, 'id' => 2, ),
+        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID => 0, UserGroupTableMap::COL_GROUP_ID => 1, UserGroupTableMap::COL_ID => 2, ),
+        self::TYPE_FIELDNAME     => array('user_id' => 0, 'group_id' => 1, 'id' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
-
-    /** The enumerated values for this table */
-    protected static $enumValueSets = array(
-                GroupPermissionTableMap::COL_TYPE => array(
-                            self::COL_TYPE_MEMBER,
-            self::COL_TYPE_ADMIN,
-        ),
-    );
-
-    /**
-     * Gets the list of values for all ENUM and SET columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return static::$enumValueSets;
-    }
-
-    /**
-     * Gets the list of values for an ENUM or SET column
-     * @param string $colname
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet($colname)
-    {
-        $valueSets = self::getValueSets();
-
-        return $valueSets[$colname];
-    }
 
     /**
      * Initialize the table attributes and columns
@@ -182,24 +129,17 @@ class GroupPermissionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('group_permission');
-        $this->setPhpName('GroupPermission');
+        $this->setName('user_group');
+        $this->setPhpName('UserGroup');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Models\\GroupPermission');
+        $this->setClassName('\\Models\\UserGroup');
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
+        $this->setIsCrossRef(true);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('type', 'Type', 'ENUM', true, null, null);
-        $this->getColumn('type')->setValueSet(array (
-  0 => 'member',
-  1 => 'admin',
-));
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group', 'id', true, null, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', true, null, null);
+        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
     } // initialize()
 
     /**
@@ -232,7 +172,7 @@ class GroupPermissionTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
-            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'auto_add_pk' => array('name' => 'id', 'autoIncrement' => 'true', 'type' => 'INTEGER', ),
         );
     } // getBehaviors()
 
@@ -252,11 +192,11 @@ class GroupPermissionTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return null === $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -275,7 +215,7 @@ class GroupPermissionTableMap extends TableMap
     {
         return (int) $row[
             $indexType == TableMap::TYPE_NUM
-                ? 0 + $offset
+                ? 2 + $offset
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
@@ -293,7 +233,7 @@ class GroupPermissionTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? GroupPermissionTableMap::CLASS_DEFAULT : GroupPermissionTableMap::OM_CLASS;
+        return $withPrefix ? UserGroupTableMap::CLASS_DEFAULT : UserGroupTableMap::OM_CLASS;
     }
 
     /**
@@ -307,22 +247,22 @@ class GroupPermissionTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (GroupPermission object, last column rank)
+     * @return array           (UserGroup object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = GroupPermissionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = GroupPermissionTableMap::getInstanceFromPool($key))) {
+        $key = UserGroupTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = UserGroupTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + GroupPermissionTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + UserGroupTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = GroupPermissionTableMap::OM_CLASS;
-            /** @var GroupPermission $obj */
+            $cls = UserGroupTableMap::OM_CLASS;
+            /** @var UserGroup $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            GroupPermissionTableMap::addInstanceToPool($obj, $key);
+            UserGroupTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -345,18 +285,18 @@ class GroupPermissionTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = GroupPermissionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = GroupPermissionTableMap::getInstanceFromPool($key))) {
+            $key = UserGroupTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = UserGroupTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var GroupPermission $obj */
+                /** @var UserGroup $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                GroupPermissionTableMap::addInstanceToPool($obj, $key);
+                UserGroupTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -377,21 +317,13 @@ class GroupPermissionTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_ID);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_TYPE);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_GROUP_ID);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_DELETED_AT);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(GroupPermissionTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(UserGroupTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(UserGroupTableMap::COL_GROUP_ID);
+            $criteria->addSelectColumn(UserGroupTableMap::COL_ID);
         } else {
-            $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.type');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.group_id');
-            $criteria->addSelectColumn($alias . '.deleted_at');
-            $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.id');
         }
     }
 
@@ -404,7 +336,7 @@ class GroupPermissionTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(GroupPermissionTableMap::DATABASE_NAME)->getTable(GroupPermissionTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(UserGroupTableMap::DATABASE_NAME)->getTable(UserGroupTableMap::TABLE_NAME);
     }
 
     /**
@@ -412,16 +344,16 @@ class GroupPermissionTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(GroupPermissionTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(GroupPermissionTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new GroupPermissionTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserGroupTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(UserGroupTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new UserGroupTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a GroupPermission or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a UserGroup or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or GroupPermission object or primary key or array of primary keys
+     * @param mixed               $values Criteria or UserGroup object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -432,27 +364,27 @@ class GroupPermissionTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(GroupPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserGroupTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Models\GroupPermission) { // it's a model object
+        } elseif ($values instanceof \Models\UserGroup) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(GroupPermissionTableMap::DATABASE_NAME);
-            $criteria->add(GroupPermissionTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(UserGroupTableMap::DATABASE_NAME);
+            $criteria->add(UserGroupTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = GroupPermissionQuery::create()->mergeWith($criteria);
+        $query = UserGroupQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            GroupPermissionTableMap::clearInstancePool();
+            UserGroupTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                GroupPermissionTableMap::removeInstanceFromPool($singleval);
+                UserGroupTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -460,20 +392,20 @@ class GroupPermissionTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the group_permission table.
+     * Deletes all rows from the user_group table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return GroupPermissionQuery::create()->doDeleteAll($con);
+        return UserGroupQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a GroupPermission or Criteria object.
+     * Performs an INSERT on the database, given a UserGroup or Criteria object.
      *
-     * @param mixed               $criteria Criteria or GroupPermission object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or UserGroup object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -482,22 +414,22 @@ class GroupPermissionTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(GroupPermissionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UserGroupTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from GroupPermission object
+            $criteria = $criteria->buildCriteria(); // build Criteria from UserGroup object
         }
 
-        if ($criteria->containsKey(GroupPermissionTableMap::COL_ID) && $criteria->keyContainsValue(GroupPermissionTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GroupPermissionTableMap::COL_ID.')');
+        if ($criteria->containsKey(UserGroupTableMap::COL_ID) && $criteria->keyContainsValue(UserGroupTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserGroupTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = GroupPermissionQuery::create()->mergeWith($criteria);
+        $query = UserGroupQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -506,7 +438,7 @@ class GroupPermissionTableMap extends TableMap
         });
     }
 
-} // GroupPermissionTableMap
+} // UserGroupTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-GroupPermissionTableMap::buildTableMap();
+UserGroupTableMap::buildTableMap();

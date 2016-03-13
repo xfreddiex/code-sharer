@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457269743.
- * Generated on 2016-03-06 14:09:03 by xfreddiex
+ * up to version 1457642472.
+ * Generated on 2016-03-10 21:41:12 by xfreddiex
  */
-class PropelMigration_1457269743
+class PropelMigration_1457642472
 {
     public $comment = '';
 
@@ -43,24 +43,18 @@ class PropelMigration_1457269743
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `group`
+ALTER TABLE `group_of_users`
 
-  ADD `user_id` INTEGER NOT NULL AFTER `private`,
+  DROP FOREIGN KEY `group_of_users_fk_29554a`,
 
-  ADD INDEX `group_fi_29554a` (`user_id`),
+  DROP INDEX `group_of_users_fi_29554a`,
 
-  ADD CONSTRAINT `group_fk_29554a`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `user` (`id`);
+  CHANGE `user_id` `owner_id` INTEGER NOT NULL,
 
-ALTER TABLE `pack`
+  ADD INDEX `group_of_users_fi_ac5b84` (`owner_id`),
 
-  ADD `user_id` INTEGER NOT NULL AFTER `private`,
-
-  ADD INDEX `pack_fi_29554a` (`user_id`),
-
-  ADD CONSTRAINT `pack_fk_29554a`
-    FOREIGN KEY (`user_id`)
+  ADD CONSTRAINT `group_of_users_fk_ac5b84`
+    FOREIGN KEY (`owner_id`)
     REFERENCES `user` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
@@ -83,21 +77,19 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `group`
+ALTER TABLE `group_of_users`
 
-  DROP FOREIGN KEY `group_fk_29554a`,
+  DROP FOREIGN KEY `group_of_users_fk_ac5b84`,
 
-  DROP INDEX `group_fi_29554a`,
+  DROP INDEX `group_of_users_fi_ac5b84`,
 
-  DROP `user_id`;
+  CHANGE `owner_id` `user_id` INTEGER NOT NULL,
 
-ALTER TABLE `pack`
+  ADD INDEX `group_of_users_fi_29554a` (`user_id`),
 
-  DROP FOREIGN KEY `pack_fk_29554a`,
-
-  DROP INDEX `pack_fi_29554a`,
-
-  DROP `user_id`;
+  ADD CONSTRAINT `group_of_users_fk_29554a`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `user` (`id`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

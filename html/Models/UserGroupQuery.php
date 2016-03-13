@@ -2,10 +2,10 @@
 
 namespace Models;
 
-use Models\Base\GroupPermission as BaseGroupPermission;
+use Models\Base\UserGroupQuery as BaseUserGroupQuery;
 
 /**
- * Skeleton subclass for representing a row from the 'group_permission' table.
+ * Skeleton subclass for performing query and update operations on the 'user_group' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use Models\Base\GroupPermission as BaseGroupPermission;
  * long as it does not already exist in the output directory.
  *
  */
-class GroupPermission extends BaseGroupPermission
+class UserGroupQuery extends BaseUserGroupQuery
 {
 
 }

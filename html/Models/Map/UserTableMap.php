@@ -216,17 +216,17 @@ class UserTableMap extends TableMap
         $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':belonger_id',
+    0 => ':user_id',
     1 => ':id',
   ),
 ), null, null, 'PackPermissions', false);
-        $this->addRelation('GroupPermission', '\\Models\\GroupPermission', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('UserGroup', '\\Models\\UserGroup', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, 'GroupPermissions', false);
+), null, null, 'UserGroups', false);
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -237,7 +237,7 @@ class UserTableMap extends TableMap
         $this->addRelation('Group', '\\Models\\Group', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':owner_id',
     1 => ':id',
   ),
 ), null, null, 'Groups', false);
