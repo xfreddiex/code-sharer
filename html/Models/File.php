@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Base\File as BaseFile;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Skeleton subclass for representing a row from the 'file' table.
@@ -16,5 +17,8 @@ use Models\Base\File as BaseFile;
  */
 class File extends BaseFile
 {
+	public function preSave(ConnectionInterface $con = null){
+		return $this->validate();
+	}
 
 }

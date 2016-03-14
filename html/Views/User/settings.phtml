@@ -6,7 +6,7 @@
 			<div class="col-sm-8">
 				<div class="panel panel-default">
 					<div class="panel-body form-wrapper">
-						<form action="/user-update" method="POST" class="form-horizontal" id="settings-form">
+						<form action="/user/update" method="POST" class="form-horizontal" id="settings-form">
 							<div class="form-group">
 								<label for="newUsername" class="col-sm-3 control-label">Username</label>
 								<div class="col-sm-9">
@@ -74,7 +74,7 @@
 						<div id="croppbox"></div>
 					</div>
 					<div id="img-form-wrapper" class="panel-body">
-						<form action="/avatar-update" method="POST" enctype="multipart/form-data" id="upload-img-form">
+						<form action="user/update-avatar" method="POST" enctype="multipart/form-data" id="upload-img-form">
 							<div class="btn btn-default btn-upload"><i class="fa fa-upload"></i><input type="file" accept="image/*" name="avatar-input" required></div>
 							<button class="btn btn-default pull-right" type="submit">Save</button>
 						</form>

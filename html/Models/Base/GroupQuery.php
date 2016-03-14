@@ -23,7 +23,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildGroupQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildGroupQuery orderByDescription($order = Criteria::ASC) Order by the description column
- * @method     ChildGroupQuery orderByPrivate($order = Criteria::ASC) Order by the private column
  * @method     ChildGroupQuery orderByOwnerId($order = Criteria::ASC) Order by the owner_id column
  * @method     ChildGroupQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildGroupQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -32,7 +31,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroupQuery groupById() Group by the id column
  * @method     ChildGroupQuery groupByName() Group by the name column
  * @method     ChildGroupQuery groupByDescription() Group by the description column
- * @method     ChildGroupQuery groupByPrivate() Group by the private column
  * @method     ChildGroupQuery groupByOwnerId() Group by the owner_id column
  * @method     ChildGroupQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildGroupQuery groupByCreatedAt() Group by the created_at column
@@ -84,7 +82,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup findOneById(int $id) Return the first ChildGroup filtered by the id column
  * @method     ChildGroup findOneByName(string $name) Return the first ChildGroup filtered by the name column
  * @method     ChildGroup findOneByDescription(string $description) Return the first ChildGroup filtered by the description column
- * @method     ChildGroup findOneByPrivate(boolean $private) Return the first ChildGroup filtered by the private column
  * @method     ChildGroup findOneByOwnerId(int $owner_id) Return the first ChildGroup filtered by the owner_id column
  * @method     ChildGroup findOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column
  * @method     ChildGroup findOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column
@@ -96,7 +93,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup requireOneById(int $id) Return the first ChildGroup filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByName(string $name) Return the first ChildGroup filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByDescription(string $description) Return the first ChildGroup filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildGroup requireOneByPrivate(boolean $private) Return the first ChildGroup filtered by the private column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByOwnerId(int $owner_id) Return the first ChildGroup filtered by the owner_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByDeletedAt(string $deleted_at) Return the first ChildGroup filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildGroup requireOneByCreatedAt(string $created_at) Return the first ChildGroup filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -106,7 +102,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGroup[]|ObjectCollection findById(int $id) Return ChildGroup objects filtered by the id column
  * @method     ChildGroup[]|ObjectCollection findByName(string $name) Return ChildGroup objects filtered by the name column
  * @method     ChildGroup[]|ObjectCollection findByDescription(string $description) Return ChildGroup objects filtered by the description column
- * @method     ChildGroup[]|ObjectCollection findByPrivate(boolean $private) Return ChildGroup objects filtered by the private column
  * @method     ChildGroup[]|ObjectCollection findByOwnerId(int $owner_id) Return ChildGroup objects filtered by the owner_id column
  * @method     ChildGroup[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildGroup objects filtered by the deleted_at column
  * @method     ChildGroup[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildGroup objects filtered by the created_at column
@@ -203,7 +198,7 @@ abstract class GroupQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, private, owner_id, deleted_at, created_at, updated_at FROM group_of_users WHERE id = :p0';
+        $sql = 'SELECT id, name, description, owner_id, deleted_at, created_at, updated_at FROM group_of_users WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -390,33 +385,6 @@ abstract class GroupQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(GroupTableMap::COL_DESCRIPTION, $description, $comparison);
-    }
-
-    /**
-     * Filter the query on the private column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByPrivate(true); // WHERE private = true
-     * $query->filterByPrivate('yes'); // WHERE private = true
-     * </code>
-     *
-     * @param     boolean|string $private The value to use as filter.
-     *              Non-boolean arguments are converted using the following rules:
-     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildGroupQuery The current query, for fluid interface
-     */
-    public function filterByPrivate($private = null, $comparison = null)
-    {
-        if (is_string($private)) {
-            $private = in_array(strtolower($private), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-        }
-
-        return $this->addUsingAlias(GroupTableMap::COL_PRIVATE, $private, $comparison);
     }
 
     /**

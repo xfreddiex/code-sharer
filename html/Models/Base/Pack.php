@@ -112,11 +112,11 @@ abstract class Pack implements ActiveRecordInterface
     protected $private;
 
     /**
-     * The value for the user_id field.
+     * The value for the owner_id field.
      *
      * @var        int
      */
-    protected $user_id;
+    protected $owner_id;
 
     /**
      * The value for the deleted_at field.
@@ -156,7 +156,7 @@ abstract class Pack implements ActiveRecordInterface
     /**
      * @var        ChildUser
      */
-    protected $aUser;
+    protected $aOwner;
 
     /**
      * @var        ObjectCollection|ChildPackPermission[] Collection to store aggregation of ChildPackPermission objects.
@@ -483,13 +483,13 @@ abstract class Pack implements ActiveRecordInterface
     }
 
     /**
-     * Get the [user_id] column value.
+     * Get the [owner_id] column value.
      *
      * @return int
      */
-    public function getUserId()
+    public function getOwnerId()
     {
-        return $this->user_id;
+        return $this->owner_id;
     }
 
     /**
@@ -670,28 +670,28 @@ abstract class Pack implements ActiveRecordInterface
     } // setPrivate()
 
     /**
-     * Set the value of [user_id] column.
+     * Set the value of [owner_id] column.
      *
      * @param int $v new value
      * @return $this|\Models\Pack The current object (for fluent API support)
      */
-    public function setUserId($v)
+    public function setOwnerId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[PackTableMap::COL_USER_ID] = true;
+        if ($this->owner_id !== $v) {
+            $this->owner_id = $v;
+            $this->modifiedColumns[PackTableMap::COL_OWNER_ID] = true;
         }
 
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
+        if ($this->aOwner !== null && $this->aOwner->getId() !== $v) {
+            $this->aOwner = null;
         }
 
         return $this;
-    } // setUserId()
+    } // setOwnerId()
 
     /**
      * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
@@ -852,8 +852,8 @@ abstract class Pack implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PackTableMap::translateFieldName('Private', TableMap::TYPE_PHPNAME, $indexType)];
             $this->private = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackTableMap::translateFieldName('OwnerId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->owner_id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
@@ -906,8 +906,8 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
+        if ($this->aOwner !== null && $this->owner_id !== $this->aOwner->getId()) {
+            $this->aOwner = null;
         }
     } // ensureConsistency
 
@@ -948,7 +948,7 @@ abstract class Pack implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
+            $this->aOwner = null;
             $this->collPackPermissions = null;
 
             $this->collFiles = null;
@@ -1069,11 +1069,11 @@ abstract class Pack implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
+            if ($this->aOwner !== null) {
+                if ($this->aOwner->isModified() || $this->aOwner->isNew()) {
+                    $affectedRows += $this->aOwner->save($con);
                 }
-                $this->setUser($this->aUser);
+                $this->setOwner($this->aOwner);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1159,8 +1159,8 @@ abstract class Pack implements ActiveRecordInterface
         if ($this->isColumnModified(PackTableMap::COL_PRIVATE)) {
             $modifiedColumns[':p' . $index++]  = 'private';
         }
-        if ($this->isColumnModified(PackTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
+        if ($this->isColumnModified(PackTableMap::COL_OWNER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'owner_id';
         }
         if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'deleted_at';
@@ -1197,8 +1197,8 @@ abstract class Pack implements ActiveRecordInterface
                     case 'private':
                         $stmt->bindValue($identifier, (int) $this->private, PDO::PARAM_INT);
                         break;
-                    case 'user_id':
-                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
+                    case 'owner_id':
+                        $stmt->bindValue($identifier, $this->owner_id, PDO::PARAM_INT);
                         break;
                     case 'deleted_at':
                         $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1287,7 +1287,7 @@ abstract class Pack implements ActiveRecordInterface
                 return $this->getPrivate();
                 break;
             case 4:
-                return $this->getUserId();
+                return $this->getOwnerId();
                 break;
             case 5:
                 return $this->getDeletedAt();
@@ -1335,7 +1335,7 @@ abstract class Pack implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getDescription(),
             $keys[3] => $this->getPrivate(),
-            $keys[4] => $this->getUserId(),
+            $keys[4] => $this->getOwnerId(),
             $keys[5] => $this->getDeletedAt(),
             $keys[6] => $this->getTags(),
             $keys[7] => $this->getCreatedAt(),
@@ -1359,7 +1359,7 @@ abstract class Pack implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
+            if (null !== $this->aOwner) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
@@ -1372,7 +1372,7 @@ abstract class Pack implements ActiveRecordInterface
                         $key = 'User';
                 }
 
-                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aOwner->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collPackPermissions) {
 
@@ -1451,7 +1451,7 @@ abstract class Pack implements ActiveRecordInterface
                 $this->setPrivate($value);
                 break;
             case 4:
-                $this->setUserId($value);
+                $this->setOwnerId($value);
                 break;
             case 5:
                 $this->setDeletedAt($value);
@@ -1508,7 +1508,7 @@ abstract class Pack implements ActiveRecordInterface
             $this->setPrivate($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUserId($arr[$keys[4]]);
+            $this->setOwnerId($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
             $this->setDeletedAt($arr[$keys[5]]);
@@ -1575,8 +1575,8 @@ abstract class Pack implements ActiveRecordInterface
         if ($this->isColumnModified(PackTableMap::COL_PRIVATE)) {
             $criteria->add(PackTableMap::COL_PRIVATE, $this->private);
         }
-        if ($this->isColumnModified(PackTableMap::COL_USER_ID)) {
-            $criteria->add(PackTableMap::COL_USER_ID, $this->user_id);
+        if ($this->isColumnModified(PackTableMap::COL_OWNER_ID)) {
+            $criteria->add(PackTableMap::COL_OWNER_ID, $this->owner_id);
         }
         if ($this->isColumnModified(PackTableMap::COL_DELETED_AT)) {
             $criteria->add(PackTableMap::COL_DELETED_AT, $this->deleted_at);
@@ -1679,7 +1679,7 @@ abstract class Pack implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setPrivate($this->getPrivate());
-        $copyObj->setUserId($this->getUserId());
+        $copyObj->setOwnerId($this->getOwnerId());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setTags($this->getTags());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -1739,15 +1739,15 @@ abstract class Pack implements ActiveRecordInterface
      * @return $this|\Models\Pack The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function setOwner(ChildUser $v = null)
     {
         if ($v === null) {
-            $this->setUserId(NULL);
+            $this->setOwnerId(NULL);
         } else {
-            $this->setUserId($v->getId());
+            $this->setOwnerId($v->getId());
         }
 
-        $this->aUser = $v;
+        $this->aOwner = $v;
 
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
@@ -1767,20 +1767,20 @@ abstract class Pack implements ActiveRecordInterface
      * @return ChildUser The associated ChildUser object.
      * @throws PropelException
      */
-    public function getUser(ConnectionInterface $con = null)
+    public function getOwner(ConnectionInterface $con = null)
     {
-        if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aOwner === null && ($this->owner_id !== null)) {
+            $this->aOwner = ChildUserQuery::create()->findPk($this->owner_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addPacks($this);
+                $this->aOwner->addPacks($this);
              */
         }
 
-        return $this->aUser;
+        return $this->aOwner;
     }
 
 
@@ -2309,14 +2309,14 @@ abstract class Pack implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aUser) {
-            $this->aUser->removePack($this);
+        if (null !== $this->aOwner) {
+            $this->aOwner->removePack($this);
         }
         $this->id = null;
         $this->name = null;
         $this->description = null;
         $this->private = null;
-        $this->user_id = null;
+        $this->owner_id = null;
         $this->deleted_at = null;
         $this->tags = null;
         $this->tags_unserialized = null;
@@ -2354,7 +2354,7 @@ abstract class Pack implements ActiveRecordInterface
 
         $this->collPackPermissions = null;
         $this->collFiles = null;
-        $this->aUser = null;
+        $this->aOwner = null;
     }
 
     /**
@@ -2426,9 +2426,9 @@ abstract class Pack implements ActiveRecordInterface
             // foreign key reference.
 
             // If validate() method exists, the validate-behavior is configured for related object
-            if (method_exists($this->aUser, 'validate')) {
-                if (!$this->aUser->validate($validator)) {
-                    $failureMap->addAll($this->aUser->getValidationFailures());
+            if (method_exists($this->aOwner, 'validate')) {
+                if (!$this->aOwner->validate($validator)) {
+                    $failureMap->addAll($this->aOwner->getValidationFailures());
                 }
             }
 

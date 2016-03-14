@@ -92,9 +92,9 @@ class PackTableMap extends TableMap
     const COL_PRIVATE = 'pack.private';
 
     /**
-     * the column name for the user_id field
+     * the column name for the owner_id field
      */
-    const COL_USER_ID = 'pack.user_id';
+    const COL_OWNER_ID = 'pack.owner_id';
 
     /**
      * the column name for the deleted_at field
@@ -128,10 +128,10 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'UserId', 'DeletedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'userId', 'deletedAt', 'tags', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PRIVATE, PackTableMap::COL_USER_ID, PackTableMap::COL_DELETED_AT, PackTableMap::COL_TAGS, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'user_id', 'deleted_at', 'tags', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'OwnerId', 'DeletedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'ownerId', 'deletedAt', 'tags', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PRIVATE, PackTableMap::COL_OWNER_ID, PackTableMap::COL_DELETED_AT, PackTableMap::COL_TAGS, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'owner_id', 'deleted_at', 'tags', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
@@ -142,10 +142,10 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'UserId' => 4, 'DeletedAt' => 5, 'Tags' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'userId' => 4, 'deletedAt' => 5, 'tags' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PRIVATE => 3, PackTableMap::COL_USER_ID => 4, PackTableMap::COL_DELETED_AT => 5, PackTableMap::COL_TAGS => 6, PackTableMap::COL_CREATED_AT => 7, PackTableMap::COL_UPDATED_AT => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'user_id' => 4, 'deleted_at' => 5, 'tags' => 6, 'created_at' => 7, 'updated_at' => 8, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'OwnerId' => 4, 'DeletedAt' => 5, 'Tags' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'ownerId' => 4, 'deletedAt' => 5, 'tags' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PRIVATE => 3, PackTableMap::COL_OWNER_ID => 4, PackTableMap::COL_DELETED_AT => 5, PackTableMap::COL_TAGS => 6, PackTableMap::COL_CREATED_AT => 7, PackTableMap::COL_UPDATED_AT => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'owner_id' => 4, 'deleted_at' => 5, 'tags' => 6, 'created_at' => 7, 'updated_at' => 8, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
@@ -170,7 +170,7 @@ class PackTableMap extends TableMap
         $this->addColumn('name', 'Name', 'VARCHAR', true, 32, null);
         $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
         $this->addColumn('private', 'Private', 'BOOLEAN', true, 1, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
+        $this->addForeignKey('owner_id', 'OwnerId', 'INTEGER', 'user', 'id', true, null, null);
         $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('tags', 'Tags', 'ARRAY', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -182,10 +182,10 @@ class PackTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Owner', '\\Models\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':owner_id',
     1 => ':id',
   ),
 ), null, null, null, false);
@@ -364,7 +364,7 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn(PackTableMap::COL_NAME);
             $criteria->addSelectColumn(PackTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(PackTableMap::COL_PRIVATE);
-            $criteria->addSelectColumn(PackTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(PackTableMap::COL_OWNER_ID);
             $criteria->addSelectColumn(PackTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(PackTableMap::COL_TAGS);
             $criteria->addSelectColumn(PackTableMap::COL_CREATED_AT);
@@ -374,7 +374,7 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.private');
-            $criteria->addSelectColumn($alias . '.user_id');
+            $criteria->addSelectColumn($alias . '.owner_id');
             $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.tags');
             $criteria->addSelectColumn($alias . '.created_at');

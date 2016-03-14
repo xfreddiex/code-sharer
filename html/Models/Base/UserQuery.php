@@ -1014,7 +1014,7 @@ abstract class UserQuery extends ModelCriteria
     {
         if ($pack instanceof \Models\Pack) {
             return $this
-                ->addUsingAlias(UserTableMap::COL_ID, $pack->getUserId(), $comparison);
+                ->addUsingAlias(UserTableMap::COL_ID, $pack->getOwnerId(), $comparison);
         } elseif ($pack instanceof ObjectCollection) {
             return $this
                 ->usePackQuery()

@@ -16,14 +16,20 @@ class UserController extends BaseController{
 		$this->addBefore("profile", array("userLogged"));
 		$this->addBefore("settings", array("userLogged"));
 		$this->addBefore("updateAvatar", array("userLogged"));
+		$this->addBefore("delete", array("userLogged", "userAuthorized"));
 	}
 
 	protected function show($params){
 		$this->data["user"] = UserQuery::create()->findOneByUsername($params["username"]);
 		if($this->data["user"] == $this->data["loggedUser"])
 			$this->redirect("/profile");
-		if($this->data["user"])
+		if($this->data["user"]){
+			if($this->data["user"]->getDeletedAt()){
+				$this->sendFlashMessage("User ".$this->data["user"]->getUsername()." was deleted on ".$this->data["user"]->getDeletedAt("j M o").".", "error");
+				$this->redirect("/404");	
+			}
 			$this->viewFile($this->template);
+		}
 		else{
 			$this->sendFlashMessage('User "'.$params["username"].'" does not exists.', "error");
 			$this->redirect("/");
@@ -39,7 +45,8 @@ class UserController extends BaseController{
 	}
 
 	protected function delete(){
-		
+		$this->data["loggedUser"]->setDeletedAt(time());
+		$this->data["loggedUser"]->save();
 	}
 
 	protected function update(){
@@ -63,6 +70,7 @@ class UserController extends BaseController{
 		}
 		else
 			$this->sendFlashMessage("User data has been successfuly updated.", "success");
+		$this->redirect("/settings");
 	}
 
 	protected function updateAvatar(){
@@ -125,6 +133,10 @@ class UserController extends BaseController{
 				->findOneByUsername($_POST["username"]);
 			if(!$user){
 				$this->sendFlashMessage("You have not been signed in. User does not exist.", "error");
+			}
+			else if($user->getDeletedAt()){
+				$this->sendFlashMessage("User ".$user->getUsername()." was deleted on ".$user->getDeletedAt("j M o").".", "error");
+				$this->redirect("/404");	
 			}
 			else if($user->checkPassword($_POST["password"])){
 				$_SESSION["userId"] = $user->getId();

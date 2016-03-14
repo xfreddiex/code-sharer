@@ -104,13 +104,6 @@ abstract class Group implements ActiveRecordInterface
     protected $description;
 
     /**
-     * The value for the private field.
-     *
-     * @var        boolean
-     */
-    protected $private;
-
-    /**
      * The value for the owner_id field.
      *
      * @var        int
@@ -448,26 +441,6 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
-     * Get the [private] column value.
-     *
-     * @return boolean
-     */
-    public function getPrivate()
-    {
-        return $this->private;
-    }
-
-    /**
-     * Get the [private] column value.
-     *
-     * @return boolean
-     */
-    public function isPrivate()
-    {
-        return $this->getPrivate();
-    }
-
-    /**
      * Get the [owner_id] column value.
      *
      * @return int
@@ -598,34 +571,6 @@ abstract class Group implements ActiveRecordInterface
     } // setDescription()
 
     /**
-     * Sets the value of the [private] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     *
-     * @param  boolean|integer|string $v The new value
-     * @return $this|\Models\Group The current object (for fluent API support)
-     */
-    public function setPrivate($v)
-    {
-        if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
-        }
-
-        if ($this->private !== $v) {
-            $this->private = $v;
-            $this->modifiedColumns[GroupTableMap::COL_PRIVATE] = true;
-        }
-
-        return $this;
-    } // setPrivate()
-
-    /**
      * Set the value of [owner_id] column.
      *
      * @param int $v new value
@@ -754,25 +699,22 @@ abstract class Group implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : GroupTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GroupTableMap::translateFieldName('Private', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->private = (null !== $col) ? (boolean) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('OwnerId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : GroupTableMap::translateFieldName('OwnerId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->owner_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GroupTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : GroupTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : GroupTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : GroupTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : GroupTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : GroupTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -785,7 +727,7 @@ abstract class Group implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = GroupTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = GroupTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\Group'), 0, $e);
@@ -1058,9 +1000,6 @@ abstract class Group implements ActiveRecordInterface
         if ($this->isColumnModified(GroupTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'description';
         }
-        if ($this->isColumnModified(GroupTableMap::COL_PRIVATE)) {
-            $modifiedColumns[':p' . $index++]  = 'private';
-        }
         if ($this->isColumnModified(GroupTableMap::COL_OWNER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'owner_id';
         }
@@ -1092,9 +1031,6 @@ abstract class Group implements ActiveRecordInterface
                         break;
                     case 'description':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
-                        break;
-                    case 'private':
-                        $stmt->bindValue($identifier, (int) $this->private, PDO::PARAM_INT);
                         break;
                     case 'owner_id':
                         $stmt->bindValue($identifier, $this->owner_id, PDO::PARAM_INT);
@@ -1180,18 +1116,15 @@ abstract class Group implements ActiveRecordInterface
                 return $this->getDescription();
                 break;
             case 3:
-                return $this->getPrivate();
-                break;
-            case 4:
                 return $this->getOwnerId();
                 break;
-            case 5:
+            case 4:
                 return $this->getDeletedAt();
                 break;
-            case 6:
+            case 5:
                 return $this->getCreatedAt();
                 break;
-            case 7:
+            case 6:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1227,22 +1160,21 @@ abstract class Group implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getDescription(),
-            $keys[3] => $this->getPrivate(),
-            $keys[4] => $this->getOwnerId(),
-            $keys[5] => $this->getDeletedAt(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[3] => $this->getOwnerId(),
+            $keys[4] => $this->getDeletedAt(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
         if ($result[$keys[5]] instanceof \DateTime) {
             $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         if ($result[$keys[6]] instanceof \DateTime) {
             $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1340,18 +1272,15 @@ abstract class Group implements ActiveRecordInterface
                 $this->setDescription($value);
                 break;
             case 3:
-                $this->setPrivate($value);
-                break;
-            case 4:
                 $this->setOwnerId($value);
                 break;
-            case 5:
+            case 4:
                 $this->setDeletedAt($value);
                 break;
-            case 6:
+            case 5:
                 $this->setCreatedAt($value);
                 break;
-            case 7:
+            case 6:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1390,19 +1319,16 @@ abstract class Group implements ActiveRecordInterface
             $this->setDescription($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPrivate($arr[$keys[3]]);
+            $this->setOwnerId($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setOwnerId($arr[$keys[4]]);
+            $this->setDeletedAt($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setDeletedAt($arr[$keys[5]]);
+            $this->setCreatedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setUpdatedAt($arr[$keys[6]]);
         }
     }
 
@@ -1453,9 +1379,6 @@ abstract class Group implements ActiveRecordInterface
         }
         if ($this->isColumnModified(GroupTableMap::COL_DESCRIPTION)) {
             $criteria->add(GroupTableMap::COL_DESCRIPTION, $this->description);
-        }
-        if ($this->isColumnModified(GroupTableMap::COL_PRIVATE)) {
-            $criteria->add(GroupTableMap::COL_PRIVATE, $this->private);
         }
         if ($this->isColumnModified(GroupTableMap::COL_OWNER_ID)) {
             $criteria->add(GroupTableMap::COL_OWNER_ID, $this->owner_id);
@@ -1557,7 +1480,6 @@ abstract class Group implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setDescription($this->getDescription());
-        $copyObj->setPrivate($this->getPrivate());
         $copyObj->setOwnerId($this->getOwnerId());
         $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -2218,7 +2140,6 @@ abstract class Group implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->description = null;
-        $this->private = null;
         $this->owner_id = null;
         $this->deleted_at = null;
         $this->created_at = null;

@@ -24,7 +24,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildPackQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildPackQuery orderByPrivate($order = Criteria::ASC) Order by the private column
- * @method     ChildPackQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildPackQuery orderByOwnerId($order = Criteria::ASC) Order by the owner_id column
  * @method     ChildPackQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildPackQuery orderByTags($order = Criteria::ASC) Order by the tags column
  * @method     ChildPackQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery groupByName() Group by the name column
  * @method     ChildPackQuery groupByDescription() Group by the description column
  * @method     ChildPackQuery groupByPrivate() Group by the private column
- * @method     ChildPackQuery groupByUserId() Group by the user_id column
+ * @method     ChildPackQuery groupByOwnerId() Group by the owner_id column
  * @method     ChildPackQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildPackQuery groupByTags() Group by the tags column
  * @method     ChildPackQuery groupByCreatedAt() Group by the created_at column
@@ -48,15 +48,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildPackQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildPackQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method     ChildPackQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method     ChildPackQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method     ChildPackQuery leftJoinOwner($relationAlias = null) Adds a LEFT JOIN clause to the query using the Owner relation
+ * @method     ChildPackQuery rightJoinOwner($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Owner relation
+ * @method     ChildPackQuery innerJoinOwner($relationAlias = null) Adds a INNER JOIN clause to the query using the Owner relation
  *
- * @method     ChildPackQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ * @method     ChildPackQuery joinWithOwner($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Owner relation
  *
- * @method     ChildPackQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
- * @method     ChildPackQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
- * @method     ChildPackQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ * @method     ChildPackQuery leftJoinWithOwner() Adds a LEFT JOIN clause and with to the query using the Owner relation
+ * @method     ChildPackQuery rightJoinWithOwner() Adds a RIGHT JOIN clause and with to the query using the Owner relation
+ * @method     ChildPackQuery innerJoinWithOwner() Adds a INNER JOIN clause and with to the query using the Owner relation
  *
  * @method     ChildPackQuery leftJoinPackPermission($relationAlias = null) Adds a LEFT JOIN clause to the query using the PackPermission relation
  * @method     ChildPackQuery rightJoinPackPermission($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PackPermission relation
@@ -87,7 +87,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack findOneByName(string $name) Return the first ChildPack filtered by the name column
  * @method     ChildPack findOneByDescription(string $description) Return the first ChildPack filtered by the description column
  * @method     ChildPack findOneByPrivate(boolean $private) Return the first ChildPack filtered by the private column
- * @method     ChildPack findOneByUserId(int $user_id) Return the first ChildPack filtered by the user_id column
+ * @method     ChildPack findOneByOwnerId(int $owner_id) Return the first ChildPack filtered by the owner_id column
  * @method     ChildPack findOneByDeletedAt(string $deleted_at) Return the first ChildPack filtered by the deleted_at column
  * @method     ChildPack findOneByTags(array $tags) Return the first ChildPack filtered by the tags column
  * @method     ChildPack findOneByCreatedAt(string $created_at) Return the first ChildPack filtered by the created_at column
@@ -100,7 +100,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack requireOneByName(string $name) Return the first ChildPack filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByDescription(string $description) Return the first ChildPack filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByPrivate(boolean $private) Return the first ChildPack filtered by the private column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPack requireOneByUserId(int $user_id) Return the first ChildPack filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPack requireOneByOwnerId(int $owner_id) Return the first ChildPack filtered by the owner_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByDeletedAt(string $deleted_at) Return the first ChildPack filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByTags(array $tags) Return the first ChildPack filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByCreatedAt(string $created_at) Return the first ChildPack filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -111,7 +111,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack[]|ObjectCollection findByName(string $name) Return ChildPack objects filtered by the name column
  * @method     ChildPack[]|ObjectCollection findByDescription(string $description) Return ChildPack objects filtered by the description column
  * @method     ChildPack[]|ObjectCollection findByPrivate(boolean $private) Return ChildPack objects filtered by the private column
- * @method     ChildPack[]|ObjectCollection findByUserId(int $user_id) Return ChildPack objects filtered by the user_id column
+ * @method     ChildPack[]|ObjectCollection findByOwnerId(int $owner_id) Return ChildPack objects filtered by the owner_id column
  * @method     ChildPack[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildPack objects filtered by the deleted_at column
  * @method     ChildPack[]|ObjectCollection findByTags(array $tags) Return ChildPack objects filtered by the tags column
  * @method     ChildPack[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildPack objects filtered by the created_at column
@@ -208,7 +208,7 @@ abstract class PackQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, private, user_id, deleted_at, tags, created_at, updated_at FROM pack WHERE id = :p0';
+        $sql = 'SELECT id, name, description, private, owner_id, deleted_at, tags, created_at, updated_at FROM pack WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -425,18 +425,18 @@ abstract class PackQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_id column
+     * Filter the query on the owner_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUserId(1234); // WHERE user_id = 1234
-     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
-     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
+     * $query->filterByOwnerId(1234); // WHERE owner_id = 1234
+     * $query->filterByOwnerId(array(12, 34)); // WHERE owner_id IN (12, 34)
+     * $query->filterByOwnerId(array('min' => 12)); // WHERE owner_id > 12
      * </code>
      *
-     * @see       filterByUser()
+     * @see       filterByOwner()
      *
-     * @param     mixed $userId The value to use as filter.
+     * @param     mixed $ownerId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -444,16 +444,16 @@ abstract class PackQuery extends ModelCriteria
      *
      * @return $this|ChildPackQuery The current query, for fluid interface
      */
-    public function filterByUserId($userId = null, $comparison = null)
+    public function filterByOwnerId($ownerId = null, $comparison = null)
     {
-        if (is_array($userId)) {
+        if (is_array($ownerId)) {
             $useMinMax = false;
-            if (isset($userId['min'])) {
-                $this->addUsingAlias(PackTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+            if (isset($ownerId['min'])) {
+                $this->addUsingAlias(PackTableMap::COL_OWNER_ID, $ownerId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($userId['max'])) {
-                $this->addUsingAlias(PackTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+            if (isset($ownerId['max'])) {
+                $this->addUsingAlias(PackTableMap::COL_OWNER_ID, $ownerId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -464,7 +464,7 @@ abstract class PackQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(PackTableMap::COL_USER_ID, $userId, $comparison);
+        return $this->addUsingAlias(PackTableMap::COL_OWNER_ID, $ownerId, $comparison);
     }
 
     /**
@@ -687,35 +687,35 @@ abstract class PackQuery extends ModelCriteria
      *
      * @return ChildPackQuery The current query, for fluid interface
      */
-    public function filterByUser($user, $comparison = null)
+    public function filterByOwner($user, $comparison = null)
     {
         if ($user instanceof \Models\User) {
             return $this
-                ->addUsingAlias(PackTableMap::COL_USER_ID, $user->getId(), $comparison);
+                ->addUsingAlias(PackTableMap::COL_OWNER_ID, $user->getId(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(PackTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(PackTableMap::COL_OWNER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByUser() only accepts arguments of type \Models\User or Collection');
+            throw new PropelException('filterByOwner() only accepts arguments of type \Models\User or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the User relation
+     * Adds a JOIN clause to the query using the Owner relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildPackQuery The current query, for fluid interface
      */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinOwner($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
+        $relationMap = $tableMap->getRelation('Owner');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -730,14 +730,14 @@ abstract class PackQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'User');
+            $this->addJoinObject($join, 'Owner');
         }
 
         return $this;
     }
 
     /**
-     * Use the User relation User object
+     * Use the Owner relation User object
      *
      * @see useQuery()
      *
@@ -747,11 +747,11 @@ abstract class PackQuery extends ModelCriteria
      *
      * @return \Models\UserQuery A secondary query class using the current class as primary query
      */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useOwnerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', '\Models\UserQuery');
+            ->joinOwner($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Owner', '\Models\UserQuery');
     }
 
     /**

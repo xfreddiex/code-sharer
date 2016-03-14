@@ -230,7 +230,7 @@ class UserTableMap extends TableMap
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':owner_id',
     1 => ':id',
   ),
 ), null, null, 'Packs', false);

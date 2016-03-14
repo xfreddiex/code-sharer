@@ -2882,7 +2882,7 @@ abstract class User implements ActiveRecordInterface
                 $this->initPacks();
             } else {
                 $collPacks = ChildPackQuery::create(null, $criteria)
-                    ->filterByUser($this)
+                    ->filterByOwner($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -2936,7 +2936,7 @@ abstract class User implements ActiveRecordInterface
         $this->packsScheduledForDeletion = $packsToDelete;
 
         foreach ($packsToDelete as $packRemoved) {
-            $packRemoved->setUser(null);
+            $packRemoved->setOwner(null);
         }
 
         $this->collPacks = null;
@@ -2977,7 +2977,7 @@ abstract class User implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByUser($this)
+                ->filterByOwner($this)
                 ->count($con);
         }
 
@@ -3015,7 +3015,7 @@ abstract class User implements ActiveRecordInterface
     protected function doAddPack(ChildPack $pack)
     {
         $this->collPacks[]= $pack;
-        $pack->setUser($this);
+        $pack->setOwner($this);
     }
 
     /**
@@ -3032,7 +3032,7 @@ abstract class User implements ActiveRecordInterface
                 $this->packsScheduledForDeletion->clear();
             }
             $this->packsScheduledForDeletion[]= clone $pack;
-            $pack->setUser(null);
+            $pack->setOwner(null);
         }
 
         return $this;

@@ -63,15 +63,4 @@ abstract class BaseController extends Controller{
 		return true;
 	}
 
-	protected function loadPack(){
-		$this->data["pack"] = null;
-		if(isset($_POST["packId"])){
-			$this->data["pack"] = PackQuery::create()->findPK($_POST["packId"]);
-		}
-		if(!$this->data["pack"]){
-			$this->sendFlashMessage("Pack does not exist.", "error");
-			$this->redirect("/");	
-		}
-		return true;
-	}
 }

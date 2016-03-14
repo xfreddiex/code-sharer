@@ -3,6 +3,7 @@
 namespace Models;
 
 use Models\Base\Group as BaseGroup;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Skeleton subclass for representing a row from the 'group' table.
@@ -16,5 +17,8 @@ use Models\Base\Group as BaseGroup;
  */
 class Group extends BaseGroup
 {
+	public function preSave(ConnectionInterface $con = null){
+		return $this->validate();
+	}
 
 }

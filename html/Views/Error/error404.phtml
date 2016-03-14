@@ -9,22 +9,29 @@
 	<div class="alert alert-danger alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
 	<div class="alert alert-info alert-dismisible"><button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>This is some alert</div>
 	
-	<form action="/update-pack-permissions" method="POST">
-		<input type="text" name="packId"/>
+	<form id="addperm">
 		<input type="password" name="authorizationPassword"/>
 		<br />
-		<input type="text" name="user0username"/>
-		<input type="checkbox" name="user0view" value="1">
-		<input type="checkbox" name="user0edit" value="1">
-		<input type="checkbox" name="user0remove" value="1">
+		<input type="text" name="user[0][username]"/>
+		<input type="checkbox" name="user[0][view]" value="1">
+		<input type="checkbox" name="user[0][edit]" value="1">
+		<input type="checkbox" name="user[0][remove]" value="1">
 		<br />
-		<input type="text" name="user1username"/>
-		<input type="checkbox" name="user1view" value="1">
-		<input type="checkbox" name="user1edit" value="1">
-		<input type="checkbox" name="user1remove" value="1">
-		<br /> 
 		<input type="submit">
 	</form>
+
+	<script>
+		$("#addperm").submit(function(event){
+			event.preventDefault();
+			$.ajax({
+				type: 'POST',
+				url: "/pack/8/update-permissions",
+				data: $(this).serialize(),
+				dataType : "json",
+			});
+		});
+	</script>
+	
 	<form action="/create/group" method="POST">
 		<input type="text" name="name"/>
 		<input type="text" name="description"/>

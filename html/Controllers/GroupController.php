@@ -15,11 +15,11 @@ class GroupController extends BaseController{
 		parent::__construct();
 
 		$this->addBefore("create", array("userLogged"));
-		$this->addBefore("delete", array("userLogged", "load", "isUserOwner"));
-		$this->addBefore("show", array("load"));
-		$this->addBefore("update", array("userLogged", "load", "isUserOwner"));
-		$this->addBefore("addUsers", array("userLogged", "load", "isUserOwner"));
-		$this->addBefore("removeUsers", array("userLogged", "load", "isUserOwner"));
+		$this->addBefore("delete", array("userLogged", "load"));
+		$this->addBefore("show", array("userLogged", "load"));
+		$this->addBefore("update", array("userLogged", "load"));
+		$this->addBefore("addUsers", array("userLogged", "load"));
+		$this->addBefore("removeUsers", array("userLogged", "load"));
 	}
 
 	/*
@@ -27,11 +27,9 @@ class GroupController extends BaseController{
 	*/
 
 	protected function show(){
-		if($this->data["group"]->getPrivate()){
-			if(!$this->data["loggedUser"] || ($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count())){
-				$this->sendFlashMessage("You dont have permission to view this group.", "error");
-				$this->redirect("/");
-			}
+		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count())){
+			$this->sendFlashMessage("You dont have permission to view this group.", "error");
+			$this->redirect("/");
 		}
 		$this->viewFile($this->template);
 	}
@@ -75,33 +73,32 @@ class GroupController extends BaseController{
 			$group->setName($_POST["name"]);
 		if(isset($_POST["description"]))
 			$group->setDescription($_POST["description"]);
-		if(isset($_POST["newEmail"]) && $_POST["newEmail"])
-			$group->setEmail($_POST["newEmail"]);
-		if(isset($_POST["newPassword"]) && $_POST["newPassword"])
-			$group->setPassword($_POST["newPassword"]);
 
 		if($group->save()){
 			$failures = $group->getValidationFailures();
 			if(count($failures) > 0){
 				foreach($failures as $failure){
-					$this->sendFlashMessage("User data has not been changeg. ".$failure->getMessage(), "error");
+					$this->sendFlashMessage("Group data has not been changeg. ".$failure->getMessage(), "error");
 				}
 			}
 		}
 		else
-			$this->sendFlashMessage("User data has been successfuly updated.", "success");
-		$this->redirect($this->data["referersURI"]);	
+			$this->sendFlashMessage("Group data has been successfuly updated.", "success");
+		$this->redirect("/group/".$group->getId());	
 	}
 
 	protected function addUsers(){
 		setContentType("json");
-		$response["messages"] = array();
 		if(isset($_POST["user"])){
 			foreach($_POST["user"] as $user){
 				if(!isset($user["username"]))
 					continue;
 				$u = UserQuery::create()->findOneByUsername($user["username"]);
 				if($u){
+					if($u == $this->data["loggedUser"]){
+						$response["messages"][] = "You can not add yourself to group.";
+						continue;
+					}
 					$userGroup = UserGroupQuery::create()->filterByUser($u)->filterByGroup($this->data["group"])->findOne();
 					if($userGroup){
 						$response["messages"][] = "User " . $user["username"] . " is already in this group.";
@@ -141,7 +138,8 @@ class GroupController extends BaseController{
 			}
 		}*/
 
-		$this->viewString(json_encode($response));
+		if(isset($response))
+			$this->viewString(json_encode($response));
 	}
 
 	protected function removeUsers(){
@@ -224,11 +222,4 @@ class GroupController extends BaseController{
 		return true;
 	}
 
-	protected function isUserOwner(){
-		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId()){
-			$this->sendFlashMessage("You dont have permission to modify this group.", "error");
-			$this->redirect("/");
-		}
-		return true;
-	}
 }

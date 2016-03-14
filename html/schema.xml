@@ -102,14 +102,14 @@
         <column name="name" type="varchar" size="32" required="true"/>
         <column name="description" type="varchar" size="256" required="false"/>
         <column name="private" type="boolean" required="true"/>
-        <column name="user_id" type="integer" required="true"/>
+        <column name="owner_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         <column name="tags" type="array" required="false"/>
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="User" refPhpName="Pack">
-            <reference local="user_id" foreign="id"/>
+        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Pack">
+            <reference local="owner_id" foreign="id"/>
         </foreign-key>
 
         <unique>
@@ -147,7 +147,6 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="32" required="true"/>
         <column name="description" type="varchar" size="256" required="false"/>
-        <column name="private" type="boolean" required="true"/>
         <column name="owner_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         
