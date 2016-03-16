@@ -5,6 +5,8 @@ namespace Models\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Models\Comment as ChildComment;
+use Models\CommentQuery as ChildCommentQuery;
 use Models\File as ChildFile;
 use Models\FileQuery as ChildFileQuery;
 use Models\Pack as ChildPack;
@@ -13,6 +15,7 @@ use Models\PackPermissionQuery as ChildPackPermissionQuery;
 use Models\PackQuery as ChildPackQuery;
 use Models\User as ChildUser;
 use Models\UserQuery as ChildUserQuery;
+use Models\Map\CommentTableMap;
 use Models\Map\FileTableMap;
 use Models\Map\PackPermissionTableMap;
 use Models\Map\PackTableMap;
@@ -171,6 +174,12 @@ abstract class Pack implements ActiveRecordInterface
     protected $collFilesPartial;
 
     /**
+     * @var        ObjectCollection|ChildComment[] Collection to store aggregation of ChildComment objects.
+     */
+    protected $collComments;
+    protected $collCommentsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -206,6 +215,12 @@ abstract class Pack implements ActiveRecordInterface
      * @var ObjectCollection|ChildFile[]
      */
     protected $filesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildComment[]
+     */
+    protected $commentsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\Pack object.
@@ -953,6 +968,8 @@ abstract class Pack implements ActiveRecordInterface
 
             $this->collFiles = null;
 
+            $this->collComments = null;
+
         } // if (deep)
     }
 
@@ -1115,6 +1132,24 @@ abstract class Pack implements ActiveRecordInterface
 
             if ($this->collFiles !== null) {
                 foreach ($this->collFiles as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->commentsScheduledForDeletion !== null) {
+                if (!$this->commentsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->commentsScheduledForDeletion as $comment) {
+                        // need to save related object because we set the relation to null
+                        $comment->save($con);
+                    }
+                    $this->commentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collComments !== null) {
+                foreach ($this->collComments as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1403,6 +1438,21 @@ abstract class Pack implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collFiles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collComments) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'comments';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'comments';
+                        break;
+                    default:
+                        $key = 'Comments';
+                }
+
+                $result[$key] = $this->collComments->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1702,6 +1752,12 @@ abstract class Pack implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getComments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addComment($relObj->copy($deepCopy));
+                }
+            }
+
         } // if ($deepCopy)
 
         if ($makeNew) {
@@ -1799,6 +1855,9 @@ abstract class Pack implements ActiveRecordInterface
         }
         if ('File' == $relationName) {
             return $this->initFiles();
+        }
+        if ('Comment' == $relationName) {
+            return $this->initComments();
         }
     }
 
@@ -2303,6 +2362,281 @@ abstract class Pack implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collComments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addComments()
+     */
+    public function clearComments()
+    {
+        $this->collComments = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collComments collection loaded partially.
+     */
+    public function resetPartialComments($v = true)
+    {
+        $this->collCommentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collComments collection.
+     *
+     * By default this just sets the collComments collection to an empty array (like clearcollComments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initComments($overrideExisting = true)
+    {
+        if (null !== $this->collComments && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = CommentTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collComments = new $collectionClassName;
+        $this->collComments->setModel('\Models\Comment');
+    }
+
+    /**
+     * Gets an array of ChildComment objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildPack is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildComment[] List of ChildComment objects
+     * @throws PropelException
+     */
+    public function getComments(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCommentsPartial && !$this->isNew();
+        if (null === $this->collComments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collComments) {
+                // return empty collection
+                $this->initComments();
+            } else {
+                $collComments = ChildCommentQuery::create(null, $criteria)
+                    ->filterByPack($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collCommentsPartial && count($collComments)) {
+                        $this->initComments(false);
+
+                        foreach ($collComments as $obj) {
+                            if (false == $this->collComments->contains($obj)) {
+                                $this->collComments->append($obj);
+                            }
+                        }
+
+                        $this->collCommentsPartial = true;
+                    }
+
+                    return $collComments;
+                }
+
+                if ($partial && $this->collComments) {
+                    foreach ($this->collComments as $obj) {
+                        if ($obj->isNew()) {
+                            $collComments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collComments = $collComments;
+                $this->collCommentsPartial = false;
+            }
+        }
+
+        return $this->collComments;
+    }
+
+    /**
+     * Sets a collection of ChildComment objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $comments A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function setComments(Collection $comments, ConnectionInterface $con = null)
+    {
+        /** @var ChildComment[] $commentsToDelete */
+        $commentsToDelete = $this->getComments(new Criteria(), $con)->diff($comments);
+
+
+        $this->commentsScheduledForDeletion = $commentsToDelete;
+
+        foreach ($commentsToDelete as $commentRemoved) {
+            $commentRemoved->setPack(null);
+        }
+
+        $this->collComments = null;
+        foreach ($comments as $comment) {
+            $this->addComment($comment);
+        }
+
+        $this->collComments = $comments;
+        $this->collCommentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Comment objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Comment objects.
+     * @throws PropelException
+     */
+    public function countComments(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCommentsPartial && !$this->isNew();
+        if (null === $this->collComments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collComments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getComments());
+            }
+
+            $query = ChildCommentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPack($this)
+                ->count($con);
+        }
+
+        return count($this->collComments);
+    }
+
+    /**
+     * Method called to associate a ChildComment object to this object
+     * through the ChildComment foreign key attribute.
+     *
+     * @param  ChildComment $l ChildComment
+     * @return $this|\Models\Pack The current object (for fluent API support)
+     */
+    public function addComment(ChildComment $l)
+    {
+        if ($this->collComments === null) {
+            $this->initComments();
+            $this->collCommentsPartial = true;
+        }
+
+        if (!$this->collComments->contains($l)) {
+            $this->doAddComment($l);
+
+            if ($this->commentsScheduledForDeletion and $this->commentsScheduledForDeletion->contains($l)) {
+                $this->commentsScheduledForDeletion->remove($this->commentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildComment $comment The ChildComment object to add.
+     */
+    protected function doAddComment(ChildComment $comment)
+    {
+        $this->collComments[]= $comment;
+        $comment->setPack($this);
+    }
+
+    /**
+     * @param  ChildComment $comment The ChildComment object to remove.
+     * @return $this|ChildPack The current object (for fluent API support)
+     */
+    public function removeComment(ChildComment $comment)
+    {
+        if ($this->getComments()->contains($comment)) {
+            $pos = $this->collComments->search($comment);
+            $this->collComments->remove($pos);
+            if (null === $this->commentsScheduledForDeletion) {
+                $this->commentsScheduledForDeletion = clone $this->collComments;
+                $this->commentsScheduledForDeletion->clear();
+            }
+            $this->commentsScheduledForDeletion[]= $comment;
+            $comment->setPack(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Pack is new, it will return
+     * an empty collection; or if this Pack has previously
+     * been saved, it will retrieve related Comments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Pack.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildComment[] List of ChildComment objects
+     */
+    public function getCommentsJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildCommentQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getComments($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Pack is new, it will return
+     * an empty collection; or if this Pack has previously
+     * been saved, it will retrieve related Comments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Pack.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildComment[] List of ChildComment objects
+     */
+    public function getCommentsJoinFile(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildCommentQuery::create(null, $criteria);
+        $query->joinWith('File', $joinBehavior);
+
+        return $this->getComments($query, $con);
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2350,10 +2684,16 @@ abstract class Pack implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collComments) {
+                foreach ($this->collComments as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collPackPermissions = null;
         $this->collFiles = null;
+        $this->collComments = null;
         $this->aOwner = null;
     }
 
@@ -2448,6 +2788,15 @@ abstract class Pack implements ActiveRecordInterface
             }
             if (null !== $this->collFiles) {
                 foreach ($this->collFiles as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collComments) {
+                foreach ($this->collComments as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

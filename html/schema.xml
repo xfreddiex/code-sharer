@@ -60,7 +60,7 @@
 
     <table name="pack_permission" phpName="PackPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="value" type="enum" valueSet="1, 2, 3" required="true"/>
+        <column name="value" type="enum" valueSet="1, 2" required="true"/>
         <column name="user_id" type="integer"/>
         <column name="group_id" type="integer"/>
         <column name="pack_id" type="integer" required="true"/>
@@ -113,7 +113,7 @@
         </foreign-key>
 
         <unique>
-            <unique-column name="user_id" />
+            <unique-column name="owner_id" />
             <unique-column name="name" />
         </unique>
 
@@ -128,18 +128,25 @@
 
     <table name="file" phpName="File">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="name" type="varchar" size="50" required="true"/>
-        <column name="description" type="varchar" size="250" required="false"/>
+        <column name="name" type="varchar" size="64" required="true"/>
+        <column name="description" type="varchar" size="256" required="false"/>
         <column name="type" type="varchar" size="10" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
-        <column name="code" type="varchar" size="200" required="true"/>
+        <column name="size" type="integer" required="true"/>
+        <column name="content" type="varbinary" required="true"/>
         <column name="pack_id" type="integer" required="true"/>
+        <column name="deleted_at" type="timestamp" required="false"/>
         
         <foreign-key foreignTable="pack" phpName="Pack" refPhpName="File">
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
         
         <behavior name="timestampable" />
+
+        <behavior name="validate">
+            <parameter name="rule1" value='{column: name, validator: Length, options: {max : 64, maxMessage: "Maximal file name length is {{ limit }} characters."}}' />
+            <parameter name="rule2" value='{column: name, validator: NotBlank, options: {message: "File name should not be blank."}}' />
+            <parameter name="rule3" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal file description length is {{ limit }} characters."}}' />
+        </behavior>
     
     </table>
 
@@ -160,6 +167,32 @@
             <parameter name="rule1" value='{column: name, validator: Length, options: {max : 32, maxMessage: "Maximal group name length is {{ limit }} characters."}}' />
             <parameter name="rule2" value='{column: name, validator: NotBlank, options: {message: "Group name should not be blank."}}' />
             <parameter name="rule3" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal pack description length is {{ limit }} characters."}}' />
+        </behavior>
+
+    </table>
+
+    <table name="comment" phpName="Comment">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="user_id" type="integer" required="true"/>
+        <column name="file_id" type="integer"/>
+        <column name="pack_id" type="integer"/>
+        <column name="text" type="varchar" size="1024" required="true"/>
+        
+        <behavior name="timestampable" />
+        
+        <foreign-key foreignTable="user" phpName="User" refPhpName="Comment">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="file" phpName="File" refPhpName="Comment">
+            <reference local="file_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="Comment">
+            <reference local="pack_id" foreign="id"/>
+        </foreign-key>
+
+        <behavior name="validate">
+            <parameter name="rule1" value='{column: text, validator: Length, options: {max : 1024, maxMessage: "Maximal text length is {{ limit }} characters."}}' />
+            <parameter name="rule2" value='{column: textt, validator: NotBlank, options: {message: "Comment should not be blank."}}' />
         </behavior>
 
     </table>

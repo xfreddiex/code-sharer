@@ -28,15 +28,16 @@ abstract class BaseController extends Controller{
 	}
 
 	protected function loadUser(){
+		$user = null;
 		if(isset($_SESSION["userId"])){
-			$this->data["loggedUser"] = UserQuery::create()->findPK($_SESSION["userId"]);
+			$user = UserQuery::create()->findPK($_SESSION["userId"]);
 		}
 		else if(isset($_COOKIE["identityId"]) && isset($_COOKIE["identityToken"])){
-			$identity = IdentityQuery::create()
-				->findPK($_COOKIE["identityId"]);
+			$identity = IdentityQuery::create()->findPK($_COOKIE["identityId"]);
 			if($identity && $identity->checkToken($_COOKIE["identityToken"])){
-				$this->data["loggedUser"] = UserQuery::create()->filterByIdentity($identity)->findOne();
-				if($this->data["loggedUser"]){
+				$user = UserQuery::create()->filterByIdentity($identity)->findOne();
+				if($user){
+						$_SESSION["userId"] = $user->getId();
 						$token = generateRandomString(32);
 						$identity->setToken($token)->setExpiresAt(time() + (86400 * 120))->save();
 						setcookie("identityId", $identity->getId(), time() + (86400 * 120));
@@ -44,6 +45,7 @@ abstract class BaseController extends Controller{
 				}
 			}
 		}
+		$this->data["loggedUser"] = $user;
 		return true;
 	}
 

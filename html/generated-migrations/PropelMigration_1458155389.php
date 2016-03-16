@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457471273.
- * Generated on 2016-03-08 22:07:53 by xfreddiex
+ * up to version 1458155389.
+ * Generated on 2016-03-16 20:09:49 by xfreddiex
  */
-class PropelMigration_1457471273
+class PropelMigration_1458155389
 {
     public $comment = '';
 
@@ -43,29 +43,29 @@ class PropelMigration_1457471273
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack_permission`
-
-  DROP FOREIGN KEY `pack_permission_fk_21351b`,
-
-  DROP FOREIGN KEY `pack_permission_fk_49d0f8`,
-
-  DROP INDEX `pack_permission_fi_49d0f8`,
-
-  CHANGE `belonger_id` `user_id` INTEGER NOT NULL,
-
-  ADD `group_id` INTEGER NOT NULL AFTER `user_id`,
-
-  ADD INDEX `pack_permission_fi_29554a` (`user_id`),
-
-  ADD INDEX `pack_permission_fi_0278b4` (`group_id`),
-
-  ADD CONSTRAINT `pack_permission_fk_29554a`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `user` (`id`),
-
-  ADD CONSTRAINT `pack_permission_fk_0278b4`
-    FOREIGN KEY (`group_id`)
-    REFERENCES `group` (`id`);
+CREATE TABLE `comment`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `file_id` INTEGER,
+    `pack_id` INTEGER,
+    `text` VARCHAR(1024) NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    INDEX `comment_fi_29554a` (`user_id`),
+    INDEX `comment_fi_38afab` (`file_id`),
+    INDEX `comment_fi_c61110` (`pack_id`),
+    CONSTRAINT `comment_fk_29554a`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `user` (`id`),
+    CONSTRAINT `comment_fk_38afab`
+        FOREIGN KEY (`file_id`)
+        REFERENCES `file` (`id`),
+    CONSTRAINT `comment_fk_c61110`
+        FOREIGN KEY (`pack_id`)
+        REFERENCES `pack` (`id`)
+) ENGINE=InnoDB CHARACTER SET=\'utf8\' COLLATE=\'utf8_unicode_ci\';
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -87,29 +87,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack_permission`
-
-  DROP FOREIGN KEY `pack_permission_fk_29554a`,
-
-  DROP FOREIGN KEY `pack_permission_fk_0278b4`,
-
-  DROP INDEX `pack_permission_fi_29554a`,
-
-  DROP INDEX `pack_permission_fi_0278b4`,
-
-  CHANGE `user_id` `belonger_id` INTEGER NOT NULL,
-
-  DROP `group_id`,
-
-  ADD INDEX `pack_permission_fi_49d0f8` (`belonger_id`),
-
-  ADD CONSTRAINT `pack_permission_fk_21351b`
-    FOREIGN KEY (`belonger_id`)
-    REFERENCES `group` (`id`),
-
-  ADD CONSTRAINT `pack_permission_fk_49d0f8`
-    FOREIGN KEY (`belonger_id`)
-    REFERENCES `user` (`id`);
+DROP TABLE IF EXISTS `comment`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

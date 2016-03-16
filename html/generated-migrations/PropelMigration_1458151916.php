@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457637324.
- * Generated on 2016-03-10 20:15:24 by xfreddiex
+ * up to version 1458151916.
+ * Generated on 2016-03-16 19:11:56 by xfreddiex
  */
-class PropelMigration_1457637324
+class PropelMigration_1458151916
 {
     public $comment = '';
 
@@ -45,7 +45,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `file`
 
-  CHANGE `code` `code` VARCHAR(255) NOT NULL;
+  CHANGE `name` `name` VARCHAR(64) NOT NULL,
+
+  CHANGE `description` `description` VARCHAR(256);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -69,7 +71,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 ALTER TABLE `file`
 
-  CHANGE `code` `code` VARCHAR(200) NOT NULL;
+  CHANGE `name` `name` VARCHAR(50) NOT NULL,
+
+  CHANGE `description` `description` VARCHAR(250);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

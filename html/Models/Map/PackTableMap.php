@@ -203,6 +203,13 @@ class PackTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Files', false);
+        $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':pack_id',
+    1 => ':id',
+  ),
+), null, null, 'Comments', false);
     } // buildRelations()
 
     /**

@@ -22,6 +22,7 @@ abstract class Controller{
 		$this->data['description'] = '';
 
 		$this->data['flash_messages'] = array();
+		$this->data["response"] = array();
 	}
 
 	public function __call($method, $params){
@@ -76,6 +77,10 @@ abstract class Controller{
 	}
 
 	protected function sendFlashMessage($message, $type = "info"){
+		/*if(in_array("application/json", array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))){
+			$this->data["response"]["messages"][] = array("message" => $message, "type" => $type);
+			return;
+		}*/
 		$type = $type == "error" ? "danger" : $type;
 		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
 	}

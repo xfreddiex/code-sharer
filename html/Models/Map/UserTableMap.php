@@ -241,6 +241,13 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Groups', false);
+        $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'Comments', false);
     } // buildRelations()
 
     /**

@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457471444.
- * Generated on 2016-03-08 22:10:44 by xfreddiex
+ * up to version 1458078378.
+ * Generated on 2016-03-15 22:46:18 by xfreddiex
  */
-class PropelMigration_1457471444
+class PropelMigration_1458078378
 {
     public $comment = '';
 
@@ -43,11 +43,9 @@ class PropelMigration_1457471444
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack_permission`
+ALTER TABLE `file`
 
-  CHANGE `user_id` `user_id` INTEGER,
-
-  CHANGE `group_id` `group_id` INTEGER;
+  DROP `extension`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -69,11 +67,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `pack_permission`
+ALTER TABLE `file`
 
-  CHANGE `user_id` `user_id` INTEGER NOT NULL,
-
-  CHANGE `group_id` `group_id` INTEGER NOT NULL;
+  ADD `extension` VARCHAR(10) NOT NULL AFTER `type`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

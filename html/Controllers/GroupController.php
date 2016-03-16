@@ -27,7 +27,7 @@ class GroupController extends BaseController{
 	*/
 
 	protected function show(){
-		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count())){
+		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count()){
 			$this->sendFlashMessage("You dont have permission to view this group.", "error");
 			$this->redirect("/");
 		}

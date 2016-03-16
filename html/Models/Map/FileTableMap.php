@@ -59,7 +59,7 @@ class FileTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class FileTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -92,19 +92,24 @@ class FileTableMap extends TableMap
     const COL_TYPE = 'file.type';
 
     /**
-     * the column name for the deleted_at field
+     * the column name for the size field
      */
-    const COL_DELETED_AT = 'file.deleted_at';
+    const COL_SIZE = 'file.size';
 
     /**
-     * the column name for the code field
+     * the column name for the content field
      */
-    const COL_CODE = 'file.code';
+    const COL_CONTENT = 'file.content';
 
     /**
      * the column name for the pack_id field
      */
     const COL_PACK_ID = 'file.pack_id';
+
+    /**
+     * the column name for the deleted_at field
+     */
+    const COL_DELETED_AT = 'file.deleted_at';
 
     /**
      * the column name for the created_at field
@@ -128,11 +133,11 @@ class FileTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Type', 'DeletedAt', 'Code', 'PackId', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'type', 'deletedAt', 'code', 'packId', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(FileTableMap::COL_ID, FileTableMap::COL_NAME, FileTableMap::COL_DESCRIPTION, FileTableMap::COL_TYPE, FileTableMap::COL_DELETED_AT, FileTableMap::COL_CODE, FileTableMap::COL_PACK_ID, FileTableMap::COL_CREATED_AT, FileTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'type', 'deleted_at', 'code', 'pack_id', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Type', 'Size', 'Content', 'PackId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'type', 'size', 'content', 'packId', 'deletedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(FileTableMap::COL_ID, FileTableMap::COL_NAME, FileTableMap::COL_DESCRIPTION, FileTableMap::COL_TYPE, FileTableMap::COL_SIZE, FileTableMap::COL_CONTENT, FileTableMap::COL_PACK_ID, FileTableMap::COL_DELETED_AT, FileTableMap::COL_CREATED_AT, FileTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'type', 'size', 'content', 'pack_id', 'deleted_at', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -142,11 +147,11 @@ class FileTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Type' => 3, 'DeletedAt' => 4, 'Code' => 5, 'PackId' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'type' => 3, 'deletedAt' => 4, 'code' => 5, 'packId' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
-        self::TYPE_COLNAME       => array(FileTableMap::COL_ID => 0, FileTableMap::COL_NAME => 1, FileTableMap::COL_DESCRIPTION => 2, FileTableMap::COL_TYPE => 3, FileTableMap::COL_DELETED_AT => 4, FileTableMap::COL_CODE => 5, FileTableMap::COL_PACK_ID => 6, FileTableMap::COL_CREATED_AT => 7, FileTableMap::COL_UPDATED_AT => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'type' => 3, 'deleted_at' => 4, 'code' => 5, 'pack_id' => 6, 'created_at' => 7, 'updated_at' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Type' => 3, 'Size' => 4, 'Content' => 5, 'PackId' => 6, 'DeletedAt' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'type' => 3, 'size' => 4, 'content' => 5, 'packId' => 6, 'deletedAt' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
+        self::TYPE_COLNAME       => array(FileTableMap::COL_ID => 0, FileTableMap::COL_NAME => 1, FileTableMap::COL_DESCRIPTION => 2, FileTableMap::COL_TYPE => 3, FileTableMap::COL_SIZE => 4, FileTableMap::COL_CONTENT => 5, FileTableMap::COL_PACK_ID => 6, FileTableMap::COL_DELETED_AT => 7, FileTableMap::COL_CREATED_AT => 8, FileTableMap::COL_UPDATED_AT => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'type' => 3, 'size' => 4, 'content' => 5, 'pack_id' => 6, 'deleted_at' => 7, 'created_at' => 8, 'updated_at' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -167,12 +172,13 @@ class FileTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 50, null);
-        $this->addColumn('description', 'Description', 'VARCHAR', false, 250, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 64, null);
+        $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
         $this->addColumn('type', 'Type', 'VARCHAR', true, 10, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('code', 'Code', 'VARCHAR', true, 200, null);
+        $this->addColumn('size', 'Size', 'INTEGER', true, null, null);
+        $this->addColumn('content', 'Content', 'VARBINARY', true, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
+        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -189,6 +195,13 @@ class FileTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, null, false);
+        $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':file_id',
+    1 => ':id',
+  ),
+), null, null, 'Comments', false);
     } // buildRelations()
 
     /**
@@ -201,6 +214,7 @@ class FileTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 64,'maxMessage' => 'Maximal file name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'File name should not be blank.',),), 'rule3' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal file description length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
 
@@ -349,9 +363,10 @@ class FileTableMap extends TableMap
             $criteria->addSelectColumn(FileTableMap::COL_NAME);
             $criteria->addSelectColumn(FileTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(FileTableMap::COL_TYPE);
-            $criteria->addSelectColumn(FileTableMap::COL_DELETED_AT);
-            $criteria->addSelectColumn(FileTableMap::COL_CODE);
+            $criteria->addSelectColumn(FileTableMap::COL_SIZE);
+            $criteria->addSelectColumn(FileTableMap::COL_CONTENT);
             $criteria->addSelectColumn(FileTableMap::COL_PACK_ID);
+            $criteria->addSelectColumn(FileTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(FileTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(FileTableMap::COL_UPDATED_AT);
         } else {
@@ -359,9 +374,10 @@ class FileTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.type');
-            $criteria->addSelectColumn($alias . '.deleted_at');
-            $criteria->addSelectColumn($alias . '.code');
+            $criteria->addSelectColumn($alias . '.size');
+            $criteria->addSelectColumn($alias . '.content');
             $criteria->addSelectColumn($alias . '.pack_id');
+            $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

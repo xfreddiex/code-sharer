@@ -10,6 +10,8 @@ use Models\Pack;
 use Models\PackQuery;
 use Models\PackPermission;
 use Models\PackPermissionQuery;
+use Models\File;
+use Models\FileQuery;
 
 class PackController extends BaseController{
 
@@ -19,7 +21,26 @@ class PackController extends BaseController{
 		$this->addBefore("new", array("userLogged"));
 		$this->addBefore("show", array("load", "loadPermission"));
 		$this->addBefore("create", array("userLogged"));
+		$this->addBefore("createView", array("userLogged"));
 		$this->addBefore("updatePermissions", array("userLogged", "userAuthorized", "load", "loadPermission"));
+		$this->addBefore("delete", array("userLogged", "userAuthorized", "load", "loadPermission"));
+		$this->addBefore("addFile", array("userLogged", "load", "loadPermission"));
+
+		$this->data["fileExtensionAccept"] = array(
+			"txt",
+			"php",
+			"html",
+			"css",
+			"scss",
+			"phtml",
+			"js",
+			"xml",
+			"json",
+			"",
+			"",
+			"",
+			""
+		);
 	}
 
 	/*
@@ -58,7 +79,7 @@ class PackController extends BaseController{
     			$failures = $pack->getValidationFailures();
 				if(count($failures) > 0){
 					foreach($failures as $failure){
-						$this->sendFlashMessage("Your pack has not been created ".$failure->getMessage(), "error");
+						$this->sendFlashMessage("Your pack has not been created. ".$failure->getMessage(), "error");
 					}
 					$this->redirect($this->data["referersURI"]);
 				}
@@ -73,12 +94,80 @@ class PackController extends BaseController{
 	}
 
 	protected function delete(){
+		if($this->data["permission"] != 3 ){
+			$this->sendFlashMessage("You have not permission to delete pack with ID ".$this->data["pack"]->getId().".", "error");
+			$this->redirect("/");
+		}
 		$this->data["pack"]->setDeletedAt(time());
 		$this->data["pack"]->save();
 		$this->sendFlashMessage("Pack has been successfuly deleted.", "info");
 		$this->redirect("/profile");	
 	}
 
+	protected function addFile(){
+		if($this->data["permission"] < 2 ){
+			$this->sendFlashMessage("You have not permission to modify pack with ID ".$this->data["pack"]->getId().".", "error");
+			$this->redirect("/");
+		}
+		
+		if(isset($_FILES["file"])){
+			
+			$fileName = $_FILES['file']['name'];
+			$fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+			$fileSize = $_FILES["file"]["size"];
+			$fileTmpName  = $_FILES['file']['tmp_name'];
+			$fileType = $_FILES['file']['type'];
+
+			if(!in_array($fileExtension, $this->data["fileExtensionAccept"])){
+				$this->sendFlashMessage('"'.$fileExtension .'" file extension is not accepted.', "error");
+				$this->redirect("/pack/".$this->data["pack"]->getId());	
+			}
+
+			if($fileSize > 281474943156225){
+				$this->sendFlashMessage("File is too large.", "error");
+				$this->redirect("/pack/".$this->data["pack"]->getId());	
+			}
+
+			$file = FileQuery::create()->filterByPack($this->data["pack"])->filterByName($fileName)->findOne();
+			if($file){
+				$this->sendFlashMessage('File "'.$fileName.'" already exists in this pack.', "error");
+				$this->redirect("/pack/".$this->data["pack"]->getId());		
+			}
+
+			$file = new File();
+			
+			$f = fopen($fileTmpName, 'r');
+			$content = fread($f, filesize($fileTmpName));
+			fclose($f);
+			
+			$file->setName($fileName);
+			if(isset($_POST["description"]))
+				$file->setDescription($_POST["description"]);
+			$file->setType($fileType);
+			$file->setSize($fileSize);
+			$file->setContent($content);
+			$file->setPack($this->data["pack"]);
+
+			if($file->save() <= 0){
+    			$failures = $file->getValidationFailures();
+				if(count($failures) > 0){
+					foreach($failures as $failure){
+						$this->sendFlashMessage("File has not been added. ".$failure->getMessage(), "error");
+					}
+					$this->redirect("/pack/".$this->data["pack"]->getId());
+				}
+			}
+			
+			$this->sendFlashMessage("You have successfuly created new pack.", "success");
+			$this->redirect("/pack/".$this->data["pack"]->getId()."/".$file->getName());
+		}
+		else
+			setHTTPStatusCode("400");		
+	}
+
+	protected function addComment(){
+
+	}
 
 	protected function validateOne(){
 		setContentType("json");
@@ -144,8 +233,8 @@ class PackController extends BaseController{
 	protected function updatePermissions(){
 		setContentType("json");
 
-		if($this->data["permission"] != 4){
-			$this->sendFlashMessage("You do not have prmission to update pack with ID " . $this->data["pack"]->getId() . ".", "success");
+		if($this->data["permission"] != 3){
+			$this->sendFlashMessage("You do not have permission to update ".$this->data["permission"]."pack with ID " . $this->data["pack"]->getId() . ".", "success");
 			$this->redirect("/pack/".$this->data["pack"]->getId());
 		}
 
@@ -160,9 +249,7 @@ class PackController extends BaseController{
 						continue;
 					}
 					$permission = PackPermissionQuery::create()->filterByUser($u)->filterByPack($this->data["pack"])->findOneOrCreate();
-					if(isset($user["remove"]))
-						$permission->setValue(3);
-					else if(isset($user["edit"]))
+					if(isset($user["edit"]))
 						$permission->setValue(2);
 					else if(isset($user["view"]))
 						$permission->setValue(1);
@@ -186,9 +273,7 @@ class PackController extends BaseController{
 				$g = GroupQuery::create()->findPK($group["id"]);
 				if($g && $g->getOwnerId() == $this->data["loggedUser"]->getId()){
 					$permission = PackPermissionQuery::create()->filterByGroup($g)->filterByPack($this->data["pack"])->findOneOrCreate();
-					if(isset($group["remove"]))
-						$permission->setValue(3);
-					else if(isset($group["edit"]))
+					if(isset($group["edit"]))
 						$permission->setValue(2);
 					else if(isset($group["view"]))
 						$permission->setValue(1);
@@ -230,10 +315,23 @@ class PackController extends BaseController{
 	protected function loadPermission(){
 		$this->data["permission"] = 0;
 		if($this->data["loggedUser"]){
+			if($this->data["loggedUser"]->getId() == $this->data["pack"]->getOwnerId()){
+				$this->data["permission"] = 3;
+				return true;
+			}
+
 			$permission = PackPermissionQuery::create()->filterByPack($this->data["pack"])->filterByUser($this->data["loggedUser"])->findOne();
-			$this->data["permission"] = !$permission ?: $permission->getValue();
-			if($this->data["loggedUser"]->getId() == $this->data["pack"]->getOwnerId())
-				$this->data["permission"] = 4;
+			if($permission){
+				$this->data["permission"] = $permission->getValue();
+				return true;
+			}
+
+			$permission = PackPermissionQuery::create()->filterByPack($this->data["pack"])->useGroupQuery()->useUserGroupQuery()->filterByUser($this->data["loggedUser"])->endUse()->endUse()->findOne();
+			if($permission){
+				$this->data["permission"] = $permission->getValue();
+				return true;
+			}
+			
 		}
 		return true;
 	}

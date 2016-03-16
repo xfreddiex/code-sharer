@@ -2,10 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1457642472.
- * Generated on 2016-03-10 21:41:12 by xfreddiex
+ * up to version 1458076496.
+ * Generated on 2016-03-15 22:14:56 by xfreddiex
  */
-class PropelMigration_1457642472
+class PropelMigration_1458076496
 {
     public $comment = '';
 
@@ -43,19 +43,13 @@ class PropelMigration_1457642472
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `group_of_users`
+ALTER TABLE `pack`
 
-  DROP FOREIGN KEY `group_of_users_fk_29554a`,
+  DROP INDEX `pack_fi_ac5b84`,
 
-  DROP INDEX `group_of_users_fi_29554a`,
+  DROP INDEX `pack_u_5e49bc`,
 
-  CHANGE `user_id` `owner_id` INTEGER NOT NULL,
-
-  ADD INDEX `group_of_users_fi_ac5b84` (`owner_id`),
-
-  ADD CONSTRAINT `group_of_users_fk_ac5b84`
-    FOREIGN KEY (`owner_id`)
-    REFERENCES `user` (`id`);
+  ADD UNIQUE INDEX `pack_u_103a4b` (`owner_id`, `name`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -77,19 +71,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `group_of_users`
+ALTER TABLE `pack`
 
-  DROP FOREIGN KEY `group_of_users_fk_ac5b84`,
+  DROP INDEX `pack_u_103a4b`,
 
-  DROP INDEX `group_of_users_fi_ac5b84`,
+  ADD INDEX `pack_fi_ac5b84` (`owner_id`),
 
-  CHANGE `owner_id` `user_id` INTEGER NOT NULL,
-
-  ADD INDEX `group_of_users_fi_29554a` (`user_id`),
-
-  ADD CONSTRAINT `group_of_users_fk_29554a`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `user` (`id`);
+  ADD UNIQUE INDEX `pack_u_5e49bc` (`owner_id`, `name`);
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
