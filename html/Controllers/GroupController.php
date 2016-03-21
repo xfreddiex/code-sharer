@@ -20,6 +20,10 @@ class GroupController extends BaseController{
 		$this->addBefore("update", array("userLogged", "load"));
 		$this->addBefore("addUsers", array("userLogged", "load"));
 		$this->addBefore("removeUsers", array("userLogged", "load"));
+		$this->addBefore("newGroup", array("userLogged"));
+
+		$this->data["isOwner"] = false;
+
 	}
 
 	/*
@@ -31,6 +35,13 @@ class GroupController extends BaseController{
 			$this->sendFlashMessage("You dont have permission to view this group.", "error");
 			$this->redirect("/");
 		}
+		if($this->data["group"]->getOwnerId() == $this->data["loggedUser"]->getId()){
+			$this->data["isOwner"] = true;
+		}
+		$this->viewFile($this->template);
+	}
+
+	protected function newGroup(){	
 		$this->viewFile($this->template);
 	}
 
@@ -48,8 +59,8 @@ class GroupController extends BaseController{
 			$group = new Group();
 			$group->setName($_POST["name"]);
 			$group->setOwner($this->data["loggedUser"]);
-			$group->setPrivate(isset($_POST["private"]));
 			$group->setDescription(isset($_POST["description"]) ? $_POST["description"] : null);
+
 
 			if(!$group->save()){
 				$failures = $group->getValidationFailures();
@@ -58,8 +69,30 @@ class GroupController extends BaseController{
 						$this->sendFlashMessage("Group has not been created. ".$failure->getMessage(), "error");
 					}
 				}
-				$this->redirect($this->data["referersURI"]);
-			}	
+				$this->redirect("/group/new");
+			}
+
+			if(isset($_POST["users"])){
+				$users = array_map("trim", explode(",", $_POST["users"]));
+				foreach($users as $username){
+					$u = UserQuery::create()->findOneByUsername($username);
+					if($u){
+						if($u == $this->data["loggedUser"]){
+							$this->sendFlashMessage("You can not add yourself to group.", "error");
+							continue;
+						}
+						$userGroup = UserGroupQuery::create()->filterByUser($u)->filterByGroup($group)->findOne();
+						if($userGroup){
+							$this->sendFlashMessage("User " . $username . " is already in this group.", "error");
+							continue;	
+						}
+						$group->addUser($u);
+					}
+					else
+						$this->sendFlashMessage("User " . $username . " does not exist.", "error");
+				}
+				$group->save();
+			}
 
 			$this->sendFlashMessage("Group has been successfully created.", "success");
 			$this->redirect("/group/".$group->getId());
@@ -87,13 +120,12 @@ class GroupController extends BaseController{
 		$this->redirect("/group/".$group->getId());	
 	}
 
-	protected function addUsers(){
+	protected function addUsers($users){
 		setContentType("json");
-		if(isset($_POST["user"])){
-			foreach($_POST["user"] as $user){
-				if(!isset($user["username"]))
-					continue;
-				$u = UserQuery::create()->findOneByUsername($user["username"]);
+		if(isset($_POST["users"])){
+			$users = explode(",", $_POST["users"]);
+			foreach($users as $username){
+				$u = UserQuery::create()->findOneByUsername($username);
 				if($u){
 					if($u == $this->data["loggedUser"]){
 						$response["messages"][] = "You can not add yourself to group.";
@@ -101,16 +133,14 @@ class GroupController extends BaseController{
 					}
 					$userGroup = UserGroupQuery::create()->filterByUser($u)->filterByGroup($this->data["group"])->findOne();
 					if($userGroup){
-						$response["messages"][] = "User " . $user["username"] . " is already in this group.";
+						$response["messages"][] = "User " . $username . " is already in this group.";
 						continue;	
 					}
-					$userGroup = new UserGroup();
-					$userGroup->setUser($u);
-					$userGroup->setGroup($this->data["group"]);
-					$userGroup->save();
+					$this->data["group"]->addUser($u);
+					$this->data["group"]->save();
 				}
 				else
-					$response["messages"][] = "User " . $user["username"] . " does not exist.";
+					$response["messages"][] = "User " . $username . " does not exist.";
 			}
 		}
 		/*

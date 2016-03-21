@@ -783,6 +783,23 @@ abstract class GroupQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related User object
+     * using the user_group table as cross reference
+     *
+     * @param User $user the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildGroupQuery The current query, for fluid interface
+     */
+    public function filterByUser($user, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useUserGroupQuery()
+            ->filterByUser($user, $comparison)
+            ->endUse();
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildGroup $group Object to remove from the list of results

@@ -16,22 +16,25 @@ return array(
 	
 	//Pack
 	array('uri' => '/pack/create', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'create'),
-	array('uri' => '/pack/new', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'createView'),
+	array('uri' => '/pack/new', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'newPack'),
 	array('uri' => '/pack/[id]/update', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'update'),
 	array('uri' => '/pack/[id]/delete', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'delete'),
+	array('uri' => '/pack/[id]/settings', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'settings'),
 	array('uri' => '/pack/[id]/add-file', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addFile'),
 	array('uri' => '/pack/[id]/update-permissions', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updatePermissions'),
+	array('uri' => '/pack/[id]/add-comment', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addComment'),
 	array('uri' => '/pack/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'validateOne'),
 	array('uri' => '/pack/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'show'),
 
 	//Group
+	array('uri' => '/group/new', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Group', 'method' => 'newGroup'),
 	array('uri' => '/group/create', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'create'),
 	array('uri' => '/group/[id]/update', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'update'),
 	array('uri' => '/group/[id]/delete', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'delete'),
 	array('uri' => '/group/[id]/add-users', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'addUsers'),
 	array('uri' => '/group/[id]/remove-users', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'removeUsers'),
 	array('uri' => '/group/[id]/delete', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'delete'),
-	array('uri' => '/group/validate-one', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'validateOne'),
+	array('uri' => '/group/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Group', 'method' => 'validateOne'),
 	array('uri' => '/group/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Group', 'method' => 'show'),
 
 	//File

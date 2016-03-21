@@ -59,7 +59,7 @@ class UserGroupTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class UserGroupTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the user_id field
@@ -82,9 +82,14 @@ class UserGroupTableMap extends TableMap
     const COL_GROUP_ID = 'user_group.group_id';
 
     /**
-     * the column name for the id field
+     * the column name for the created_at field
      */
-    const COL_ID = 'user_group.id';
+    const COL_CREATED_AT = 'user_group.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'user_group.updated_at';
 
     /**
      * The default string format for model objects of the related table
@@ -98,11 +103,11 @@ class UserGroupTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('UserId', 'GroupId', 'Id', ),
-        self::TYPE_CAMELNAME     => array('userId', 'groupId', 'id', ),
-        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID, UserGroupTableMap::COL_GROUP_ID, UserGroupTableMap::COL_ID, ),
-        self::TYPE_FIELDNAME     => array('user_id', 'group_id', 'id', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('UserId', 'GroupId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('userId', 'groupId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID, UserGroupTableMap::COL_GROUP_ID, UserGroupTableMap::COL_CREATED_AT, UserGroupTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('user_id', 'group_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class UserGroupTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('UserId' => 0, 'GroupId' => 1, 'Id' => 2, ),
-        self::TYPE_CAMELNAME     => array('userId' => 0, 'groupId' => 1, 'id' => 2, ),
-        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID => 0, UserGroupTableMap::COL_GROUP_ID => 1, UserGroupTableMap::COL_ID => 2, ),
-        self::TYPE_FIELDNAME     => array('user_id' => 0, 'group_id' => 1, 'id' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('UserId' => 0, 'GroupId' => 1, 'CreatedAt' => 2, 'UpdatedAt' => 3, ),
+        self::TYPE_CAMELNAME     => array('userId' => 0, 'groupId' => 1, 'createdAt' => 2, 'updatedAt' => 3, ),
+        self::TYPE_COLNAME       => array(UserGroupTableMap::COL_USER_ID => 0, UserGroupTableMap::COL_GROUP_ID => 1, UserGroupTableMap::COL_CREATED_AT => 2, UserGroupTableMap::COL_UPDATED_AT => 3, ),
+        self::TYPE_FIELDNAME     => array('user_id' => 0, 'group_id' => 1, 'created_at' => 2, 'updated_at' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -134,12 +139,13 @@ class UserGroupTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Models\\UserGroup');
         $this->setPackage('Models');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         $this->setIsCrossRef(true);
         // columns
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', true, null, null);
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
+        $this->addForeignPrimaryKey('user_id', 'UserId', 'INTEGER' , 'user', 'id', true, null, null);
+        $this->addForeignPrimaryKey('group_id', 'GroupId', 'INTEGER' , 'group_of_users', 'id', true, null, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -173,8 +179,62 @@ class UserGroupTableMap extends TableMap
     {
         return array(
             'auto_add_pk' => array('name' => 'id', 'autoIncrement' => 'true', 'type' => 'INTEGER', ),
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
         );
     } // getBehaviors()
+
+    /**
+     * Adds an object to the instance pool.
+     *
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database. In some cases you may need to explicitly add objects
+     * to the cache in order to ensure that the same objects are always returned by find*()
+     * and findPk*() calls.
+     *
+     * @param \Models\UserGroup $obj A \Models\UserGroup object.
+     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     */
+    public static function addInstanceToPool($obj, $key = null)
+    {
+        if (Propel::isInstancePoolingEnabled()) {
+            if (null === $key) {
+                $key = serialize([(null === $obj->getUserId() || is_scalar($obj->getUserId()) || is_callable([$obj->getUserId(), '__toString']) ? (string) $obj->getUserId() : $obj->getUserId()), (null === $obj->getGroupId() || is_scalar($obj->getGroupId()) || is_callable([$obj->getGroupId(), '__toString']) ? (string) $obj->getGroupId() : $obj->getGroupId())]);
+            } // if key === null
+            self::$instances[$key] = $obj;
+        }
+    }
+
+    /**
+     * Removes an object from the instance pool.
+     *
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database.  In some cases -- especially when you override doDelete
+     * methods in your stub classes -- you may need to explicitly remove objects
+     * from the cache in order to prevent returning objects that no longer exist.
+     *
+     * @param mixed $value A \Models\UserGroup object or a primary key value.
+     */
+    public static function removeInstanceFromPool($value)
+    {
+        if (Propel::isInstancePoolingEnabled() && null !== $value) {
+            if (is_object($value) && $value instanceof \Models\UserGroup) {
+                $key = serialize([(null === $value->getUserId() || is_scalar($value->getUserId()) || is_callable([$value->getUserId(), '__toString']) ? (string) $value->getUserId() : $value->getUserId()), (null === $value->getGroupId() || is_scalar($value->getGroupId()) || is_callable([$value->getGroupId(), '__toString']) ? (string) $value->getGroupId() : $value->getGroupId())]);
+
+            } elseif (is_array($value) && count($value) === 2) {
+                // assume we've been passed a primary key";
+                $key = serialize([(null === $value[0] || is_scalar($value[0]) || is_callable([$value[0], '__toString']) ? (string) $value[0] : $value[0]), (null === $value[1] || is_scalar($value[1]) || is_callable([$value[1], '__toString']) ? (string) $value[1] : $value[1])]);
+            } elseif ($value instanceof Criteria) {
+                self::$instances = [];
+
+                return;
+            } else {
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \Models\UserGroup object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
+                throw $e;
+            }
+
+            unset(self::$instances[$key]);
+        }
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -192,11 +252,11 @@ class UserGroupTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return null === $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 2 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return serialize([(null === $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)]), (null === $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)] || is_scalar($row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)]) || is_callable([$row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)], '__toString']) ? (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)] : $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)])]);
     }
 
     /**
@@ -213,11 +273,20 @@ class UserGroupTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
+            $pks = [];
+
+        $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
-                ? 2 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                ? 0 + $offset
+                : self::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)
         ];
+        $pks[] = (int) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 1 + $offset
+                : self::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+
+        return $pks;
     }
 
     /**
@@ -319,11 +388,13 @@ class UserGroupTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(UserGroupTableMap::COL_USER_ID);
             $criteria->addSelectColumn(UserGroupTableMap::COL_GROUP_ID);
-            $criteria->addSelectColumn(UserGroupTableMap::COL_ID);
+            $criteria->addSelectColumn(UserGroupTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(UserGroupTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.group_id');
-            $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 
@@ -375,7 +446,17 @@ class UserGroupTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(UserGroupTableMap::DATABASE_NAME);
-            $criteria->add(UserGroupTableMap::COL_ID, (array) $values, Criteria::IN);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            foreach ($values as $value) {
+                $criterion = $criteria->getNewCriterion(UserGroupTableMap::COL_USER_ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(UserGroupTableMap::COL_GROUP_ID, $value[1]));
+                $criteria->addOr($criterion);
+            }
         }
 
         $query = UserGroupQuery::create()->mergeWith($criteria);
@@ -421,10 +502,6 @@ class UserGroupTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from UserGroup object
-        }
-
-        if ($criteria->containsKey(UserGroupTableMap::COL_ID) && $criteria->keyContainsValue(UserGroupTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserGroupTableMap::COL_ID.')');
         }
 
 

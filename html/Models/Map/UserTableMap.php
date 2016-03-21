@@ -220,13 +220,6 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'PackPermissions', false);
-        $this->addRelation('UserGroup', '\\Models\\UserGroup', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, 'UserGroups', false);
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -234,13 +227,13 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Packs', false);
-        $this->addRelation('Group', '\\Models\\Group', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('MyGroup', '\\Models\\Group', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':owner_id',
     1 => ':id',
   ),
-), null, null, 'Groups', false);
+), null, null, 'MyGroups', false);
         $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -248,6 +241,14 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Comments', false);
+        $this->addRelation('UserGroup', '\\Models\\UserGroup', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'UserGroups', false);
+        $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_MANY, array(), null, null, 'Groups');
     } // buildRelations()
 
     /**

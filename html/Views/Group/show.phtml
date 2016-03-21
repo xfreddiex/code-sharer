@@ -1,7 +1,7 @@
-<div  class="pack-wrapper">
+<div  class="group-wrapper">
 	<div class="container">
 		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
-		<h1><?=$pack->getName()?></h1>
+		<h1><?=$group->getName()?></h1>
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">
 				<div class="panel panel-default">
@@ -11,7 +11,7 @@
 								<p>Owner</p>
 							</div>
 							<div class="col-xs-7 col-sm-6">
-								<strong><?=$pack->getOwner()->getUsername()?></strong>
+								<strong><?=$group->getOwner()->getUsername()?></strong>
 							</div>
 						</div>
 						<div class="row">
@@ -19,7 +19,7 @@
 								<p>Created</p>
 							</div>
 							<div class="col-xs-7 col-sm-6">
-								<strong><?=$pack->getCreatedAt("j M o")?></strong>
+								<strong><?=$group->getCreatedAt("j M o")?></strong>
 							</div>
 						</div>
 						<div class="row">
@@ -27,19 +27,10 @@
 								<p>Updated</p>
 							</div>
 							<div class="col-xs-7 col-sm-6">
-								<strong><?=$pack->getUpdatedAt("j M o")?></strong>
+								<strong><?=$group->getUpdatedAt("j M o")?></strong>
 							</div>
 						</div>
 					</div>
-					<?php if($permission == 3): ?>
-						<div class="panel-footer">	
-							<div class="row">
-								<div class="col-xs-offset-7 col-xs-5 col-sm-offset-0 col-sm-12">
-									<a class="btn btn-info btn-block" href="/pack/<?=$pack->getId()?>/settings"><i class="fa fa-cog"></i> Settings</a>
-								</div>
-							</div>
-						</div>
-					<?php endif; ?>
 				</div>
 			</div>
 			<div class="col-sm-7 col-md-8 col-lg-9">
@@ -48,9 +39,9 @@
 						<h2>Description</h2>
 					</div>
 					<div class="panel-body">
-						<p><?=$pack->getDescription()?></p>
+						<p><?=$group->getDescription()?></p>
 					</div>
-					<?php if($permission == 3): ?>
+					<?php if($isOwner): ?>
 						<div class="panel-footer text-right">
 							<button class="btn btn-success">Edit description</button>	
 						</div>
@@ -61,11 +52,35 @@
 
 		<div class="panel panel-default" id="user-info">
 			<div class="panel-heading">
-				<h2>Files</h2>
+				<h2>Users</h2>
 			</div>
 			<div class="panel-body">
-				
+				<?php if($group->getUsers()->count()): ?>
+					<?php foreach($group->getUsers() as $index => $user): ?>
+						<div class="row">
+							<div class="col-xs-6">
+								<a class="link" href="/user/<?=$user->getUsername()?>">
+									<?=$user->getUsername()?>
+								</a>
+							</div>
+							<div class="col-xs-6 text-right added-at-wrapper">
+								<i class="fa fa-user-plus"></i>
+								<?=$user->getAddedToGroup($group, "j M o")?>
+							</div>
+						</div>
+						<?php if($index != $group->getUsers()->count() - 1): ?>
+							<hr />
+						<?php endif; ?>
+					<?php endforeach; ?>
+				<?php else: ?>
+					<p>There is not any user here.</p>
+				<?php endif; ?>
 			</div>
+			<?php if($isOwner): ?>
+				<div class="panel-footer text-right">
+					<button class="btn btn-success">Add user <i class="fa fa-plus"></i></a>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 

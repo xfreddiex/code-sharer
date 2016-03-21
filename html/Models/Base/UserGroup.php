@@ -2,11 +2,13 @@
 
 namespace Models\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
 use Models\Group as ChildGroup;
 use Models\GroupQuery as ChildGroupQuery;
 use Models\User as ChildUser;
+use Models\UserGroup as ChildUserGroup;
 use Models\UserGroupQuery as ChildUserGroupQuery;
 use Models\UserQuery as ChildUserQuery;
 use Models\Map\UserGroupTableMap;
@@ -21,6 +23,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'user_group' table.
@@ -78,11 +81,18 @@ abstract class UserGroup implements ActiveRecordInterface
     protected $group_id;
 
     /**
-     * The value for the id field.
+     * The value for the created_at field.
      *
-     * @var        int
+     * @var        \DateTime
      */
-    protected $id;
+    protected $created_at;
+
+    /**
+     * The value for the updated_at field.
+     *
+     * @var        \DateTime
+     */
+    protected $updated_at;
 
     /**
      * @var        ChildUser
@@ -348,13 +358,43 @@ abstract class UserGroup implements ActiveRecordInterface
     }
 
     /**
-     * Get the [id] column value.
+     * Get the [optionally formatted] temporal [created_at] column value.
      *
-     * @return int
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getId()
+    public function getCreatedAt($format = NULL)
     {
-        return $this->id;
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [updated_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getUpdatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
+        }
     }
 
     /**
@@ -406,24 +446,44 @@ abstract class UserGroup implements ActiveRecordInterface
     } // setGroupId()
 
     /**
-     * Set the value of [id] column.
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
-     * @param int $v new value
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
      * @return $this|\Models\UserGroup The current object (for fluent API support)
      */
-    public function setId($v)
+    public function setCreatedAt($v)
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[UserGroupTableMap::COL_ID] = true;
-        }
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+                $this->created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserGroupTableMap::COL_CREATED_AT] = true;
+            }
+        } // if either are not null
 
         return $this;
-    } // setId()
+    } // setCreatedAt()
+
+    /**
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Models\UserGroup The current object (for fluent API support)
+     */
+    public function setUpdatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserGroupTableMap::COL_UPDATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setUpdatedAt()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -467,8 +527,17 @@ abstract class UserGroup implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserGroupTableMap::translateFieldName('GroupId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->group_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserGroupTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserGroupTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserGroupTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -477,7 +546,7 @@ abstract class UserGroup implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = UserGroupTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = UserGroupTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\UserGroup'), 0, $e);
@@ -608,8 +677,20 @@ abstract class UserGroup implements ActiveRecordInterface
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(UserGroupTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(UserGroupTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(UserGroupTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -695,10 +776,6 @@ abstract class UserGroup implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[UserGroupTableMap::COL_ID] = true;
-        if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserGroupTableMap::COL_ID . ')');
-        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(UserGroupTableMap::COL_USER_ID)) {
@@ -707,8 +784,11 @@ abstract class UserGroup implements ActiveRecordInterface
         if ($this->isColumnModified(UserGroupTableMap::COL_GROUP_ID)) {
             $modifiedColumns[':p' . $index++]  = 'group_id';
         }
-        if ($this->isColumnModified(UserGroupTableMap::COL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'id';
+        if ($this->isColumnModified(UserGroupTableMap::COL_CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'created_at';
+        }
+        if ($this->isColumnModified(UserGroupTableMap::COL_UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
 
         $sql = sprintf(
@@ -727,8 +807,11 @@ abstract class UserGroup implements ActiveRecordInterface
                     case 'group_id':
                         $stmt->bindValue($identifier, $this->group_id, PDO::PARAM_INT);
                         break;
-                    case 'id':
-                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                    case 'created_at':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'updated_at':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -737,13 +820,6 @@ abstract class UserGroup implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
-
-        try {
-            $pk = $con->lastInsertId();
-        } catch (Exception $e) {
-            throw new PropelException('Unable to get autoincrement id.', 0, $e);
-        }
-        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -799,7 +875,10 @@ abstract class UserGroup implements ActiveRecordInterface
                 return $this->getGroupId();
                 break;
             case 2:
-                return $this->getId();
+                return $this->getCreatedAt();
+                break;
+            case 3:
+                return $this->getUpdatedAt();
                 break;
             default:
                 return null;
@@ -833,8 +912,17 @@ abstract class UserGroup implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getUserId(),
             $keys[1] => $this->getGroupId(),
-            $keys[2] => $this->getId(),
+            $keys[2] => $this->getCreatedAt(),
+            $keys[3] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[2]] instanceof \DateTime) {
+            $result[$keys[2]] = $result[$keys[2]]->format('c');
+        }
+
+        if ($result[$keys[3]] instanceof \DateTime) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -912,7 +1000,10 @@ abstract class UserGroup implements ActiveRecordInterface
                 $this->setGroupId($value);
                 break;
             case 2:
-                $this->setId($value);
+                $this->setCreatedAt($value);
+                break;
+            case 3:
+                $this->setUpdatedAt($value);
                 break;
         } // switch()
 
@@ -947,7 +1038,10 @@ abstract class UserGroup implements ActiveRecordInterface
             $this->setGroupId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setId($arr[$keys[2]]);
+            $this->setCreatedAt($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setUpdatedAt($arr[$keys[3]]);
         }
     }
 
@@ -996,8 +1090,11 @@ abstract class UserGroup implements ActiveRecordInterface
         if ($this->isColumnModified(UserGroupTableMap::COL_GROUP_ID)) {
             $criteria->add(UserGroupTableMap::COL_GROUP_ID, $this->group_id);
         }
-        if ($this->isColumnModified(UserGroupTableMap::COL_ID)) {
-            $criteria->add(UserGroupTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(UserGroupTableMap::COL_CREATED_AT)) {
+            $criteria->add(UserGroupTableMap::COL_CREATED_AT, $this->created_at);
+        }
+        if ($this->isColumnModified(UserGroupTableMap::COL_UPDATED_AT)) {
+            $criteria->add(UserGroupTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1016,7 +1113,8 @@ abstract class UserGroup implements ActiveRecordInterface
     public function buildPkeyCriteria()
     {
         $criteria = ChildUserGroupQuery::create();
-        $criteria->add(UserGroupTableMap::COL_ID, $this->id);
+        $criteria->add(UserGroupTableMap::COL_USER_ID, $this->user_id);
+        $criteria->add(UserGroupTableMap::COL_GROUP_ID, $this->group_id);
 
         return $criteria;
     }
@@ -1029,10 +1127,25 @@ abstract class UserGroup implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId();
+        $validPk = null !== $this->getUserId() &&
+            null !== $this->getGroupId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation user_group_fk_29554a to table user
+        if ($this->aUser && $hash = spl_object_hash($this->aUser)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation user_group_fk_3a4cbf to table group_of_users
+        if ($this->aGroup && $hash = spl_object_hash($this->aGroup)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1044,23 +1157,29 @@ abstract class UserGroup implements ActiveRecordInterface
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return int
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        $pks = array();
+        $pks[0] = $this->getUserId();
+        $pks[1] = $this->getGroupId();
+
+        return $pks;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Set the [composite] primary key.
      *
-     * @param       int $key Primary key.
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($keys)
     {
-        $this->setId($key);
+        $this->setUserId($keys[0]);
+        $this->setGroupId($keys[1]);
     }
 
     /**
@@ -1069,7 +1188,7 @@ abstract class UserGroup implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getId();
+        return (null === $this->getUserId()) && (null === $this->getGroupId());
     }
 
     /**
@@ -1087,9 +1206,10 @@ abstract class UserGroup implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setGroupId($this->getGroupId());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1232,7 +1352,8 @@ abstract class UserGroup implements ActiveRecordInterface
         }
         $this->user_id = null;
         $this->group_id = null;
-        $this->id = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1265,6 +1386,20 @@ abstract class UserGroup implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(UserGroupTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildUserGroup The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[UserGroupTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**

@@ -76,16 +76,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithPackPermission() Adds a RIGHT JOIN clause and with to the query using the PackPermission relation
  * @method     ChildUserQuery innerJoinWithPackPermission() Adds a INNER JOIN clause and with to the query using the PackPermission relation
  *
- * @method     ChildUserQuery leftJoinUserGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserGroup relation
- * @method     ChildUserQuery rightJoinUserGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserGroup relation
- * @method     ChildUserQuery innerJoinUserGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the UserGroup relation
- *
- * @method     ChildUserQuery joinWithUserGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserGroup relation
- *
- * @method     ChildUserQuery leftJoinWithUserGroup() Adds a LEFT JOIN clause and with to the query using the UserGroup relation
- * @method     ChildUserQuery rightJoinWithUserGroup() Adds a RIGHT JOIN clause and with to the query using the UserGroup relation
- * @method     ChildUserQuery innerJoinWithUserGroup() Adds a INNER JOIN clause and with to the query using the UserGroup relation
- *
  * @method     ChildUserQuery leftJoinPack($relationAlias = null) Adds a LEFT JOIN clause to the query using the Pack relation
  * @method     ChildUserQuery rightJoinPack($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Pack relation
  * @method     ChildUserQuery innerJoinPack($relationAlias = null) Adds a INNER JOIN clause to the query using the Pack relation
@@ -96,15 +86,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithPack() Adds a RIGHT JOIN clause and with to the query using the Pack relation
  * @method     ChildUserQuery innerJoinWithPack() Adds a INNER JOIN clause and with to the query using the Pack relation
  *
- * @method     ChildUserQuery leftJoinGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the Group relation
- * @method     ChildUserQuery rightJoinGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Group relation
- * @method     ChildUserQuery innerJoinGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the Group relation
+ * @method     ChildUserQuery leftJoinMyGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the MyGroup relation
+ * @method     ChildUserQuery rightJoinMyGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the MyGroup relation
+ * @method     ChildUserQuery innerJoinMyGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the MyGroup relation
  *
- * @method     ChildUserQuery joinWithGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Group relation
+ * @method     ChildUserQuery joinWithMyGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the MyGroup relation
  *
- * @method     ChildUserQuery leftJoinWithGroup() Adds a LEFT JOIN clause and with to the query using the Group relation
- * @method     ChildUserQuery rightJoinWithGroup() Adds a RIGHT JOIN clause and with to the query using the Group relation
- * @method     ChildUserQuery innerJoinWithGroup() Adds a INNER JOIN clause and with to the query using the Group relation
+ * @method     ChildUserQuery leftJoinWithMyGroup() Adds a LEFT JOIN clause and with to the query using the MyGroup relation
+ * @method     ChildUserQuery rightJoinWithMyGroup() Adds a RIGHT JOIN clause and with to the query using the MyGroup relation
+ * @method     ChildUserQuery innerJoinWithMyGroup() Adds a INNER JOIN clause and with to the query using the MyGroup relation
  *
  * @method     ChildUserQuery leftJoinComment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Comment relation
  * @method     ChildUserQuery rightJoinComment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Comment relation
@@ -116,7 +106,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithComment() Adds a RIGHT JOIN clause and with to the query using the Comment relation
  * @method     ChildUserQuery innerJoinWithComment() Adds a INNER JOIN clause and with to the query using the Comment relation
  *
- * @method     \Models\IdentityQuery|\Models\PackPermissionQuery|\Models\UserGroupQuery|\Models\PackQuery|\Models\GroupQuery|\Models\CommentQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildUserQuery leftJoinUserGroup($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserGroup relation
+ * @method     ChildUserQuery rightJoinUserGroup($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserGroup relation
+ * @method     ChildUserQuery innerJoinUserGroup($relationAlias = null) Adds a INNER JOIN clause to the query using the UserGroup relation
+ *
+ * @method     ChildUserQuery joinWithUserGroup($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserGroup relation
+ *
+ * @method     ChildUserQuery leftJoinWithUserGroup() Adds a LEFT JOIN clause and with to the query using the UserGroup relation
+ * @method     ChildUserQuery rightJoinWithUserGroup() Adds a RIGHT JOIN clause and with to the query using the UserGroup relation
+ * @method     ChildUserQuery innerJoinWithUserGroup() Adds a INNER JOIN clause and with to the query using the UserGroup relation
+ *
+ * @method     \Models\IdentityQuery|\Models\PackPermissionQuery|\Models\PackQuery|\Models\GroupQuery|\Models\CommentQuery|\Models\UserGroupQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -940,79 +940,6 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Models\UserGroup object
-     *
-     * @param \Models\UserGroup|ObjectCollection $userGroup the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByUserGroup($userGroup, $comparison = null)
-    {
-        if ($userGroup instanceof \Models\UserGroup) {
-            return $this
-                ->addUsingAlias(UserTableMap::COL_ID, $userGroup->getUserId(), $comparison);
-        } elseif ($userGroup instanceof ObjectCollection) {
-            return $this
-                ->useUserGroupQuery()
-                ->filterByPrimaryKeys($userGroup->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByUserGroup() only accepts arguments of type \Models\UserGroup or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the UserGroup relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildUserQuery The current query, for fluid interface
-     */
-    public function joinUserGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('UserGroup');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'UserGroup');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the UserGroup relation UserGroup object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \Models\UserGroupQuery A secondary query class using the current class as primary query
-     */
-    public function useUserGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinUserGroup($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'UserGroup', '\Models\UserGroupQuery');
-    }
-
-    /**
      * Filter the query by a related \Models\Pack object
      *
      * @param \Models\Pack|ObjectCollection $pack the related object to use as filter
@@ -1093,33 +1020,33 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByGroup($group, $comparison = null)
+    public function filterByMyGroup($group, $comparison = null)
     {
         if ($group instanceof \Models\Group) {
             return $this
                 ->addUsingAlias(UserTableMap::COL_ID, $group->getOwnerId(), $comparison);
         } elseif ($group instanceof ObjectCollection) {
             return $this
-                ->useGroupQuery()
+                ->useMyGroupQuery()
                 ->filterByPrimaryKeys($group->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByGroup() only accepts arguments of type \Models\Group or Collection');
+            throw new PropelException('filterByMyGroup() only accepts arguments of type \Models\Group or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Group relation
+     * Adds a JOIN clause to the query using the MyGroup relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function joinGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinMyGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Group');
+        $relationMap = $tableMap->getRelation('MyGroup');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -1134,14 +1061,14 @@ abstract class UserQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Group');
+            $this->addJoinObject($join, 'MyGroup');
         }
 
         return $this;
     }
 
     /**
-     * Use the Group relation Group object
+     * Use the MyGroup relation Group object
      *
      * @see useQuery()
      *
@@ -1151,11 +1078,11 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return \Models\GroupQuery A secondary query class using the current class as primary query
      */
-    public function useGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useMyGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinGroup($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Group', '\Models\GroupQuery');
+            ->joinMyGroup($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'MyGroup', '\Models\GroupQuery');
     }
 
     /**
@@ -1229,6 +1156,96 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->joinComment($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Comment', '\Models\CommentQuery');
+    }
+
+    /**
+     * Filter the query by a related \Models\UserGroup object
+     *
+     * @param \Models\UserGroup|ObjectCollection $userGroup the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByUserGroup($userGroup, $comparison = null)
+    {
+        if ($userGroup instanceof \Models\UserGroup) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $userGroup->getUserId(), $comparison);
+        } elseif ($userGroup instanceof ObjectCollection) {
+            return $this
+                ->useUserGroupQuery()
+                ->filterByPrimaryKeys($userGroup->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserGroup() only accepts arguments of type \Models\UserGroup or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the UserGroup relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinUserGroup($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserGroup');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserGroup');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the UserGroup relation UserGroup object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\UserGroupQuery A secondary query class using the current class as primary query
+     */
+    public function useUserGroupQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUserGroup($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserGroup', '\Models\UserGroupQuery');
+    }
+
+    /**
+     * Filter the query by a related Group object
+     * using the user_group table as cross reference
+     *
+     * @param Group $group the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByGroup($group, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useUserGroupQuery()
+            ->filterByGroup($group, $comparison)
+            ->endUse();
     }
 
     /**

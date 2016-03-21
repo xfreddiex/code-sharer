@@ -81,22 +81,6 @@
 
     </table>
 
-    <table name="user_group" isCrossRef="true">
-        <column name="user_id" type="integer" required="true"/>
-        <column name="group_id" type="integer" required="true"/>
-        
-        <foreign-key foreignTable="user">
-            <reference local="user_id" foreign="id"/>
-        </foreign-key>
-
-        <foreign-key foreignTable="group_of_users">
-            <reference local="group_id" foreign="id"/>
-        </foreign-key>
-
-        <behavior name="auto_add_pk" />
-
-    </table>
-
     <table name="pack" phpName="Pack">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="32" required="true"/>
@@ -159,7 +143,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Group">
+        <foreign-key foreignTable="user" phpName="Owner" refPhpName="MyGroup">
             <reference local="owner_id" foreign="id"/>
         </foreign-key>
 
@@ -167,6 +151,8 @@
             <parameter name="rule1" value='{column: name, validator: Length, options: {max : 32, maxMessage: "Maximal group name length is {{ limit }} characters."}}' />
             <parameter name="rule2" value='{column: name, validator: NotBlank, options: {message: "Group name should not be blank."}}' />
             <parameter name="rule3" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal pack description length is {{ limit }} characters."}}' />
+            <parameter name="rule4" value='{column: name, validator: Regex, options: {pattern: "/^[^\\s]*$/", match: true, message: "Group name should not contain whitespaces."}}' />
+
         </behavior>
 
     </table>
@@ -194,6 +180,24 @@
             <parameter name="rule1" value='{column: text, validator: Length, options: {max : 1024, maxMessage: "Maximal text length is {{ limit }} characters."}}' />
             <parameter name="rule2" value='{column: textt, validator: NotBlank, options: {message: "Comment should not be blank."}}' />
         </behavior>
+
+    </table>
+
+    <table name="user_group" isCrossRef="true">
+        <column name="user_id" type="integer" required="true" primaryKey="true"/>
+        <column name="group_id" type="integer" required="true" primaryKey="true"/>
+        
+        <foreign-key foreignTable="user">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+
+        <foreign-key foreignTable="group_of_users">
+            <reference local="group_id" foreign="id"/>
+        </foreign-key>
+
+        <behavior name="auto_add_pk" />
+
+        <behavior name="timestampable" />
 
     </table>
 

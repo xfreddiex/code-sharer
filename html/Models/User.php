@@ -5,6 +5,8 @@ namespace Models;
 use Models\Base\User as BaseUser;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Models\Map\UserTableMap;
+use Models\UserGroup as ChildUserGroup;
+use Models\UserGroupQuery as ChildUserGroupQuery;
 
 /**
  * Skeleton subclass for representing a row from the 'user' table.
@@ -58,5 +60,10 @@ class User extends BaseUser
 	public function getAvatar40(){
 		$dir = "Includes/images/avatars/40x40/";
 		return "/".$dir.(file_exists($dir.$this->avatar_path) && is_file($dir.$this->avatar_path) ? $this->avatar_path : "default.png");
+	}
+
+	public function getAddedToGroup($group, $format){
+		$timestamp = ChildUserGroupQuery::create()->filterByUser($this)->filterByGroup($group)->findOne()->getCreatedAt($format);
+		return $timestamp;
 	}
 }

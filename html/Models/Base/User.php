@@ -199,12 +199,6 @@ abstract class User implements ActiveRecordInterface
     protected $collPackPermissionsPartial;
 
     /**
-     * @var        ObjectCollection|ChildUserGroup[] Collection to store aggregation of ChildUserGroup objects.
-     */
-    protected $collUserGroups;
-    protected $collUserGroupsPartial;
-
-    /**
      * @var        ObjectCollection|ChildPack[] Collection to store aggregation of ChildPack objects.
      */
     protected $collPacks;
@@ -213,14 +207,30 @@ abstract class User implements ActiveRecordInterface
     /**
      * @var        ObjectCollection|ChildGroup[] Collection to store aggregation of ChildGroup objects.
      */
-    protected $collGroups;
-    protected $collGroupsPartial;
+    protected $collMyGroups;
+    protected $collMyGroupsPartial;
 
     /**
      * @var        ObjectCollection|ChildComment[] Collection to store aggregation of ChildComment objects.
      */
     protected $collComments;
     protected $collCommentsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildUserGroup[] Collection to store aggregation of ChildUserGroup objects.
+     */
+    protected $collUserGroups;
+    protected $collUserGroupsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildGroup[] Cross Collection to store aggregation of ChildGroup objects.
+     */
+    protected $collGroups;
+
+    /**
+     * @var bool
+     */
+    protected $collGroupsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -249,6 +259,12 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildGroup[]
+     */
+    protected $groupsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildIdentity[]
      */
     protected $identitiesScheduledForDeletion = null;
@@ -261,12 +277,6 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildUserGroup[]
-     */
-    protected $userGroupsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildPack[]
      */
     protected $packsScheduledForDeletion = null;
@@ -275,13 +285,19 @@ abstract class User implements ActiveRecordInterface
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildGroup[]
      */
-    protected $groupsScheduledForDeletion = null;
+    protected $myGroupsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildComment[]
      */
     protected $commentsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildUserGroup[]
+     */
+    protected $userGroupsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Models\Base\User object.
@@ -1097,14 +1113,15 @@ abstract class User implements ActiveRecordInterface
 
             $this->collPackPermissions = null;
 
-            $this->collUserGroups = null;
-
             $this->collPacks = null;
 
-            $this->collGroups = null;
+            $this->collMyGroups = null;
 
             $this->collComments = null;
 
+            $this->collUserGroups = null;
+
+            $this->collGroups = null;
         } // if (deep)
     }
 
@@ -1227,6 +1244,35 @@ abstract class User implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->groupsScheduledForDeletion !== null) {
+                if (!$this->groupsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->groupsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \Models\UserGroupQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->groupsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collGroups) {
+                foreach ($this->collGroups as $group) {
+                    if (!$group->isDeleted() && ($group->isNew() || $group->isModified())) {
+                        $group->save($con);
+                    }
+                }
+            }
+
+
             if ($this->identitiesScheduledForDeletion !== null) {
                 if (!$this->identitiesScheduledForDeletion->isEmpty()) {
                     \Models\IdentityQuery::create()
@@ -1262,23 +1308,6 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
-            if ($this->userGroupsScheduledForDeletion !== null) {
-                if (!$this->userGroupsScheduledForDeletion->isEmpty()) {
-                    \Models\UserGroupQuery::create()
-                        ->filterByPrimaryKeys($this->userGroupsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->userGroupsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collUserGroups !== null) {
-                foreach ($this->collUserGroups as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->packsScheduledForDeletion !== null) {
                 if (!$this->packsScheduledForDeletion->isEmpty()) {
                     \Models\PackQuery::create()
@@ -1296,17 +1325,17 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
-            if ($this->groupsScheduledForDeletion !== null) {
-                if (!$this->groupsScheduledForDeletion->isEmpty()) {
+            if ($this->myGroupsScheduledForDeletion !== null) {
+                if (!$this->myGroupsScheduledForDeletion->isEmpty()) {
                     \Models\GroupQuery::create()
-                        ->filterByPrimaryKeys($this->groupsScheduledForDeletion->getPrimaryKeys(false))
+                        ->filterByPrimaryKeys($this->myGroupsScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->groupsScheduledForDeletion = null;
+                    $this->myGroupsScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collGroups !== null) {
-                foreach ($this->collGroups as $referrerFK) {
+            if ($this->collMyGroups !== null) {
+                foreach ($this->collMyGroups as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1324,6 +1353,23 @@ abstract class User implements ActiveRecordInterface
 
             if ($this->collComments !== null) {
                 foreach ($this->collComments as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->userGroupsScheduledForDeletion !== null) {
+                if (!$this->userGroupsScheduledForDeletion->isEmpty()) {
+                    \Models\UserGroupQuery::create()
+                        ->filterByPrimaryKeys($this->userGroupsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->userGroupsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collUserGroups !== null) {
+                foreach ($this->collUserGroups as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1642,21 +1688,6 @@ abstract class User implements ActiveRecordInterface
 
                 $result[$key] = $this->collPackPermissions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collUserGroups) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'userGroups';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'user_groups';
-                        break;
-                    default:
-                        $key = 'UserGroups';
-                }
-
-                $result[$key] = $this->collUserGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collPacks) {
 
                 switch ($keyType) {
@@ -1672,7 +1703,7 @@ abstract class User implements ActiveRecordInterface
 
                 $result[$key] = $this->collPacks->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collGroups) {
+            if (null !== $this->collMyGroups) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
@@ -1685,7 +1716,7 @@ abstract class User implements ActiveRecordInterface
                         $key = 'Groups';
                 }
 
-                $result[$key] = $this->collGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collMyGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collComments) {
 
@@ -1701,6 +1732,21 @@ abstract class User implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collComments->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collUserGroups) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'userGroups';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'user_groups';
+                        break;
+                    default:
+                        $key = 'UserGroups';
+                }
+
+                $result[$key] = $this->collUserGroups->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -2036,27 +2082,27 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getUserGroups() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addUserGroup($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getPacks() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addPack($relObj->copy($deepCopy));
                 }
             }
 
-            foreach ($this->getGroups() as $relObj) {
+            foreach ($this->getMyGroups() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addGroup($relObj->copy($deepCopy));
+                    $copyObj->addMyGroup($relObj->copy($deepCopy));
                 }
             }
 
             foreach ($this->getComments() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addComment($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getUserGroups() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addUserGroup($relObj->copy($deepCopy));
                 }
             }
 
@@ -2107,17 +2153,17 @@ abstract class User implements ActiveRecordInterface
         if ('PackPermission' == $relationName) {
             return $this->initPackPermissions();
         }
-        if ('UserGroup' == $relationName) {
-            return $this->initUserGroups();
-        }
         if ('Pack' == $relationName) {
             return $this->initPacks();
         }
-        if ('Group' == $relationName) {
-            return $this->initGroups();
+        if ('MyGroup' == $relationName) {
+            return $this->initMyGroups();
         }
         if ('Comment' == $relationName) {
             return $this->initComments();
+        }
+        if ('UserGroup' == $relationName) {
+            return $this->initUserGroups();
         }
     }
 
@@ -2622,256 +2668,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collUserGroups collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addUserGroups()
-     */
-    public function clearUserGroups()
-    {
-        $this->collUserGroups = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collUserGroups collection loaded partially.
-     */
-    public function resetPartialUserGroups($v = true)
-    {
-        $this->collUserGroupsPartial = $v;
-    }
-
-    /**
-     * Initializes the collUserGroups collection.
-     *
-     * By default this just sets the collUserGroups collection to an empty array (like clearcollUserGroups());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initUserGroups($overrideExisting = true)
-    {
-        if (null !== $this->collUserGroups && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collUserGroups = new $collectionClassName;
-        $this->collUserGroups->setModel('\Models\UserGroup');
-    }
-
-    /**
-     * Gets an array of ChildUserGroup objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildUser is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
-     * @throws PropelException
-     */
-    public function getUserGroups(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collUserGroupsPartial && !$this->isNew();
-        if (null === $this->collUserGroups || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collUserGroups) {
-                // return empty collection
-                $this->initUserGroups();
-            } else {
-                $collUserGroups = ChildUserGroupQuery::create(null, $criteria)
-                    ->filterByUser($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collUserGroupsPartial && count($collUserGroups)) {
-                        $this->initUserGroups(false);
-
-                        foreach ($collUserGroups as $obj) {
-                            if (false == $this->collUserGroups->contains($obj)) {
-                                $this->collUserGroups->append($obj);
-                            }
-                        }
-
-                        $this->collUserGroupsPartial = true;
-                    }
-
-                    return $collUserGroups;
-                }
-
-                if ($partial && $this->collUserGroups) {
-                    foreach ($this->collUserGroups as $obj) {
-                        if ($obj->isNew()) {
-                            $collUserGroups[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collUserGroups = $collUserGroups;
-                $this->collUserGroupsPartial = false;
-            }
-        }
-
-        return $this->collUserGroups;
-    }
-
-    /**
-     * Sets a collection of ChildUserGroup objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $userGroups A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildUser The current object (for fluent API support)
-     */
-    public function setUserGroups(Collection $userGroups, ConnectionInterface $con = null)
-    {
-        /** @var ChildUserGroup[] $userGroupsToDelete */
-        $userGroupsToDelete = $this->getUserGroups(new Criteria(), $con)->diff($userGroups);
-
-
-        $this->userGroupsScheduledForDeletion = $userGroupsToDelete;
-
-        foreach ($userGroupsToDelete as $userGroupRemoved) {
-            $userGroupRemoved->setUser(null);
-        }
-
-        $this->collUserGroups = null;
-        foreach ($userGroups as $userGroup) {
-            $this->addUserGroup($userGroup);
-        }
-
-        $this->collUserGroups = $userGroups;
-        $this->collUserGroupsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related UserGroup objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related UserGroup objects.
-     * @throws PropelException
-     */
-    public function countUserGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collUserGroupsPartial && !$this->isNew();
-        if (null === $this->collUserGroups || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collUserGroups) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getUserGroups());
-            }
-
-            $query = ChildUserGroupQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByUser($this)
-                ->count($con);
-        }
-
-        return count($this->collUserGroups);
-    }
-
-    /**
-     * Method called to associate a ChildUserGroup object to this object
-     * through the ChildUserGroup foreign key attribute.
-     *
-     * @param  ChildUserGroup $l ChildUserGroup
-     * @return $this|\Models\User The current object (for fluent API support)
-     */
-    public function addUserGroup(ChildUserGroup $l)
-    {
-        if ($this->collUserGroups === null) {
-            $this->initUserGroups();
-            $this->collUserGroupsPartial = true;
-        }
-
-        if (!$this->collUserGroups->contains($l)) {
-            $this->doAddUserGroup($l);
-
-            if ($this->userGroupsScheduledForDeletion and $this->userGroupsScheduledForDeletion->contains($l)) {
-                $this->userGroupsScheduledForDeletion->remove($this->userGroupsScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildUserGroup $userGroup The ChildUserGroup object to add.
-     */
-    protected function doAddUserGroup(ChildUserGroup $userGroup)
-    {
-        $this->collUserGroups[]= $userGroup;
-        $userGroup->setUser($this);
-    }
-
-    /**
-     * @param  ChildUserGroup $userGroup The ChildUserGroup object to remove.
-     * @return $this|ChildUser The current object (for fluent API support)
-     */
-    public function removeUserGroup(ChildUserGroup $userGroup)
-    {
-        if ($this->getUserGroups()->contains($userGroup)) {
-            $pos = $this->collUserGroups->search($userGroup);
-            $this->collUserGroups->remove($pos);
-            if (null === $this->userGroupsScheduledForDeletion) {
-                $this->userGroupsScheduledForDeletion = clone $this->collUserGroups;
-                $this->userGroupsScheduledForDeletion->clear();
-            }
-            $this->userGroupsScheduledForDeletion[]= clone $userGroup;
-            $userGroup->setUser(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
-     * been saved, it will retrieve related UserGroups from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in User.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
-     */
-    public function getUserGroupsJoinGroup(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildUserGroupQuery::create(null, $criteria);
-        $query->joinWith('Group', $joinBehavior);
-
-        return $this->getUserGroups($query, $con);
-    }
-
-    /**
      * Clears out the collPacks collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -3097,31 +2893,31 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collGroups collection
+     * Clears out the collMyGroups collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addGroups()
+     * @see        addMyGroups()
      */
-    public function clearGroups()
+    public function clearMyGroups()
     {
-        $this->collGroups = null; // important to set this to NULL since that means it is uninitialized
+        $this->collMyGroups = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collGroups collection loaded partially.
+     * Reset is the collMyGroups collection loaded partially.
      */
-    public function resetPartialGroups($v = true)
+    public function resetPartialMyGroups($v = true)
     {
-        $this->collGroupsPartial = $v;
+        $this->collMyGroupsPartial = $v;
     }
 
     /**
-     * Initializes the collGroups collection.
+     * Initializes the collMyGroups collection.
      *
-     * By default this just sets the collGroups collection to an empty array (like clearcollGroups());
+     * By default this just sets the collMyGroups collection to an empty array (like clearcollMyGroups());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -3130,16 +2926,16 @@ abstract class User implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initGroups($overrideExisting = true)
+    public function initMyGroups($overrideExisting = true)
     {
-        if (null !== $this->collGroups && !$overrideExisting) {
+        if (null !== $this->collMyGroups && !$overrideExisting) {
             return;
         }
 
         $collectionClassName = GroupTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collGroups = new $collectionClassName;
-        $this->collGroups->setModel('\Models\Group');
+        $this->collMyGroups = new $collectionClassName;
+        $this->collMyGroups->setModel('\Models\Group');
     }
 
     /**
@@ -3156,48 +2952,48 @@ abstract class User implements ActiveRecordInterface
      * @return ObjectCollection|ChildGroup[] List of ChildGroup objects
      * @throws PropelException
      */
-    public function getGroups(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getMyGroups(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collGroupsPartial && !$this->isNew();
-        if (null === $this->collGroups || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collGroups) {
+        $partial = $this->collMyGroupsPartial && !$this->isNew();
+        if (null === $this->collMyGroups || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMyGroups) {
                 // return empty collection
-                $this->initGroups();
+                $this->initMyGroups();
             } else {
-                $collGroups = ChildGroupQuery::create(null, $criteria)
+                $collMyGroups = ChildGroupQuery::create(null, $criteria)
                     ->filterByOwner($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collGroupsPartial && count($collGroups)) {
-                        $this->initGroups(false);
+                    if (false !== $this->collMyGroupsPartial && count($collMyGroups)) {
+                        $this->initMyGroups(false);
 
-                        foreach ($collGroups as $obj) {
-                            if (false == $this->collGroups->contains($obj)) {
-                                $this->collGroups->append($obj);
+                        foreach ($collMyGroups as $obj) {
+                            if (false == $this->collMyGroups->contains($obj)) {
+                                $this->collMyGroups->append($obj);
                             }
                         }
 
-                        $this->collGroupsPartial = true;
+                        $this->collMyGroupsPartial = true;
                     }
 
-                    return $collGroups;
+                    return $collMyGroups;
                 }
 
-                if ($partial && $this->collGroups) {
-                    foreach ($this->collGroups as $obj) {
+                if ($partial && $this->collMyGroups) {
+                    foreach ($this->collMyGroups as $obj) {
                         if ($obj->isNew()) {
-                            $collGroups[] = $obj;
+                            $collMyGroups[] = $obj;
                         }
                     }
                 }
 
-                $this->collGroups = $collGroups;
-                $this->collGroupsPartial = false;
+                $this->collMyGroups = $collMyGroups;
+                $this->collMyGroupsPartial = false;
             }
         }
 
-        return $this->collGroups;
+        return $this->collMyGroups;
     }
 
     /**
@@ -3206,29 +3002,29 @@ abstract class User implements ActiveRecordInterface
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $groups A Propel collection.
+     * @param      Collection $myGroups A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function setGroups(Collection $groups, ConnectionInterface $con = null)
+    public function setMyGroups(Collection $myGroups, ConnectionInterface $con = null)
     {
-        /** @var ChildGroup[] $groupsToDelete */
-        $groupsToDelete = $this->getGroups(new Criteria(), $con)->diff($groups);
+        /** @var ChildGroup[] $myGroupsToDelete */
+        $myGroupsToDelete = $this->getMyGroups(new Criteria(), $con)->diff($myGroups);
 
 
-        $this->groupsScheduledForDeletion = $groupsToDelete;
+        $this->myGroupsScheduledForDeletion = $myGroupsToDelete;
 
-        foreach ($groupsToDelete as $groupRemoved) {
-            $groupRemoved->setOwner(null);
+        foreach ($myGroupsToDelete as $myGroupRemoved) {
+            $myGroupRemoved->setOwner(null);
         }
 
-        $this->collGroups = null;
-        foreach ($groups as $group) {
-            $this->addGroup($group);
+        $this->collMyGroups = null;
+        foreach ($myGroups as $myGroup) {
+            $this->addMyGroup($myGroup);
         }
 
-        $this->collGroups = $groups;
-        $this->collGroupsPartial = false;
+        $this->collMyGroups = $myGroups;
+        $this->collMyGroupsPartial = false;
 
         return $this;
     }
@@ -3242,16 +3038,16 @@ abstract class User implements ActiveRecordInterface
      * @return int             Count of related Group objects.
      * @throws PropelException
      */
-    public function countGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countMyGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collGroupsPartial && !$this->isNew();
-        if (null === $this->collGroups || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collGroups) {
+        $partial = $this->collMyGroupsPartial && !$this->isNew();
+        if (null === $this->collMyGroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMyGroups) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getGroups());
+                return count($this->getMyGroups());
             }
 
             $query = ChildGroupQuery::create(null, $criteria);
@@ -3264,7 +3060,7 @@ abstract class User implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collGroups);
+        return count($this->collMyGroups);
     }
 
     /**
@@ -3274,18 +3070,18 @@ abstract class User implements ActiveRecordInterface
      * @param  ChildGroup $l ChildGroup
      * @return $this|\Models\User The current object (for fluent API support)
      */
-    public function addGroup(ChildGroup $l)
+    public function addMyGroup(ChildGroup $l)
     {
-        if ($this->collGroups === null) {
-            $this->initGroups();
-            $this->collGroupsPartial = true;
+        if ($this->collMyGroups === null) {
+            $this->initMyGroups();
+            $this->collMyGroupsPartial = true;
         }
 
-        if (!$this->collGroups->contains($l)) {
-            $this->doAddGroup($l);
+        if (!$this->collMyGroups->contains($l)) {
+            $this->doAddMyGroup($l);
 
-            if ($this->groupsScheduledForDeletion and $this->groupsScheduledForDeletion->contains($l)) {
-                $this->groupsScheduledForDeletion->remove($this->groupsScheduledForDeletion->search($l));
+            if ($this->myGroupsScheduledForDeletion and $this->myGroupsScheduledForDeletion->contains($l)) {
+                $this->myGroupsScheduledForDeletion->remove($this->myGroupsScheduledForDeletion->search($l));
             }
         }
 
@@ -3293,29 +3089,29 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildGroup $group The ChildGroup object to add.
+     * @param ChildGroup $myGroup The ChildGroup object to add.
      */
-    protected function doAddGroup(ChildGroup $group)
+    protected function doAddMyGroup(ChildGroup $myGroup)
     {
-        $this->collGroups[]= $group;
-        $group->setOwner($this);
+        $this->collMyGroups[]= $myGroup;
+        $myGroup->setOwner($this);
     }
 
     /**
-     * @param  ChildGroup $group The ChildGroup object to remove.
+     * @param  ChildGroup $myGroup The ChildGroup object to remove.
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function removeGroup(ChildGroup $group)
+    public function removeMyGroup(ChildGroup $myGroup)
     {
-        if ($this->getGroups()->contains($group)) {
-            $pos = $this->collGroups->search($group);
-            $this->collGroups->remove($pos);
-            if (null === $this->groupsScheduledForDeletion) {
-                $this->groupsScheduledForDeletion = clone $this->collGroups;
-                $this->groupsScheduledForDeletion->clear();
+        if ($this->getMyGroups()->contains($myGroup)) {
+            $pos = $this->collMyGroups->search($myGroup);
+            $this->collMyGroups->remove($pos);
+            if (null === $this->myGroupsScheduledForDeletion) {
+                $this->myGroupsScheduledForDeletion = clone $this->collMyGroups;
+                $this->myGroupsScheduledForDeletion->clear();
             }
-            $this->groupsScheduledForDeletion[]= clone $group;
-            $group->setOwner(null);
+            $this->myGroupsScheduledForDeletion[]= clone $myGroup;
+            $myGroup->setOwner(null);
         }
 
         return $this;
@@ -3597,6 +3393,502 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collUserGroups collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addUserGroups()
+     */
+    public function clearUserGroups()
+    {
+        $this->collUserGroups = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collUserGroups collection loaded partially.
+     */
+    public function resetPartialUserGroups($v = true)
+    {
+        $this->collUserGroupsPartial = $v;
+    }
+
+    /**
+     * Initializes the collUserGroups collection.
+     *
+     * By default this just sets the collUserGroups collection to an empty array (like clearcollUserGroups());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initUserGroups($overrideExisting = true)
+    {
+        if (null !== $this->collUserGroups && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collUserGroups = new $collectionClassName;
+        $this->collUserGroups->setModel('\Models\UserGroup');
+    }
+
+    /**
+     * Gets an array of ChildUserGroup objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
+     * @throws PropelException
+     */
+    public function getUserGroups(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUserGroupsPartial && !$this->isNew();
+        if (null === $this->collUserGroups || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collUserGroups) {
+                // return empty collection
+                $this->initUserGroups();
+            } else {
+                $collUserGroups = ChildUserGroupQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collUserGroupsPartial && count($collUserGroups)) {
+                        $this->initUserGroups(false);
+
+                        foreach ($collUserGroups as $obj) {
+                            if (false == $this->collUserGroups->contains($obj)) {
+                                $this->collUserGroups->append($obj);
+                            }
+                        }
+
+                        $this->collUserGroupsPartial = true;
+                    }
+
+                    return $collUserGroups;
+                }
+
+                if ($partial && $this->collUserGroups) {
+                    foreach ($this->collUserGroups as $obj) {
+                        if ($obj->isNew()) {
+                            $collUserGroups[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUserGroups = $collUserGroups;
+                $this->collUserGroupsPartial = false;
+            }
+        }
+
+        return $this->collUserGroups;
+    }
+
+    /**
+     * Sets a collection of ChildUserGroup objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $userGroups A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setUserGroups(Collection $userGroups, ConnectionInterface $con = null)
+    {
+        /** @var ChildUserGroup[] $userGroupsToDelete */
+        $userGroupsToDelete = $this->getUserGroups(new Criteria(), $con)->diff($userGroups);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->userGroupsScheduledForDeletion = clone $userGroupsToDelete;
+
+        foreach ($userGroupsToDelete as $userGroupRemoved) {
+            $userGroupRemoved->setUser(null);
+        }
+
+        $this->collUserGroups = null;
+        foreach ($userGroups as $userGroup) {
+            $this->addUserGroup($userGroup);
+        }
+
+        $this->collUserGroups = $userGroups;
+        $this->collUserGroupsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related UserGroup objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related UserGroup objects.
+     * @throws PropelException
+     */
+    public function countUserGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUserGroupsPartial && !$this->isNew();
+        if (null === $this->collUserGroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUserGroups) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getUserGroups());
+            }
+
+            $query = ChildUserGroupQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collUserGroups);
+    }
+
+    /**
+     * Method called to associate a ChildUserGroup object to this object
+     * through the ChildUserGroup foreign key attribute.
+     *
+     * @param  ChildUserGroup $l ChildUserGroup
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function addUserGroup(ChildUserGroup $l)
+    {
+        if ($this->collUserGroups === null) {
+            $this->initUserGroups();
+            $this->collUserGroupsPartial = true;
+        }
+
+        if (!$this->collUserGroups->contains($l)) {
+            $this->doAddUserGroup($l);
+
+            if ($this->userGroupsScheduledForDeletion and $this->userGroupsScheduledForDeletion->contains($l)) {
+                $this->userGroupsScheduledForDeletion->remove($this->userGroupsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildUserGroup $userGroup The ChildUserGroup object to add.
+     */
+    protected function doAddUserGroup(ChildUserGroup $userGroup)
+    {
+        $this->collUserGroups[]= $userGroup;
+        $userGroup->setUser($this);
+    }
+
+    /**
+     * @param  ChildUserGroup $userGroup The ChildUserGroup object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeUserGroup(ChildUserGroup $userGroup)
+    {
+        if ($this->getUserGroups()->contains($userGroup)) {
+            $pos = $this->collUserGroups->search($userGroup);
+            $this->collUserGroups->remove($pos);
+            if (null === $this->userGroupsScheduledForDeletion) {
+                $this->userGroupsScheduledForDeletion = clone $this->collUserGroups;
+                $this->userGroupsScheduledForDeletion->clear();
+            }
+            $this->userGroupsScheduledForDeletion[]= clone $userGroup;
+            $userGroup->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related UserGroups from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildUserGroup[] List of ChildUserGroup objects
+     */
+    public function getUserGroupsJoinGroup(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildUserGroupQuery::create(null, $criteria);
+        $query->joinWith('Group', $joinBehavior);
+
+        return $this->getUserGroups($query, $con);
+    }
+
+    /**
+     * Clears out the collGroups collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addGroups()
+     */
+    public function clearGroups()
+    {
+        $this->collGroups = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collGroups crossRef collection.
+     *
+     * By default this just sets the collGroups collection to an empty collection (like clearGroups());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initGroups()
+    {
+        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collGroups = new $collectionClassName;
+        $this->collGroupsPartial = true;
+        $this->collGroups->setModel('\Models\Group');
+    }
+
+    /**
+     * Checks if the collGroups collection is loaded.
+     *
+     * @return bool
+     */
+    public function isGroupsLoaded()
+    {
+        return null !== $this->collGroups;
+    }
+
+    /**
+     * Gets a collection of ChildGroup objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildGroup[] List of ChildGroup objects
+     */
+    public function getGroups(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupsPartial && !$this->isNew();
+        if (null === $this->collGroups || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collGroups) {
+                    $this->initGroups();
+                }
+            } else {
+
+                $query = ChildGroupQuery::create(null, $criteria)
+                    ->filterByUser($this);
+                $collGroups = $query->find($con);
+                if (null !== $criteria) {
+                    return $collGroups;
+                }
+
+                if ($partial && $this->collGroups) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collGroups as $obj) {
+                        if (!$collGroups->contains($obj)) {
+                            $collGroups[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collGroups = $collGroups;
+                $this->collGroupsPartial = false;
+            }
+        }
+
+        return $this->collGroups;
+    }
+
+    /**
+     * Sets a collection of Group objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $groups A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setGroups(Collection $groups, ConnectionInterface $con = null)
+    {
+        $this->clearGroups();
+        $currentGroups = $this->getGroups();
+
+        $groupsScheduledForDeletion = $currentGroups->diff($groups);
+
+        foreach ($groupsScheduledForDeletion as $toDelete) {
+            $this->removeGroup($toDelete);
+        }
+
+        foreach ($groups as $group) {
+            if (!$currentGroups->contains($group)) {
+                $this->doAddGroup($group);
+            }
+        }
+
+        $this->collGroupsPartial = false;
+        $this->collGroups = $groups;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of Group objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related Group objects
+     */
+    public function countGroups(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGroupsPartial && !$this->isNew();
+        if (null === $this->collGroups || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collGroups) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getGroups());
+                }
+
+                $query = ChildGroupQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByUser($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collGroups);
+        }
+    }
+
+    /**
+     * Associate a ChildGroup to this object
+     * through the user_group cross reference table.
+     *
+     * @param ChildGroup $group
+     * @return ChildUser The current object (for fluent API support)
+     */
+    public function addGroup(ChildGroup $group)
+    {
+        if ($this->collGroups === null) {
+            $this->initGroups();
+        }
+
+        if (!$this->getGroups()->contains($group)) {
+            // only add it if the **same** object is not already associated
+            $this->collGroups->push($group);
+            $this->doAddGroup($group);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildGroup $group
+     */
+    protected function doAddGroup(ChildGroup $group)
+    {
+        $userGroup = new ChildUserGroup();
+
+        $userGroup->setGroup($group);
+
+        $userGroup->setUser($this);
+
+        $this->addUserGroup($userGroup);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$group->isUsersLoaded()) {
+            $group->initUsers();
+            $group->getUsers()->push($this);
+        } elseif (!$group->getUsers()->contains($this)) {
+            $group->getUsers()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove group of this object
+     * through the user_group cross reference table.
+     *
+     * @param ChildGroup $group
+     * @return ChildUser The current object (for fluent API support)
+     */
+    public function removeGroup(ChildGroup $group)
+    {
+        if ($this->getGroups()->contains($group)) { $userGroup = new ChildUserGroup();
+
+            $userGroup->setGroup($group);
+            if ($group->isUsersLoaded()) {
+                //remove the back reference if available
+                $group->getUsers()->removeObject($this);
+            }
+
+            $userGroup->setUser($this);
+            $this->removeUserGroup(clone $userGroup);
+            $userGroup->clear();
+
+            $this->collGroups->remove($this->collGroups->search($group));
+
+            if (null === $this->groupsScheduledForDeletion) {
+                $this->groupsScheduledForDeletion = clone $this->collGroups;
+                $this->groupsScheduledForDeletion->clear();
+            }
+
+            $this->groupsScheduledForDeletion->push($group);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -3644,18 +3936,13 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collUserGroups) {
-                foreach ($this->collUserGroups as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collPacks) {
                 foreach ($this->collPacks as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collGroups) {
-                foreach ($this->collGroups as $o) {
+            if ($this->collMyGroups) {
+                foreach ($this->collMyGroups as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3664,14 +3951,25 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collUserGroups) {
+                foreach ($this->collUserGroups as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collGroups) {
+                foreach ($this->collGroups as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collIdentities = null;
         $this->collPackPermissions = null;
-        $this->collUserGroups = null;
         $this->collPacks = null;
-        $this->collGroups = null;
+        $this->collMyGroups = null;
         $this->collComments = null;
+        $this->collUserGroups = null;
+        $this->collGroups = null;
     }
 
     /**
@@ -3769,15 +4067,6 @@ abstract class User implements ActiveRecordInterface
                     }
                 }
             }
-            if (null !== $this->collUserGroups) {
-                foreach ($this->collUserGroups as $referrerFK) {
-                    if (method_exists($referrerFK, 'validate')) {
-                        if (!$referrerFK->validate($validator)) {
-                            $failureMap->addAll($referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-            }
             if (null !== $this->collPacks) {
                 foreach ($this->collPacks as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
@@ -3787,8 +4076,8 @@ abstract class User implements ActiveRecordInterface
                     }
                 }
             }
-            if (null !== $this->collGroups) {
-                foreach ($this->collGroups as $referrerFK) {
+            if (null !== $this->collMyGroups) {
+                foreach ($this->collMyGroups as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());
@@ -3798,6 +4087,15 @@ abstract class User implements ActiveRecordInterface
             }
             if (null !== $this->collComments) {
                 foreach ($this->collComments as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collUserGroups) {
+                foreach ($this->collUserGroups as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

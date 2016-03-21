@@ -21,4 +21,26 @@ class Group extends BaseGroup
 		return $this->validate();
 	}
 
+	public function addUsersFromArray($users = array()){
+		foreach($users as $user){
+				$u = UserQuery::create()->findOneByUsername($user["username"]);
+				if($u){
+					if($u == $this->data["loggedUser"]){
+						$response["messages"][] = "You can not add yourself to group.";
+						continue;
+					}
+					$userGroup = UserGroupQuery::create()->filterByUser($u)->filterByGroup($this->data["group"])->findOne();
+					if($userGroup){
+						$response["messages"][] = "User " . $user["username"] . " is already in this group.";
+						continue;	
+					}
+					$userGroup = new UserGroup();
+					$userGroup->setUser($u);
+					$userGroup->setGroup($this->data["group"]);
+					$userGroup->save();
+				}
+				else
+					$response["messages"][] = "User " . $user["username"] . " does not exist.";
+			}
+	}
 }

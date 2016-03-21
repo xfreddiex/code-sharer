@@ -22,11 +22,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUserGroupQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildUserGroupQuery orderByGroupId($order = Criteria::ASC) Order by the group_id column
- * @method     ChildUserGroupQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildUserGroupQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildUserGroupQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildUserGroupQuery groupByUserId() Group by the user_id column
  * @method     ChildUserGroupQuery groupByGroupId() Group by the group_id column
- * @method     ChildUserGroupQuery groupById() Group by the id column
+ * @method     ChildUserGroupQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildUserGroupQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildUserGroupQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserGroupQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -63,19 +65,22 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUserGroup findOneByUserId(int $user_id) Return the first ChildUserGroup filtered by the user_id column
  * @method     ChildUserGroup findOneByGroupId(int $group_id) Return the first ChildUserGroup filtered by the group_id column
- * @method     ChildUserGroup findOneById(int $id) Return the first ChildUserGroup filtered by the id column *
+ * @method     ChildUserGroup findOneByCreatedAt(string $created_at) Return the first ChildUserGroup filtered by the created_at column
+ * @method     ChildUserGroup findOneByUpdatedAt(string $updated_at) Return the first ChildUserGroup filtered by the updated_at column *
 
  * @method     ChildUserGroup requirePk($key, ConnectionInterface $con = null) Return the ChildUserGroup by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUserGroup requireOne(ConnectionInterface $con = null) Return the first ChildUserGroup matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUserGroup requireOneByUserId(int $user_id) Return the first ChildUserGroup filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUserGroup requireOneByGroupId(int $group_id) Return the first ChildUserGroup filtered by the group_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserGroup requireOneById(int $id) Return the first ChildUserGroup filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUserGroup requireOneByCreatedAt(string $created_at) Return the first ChildUserGroup filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUserGroup requireOneByUpdatedAt(string $updated_at) Return the first ChildUserGroup filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUserGroup[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUserGroup objects based on current ModelCriteria
  * @method     ChildUserGroup[]|ObjectCollection findByUserId(int $user_id) Return ChildUserGroup objects filtered by the user_id column
  * @method     ChildUserGroup[]|ObjectCollection findByGroupId(int $group_id) Return ChildUserGroup objects filtered by the group_id column
- * @method     ChildUserGroup[]|ObjectCollection findById(int $id) Return ChildUserGroup objects filtered by the id column
+ * @method     ChildUserGroup[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildUserGroup objects filtered by the created_at column
+ * @method     ChildUserGroup[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildUserGroup objects filtered by the updated_at column
  * @method     ChildUserGroup[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -125,10 +130,10 @@ abstract class UserGroupQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$user_id, $group_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildUserGroup|array|mixed the result, formatted by the current formatter
@@ -138,7 +143,7 @@ abstract class UserGroupQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = UserGroupTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
+        if ((null !== ($obj = UserGroupTableMap::getInstanceFromPool(serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])])))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
@@ -168,10 +173,11 @@ abstract class UserGroupQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT user_id, group_id, id FROM user_group WHERE id = :p0';
+        $sql = 'SELECT user_id, group_id, created_at, updated_at FROM user_group WHERE user_id = :p0 AND group_id = :p1';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -182,7 +188,7 @@ abstract class UserGroupQuery extends ModelCriteria
             /** @var ChildUserGroup $obj */
             $obj = new ChildUserGroup();
             $obj->hydrate($row);
-            UserGroupTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            UserGroupTableMap::addInstanceToPool($obj, serialize([(null === $key[0] || is_scalar($key[0]) || is_callable([$key[0], '__toString']) ? (string) $key[0] : $key[0]), (null === $key[1] || is_scalar($key[1]) || is_callable([$key[1], '__toString']) ? (string) $key[1] : $key[1])]));
         }
         $stmt->closeCursor();
 
@@ -211,7 +217,7 @@ abstract class UserGroupQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     ConnectionInterface $con an optional connection object
@@ -241,8 +247,10 @@ abstract class UserGroupQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
+        $this->addUsingAlias(UserGroupTableMap::COL_USER_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(UserGroupTableMap::COL_GROUP_ID, $key[1], Criteria::EQUAL);
 
-        return $this->addUsingAlias(UserGroupTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this;
     }
 
     /**
@@ -254,8 +262,17 @@ abstract class UserGroupQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(UserGroupTableMap::COL_USER_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(UserGroupTableMap::COL_GROUP_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $this->addOr($cton0);
+        }
 
-        return $this->addUsingAlias(UserGroupTableMap::COL_ID, $keys, Criteria::IN);
+        return $this;
     }
 
     /**
@@ -345,16 +362,18 @@ abstract class UserGroupQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the id column
+     * Filter the query on the created_at column
      *
      * Example usage:
      * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
      * </code>
      *
-     * @param     mixed $id The value to use as filter.
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -362,16 +381,16 @@ abstract class UserGroupQuery extends ModelCriteria
      *
      * @return $this|ChildUserGroupQuery The current query, for fluid interface
      */
-    public function filterById($id = null, $comparison = null)
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
     {
-        if (is_array($id)) {
+        if (is_array($createdAt)) {
             $useMinMax = false;
-            if (isset($id['min'])) {
-                $this->addUsingAlias(UserGroupTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(UserGroupTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($id['max'])) {
-                $this->addUsingAlias(UserGroupTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(UserGroupTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -382,7 +401,50 @@ abstract class UserGroupQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserGroupTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(UserGroupTableMap::COL_CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(UserGroupTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(UserGroupTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserGroupTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -549,7 +611,9 @@ abstract class UserGroupQuery extends ModelCriteria
     public function prune($userGroup = null)
     {
         if ($userGroup) {
-            $this->addUsingAlias(UserGroupTableMap::COL_ID, $userGroup->getId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond0', $this->getAliasedColName(UserGroupTableMap::COL_USER_ID), $userGroup->getUserId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(UserGroupTableMap::COL_GROUP_ID), $userGroup->getGroupId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 
         return $this;
@@ -614,6 +678,72 @@ abstract class UserGroupQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserGroupTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserGroupTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserGroupTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(UserGroupTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(UserGroupTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildUserGroupQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(UserGroupTableMap::COL_CREATED_AT);
     }
 
 } // UserGroupQuery

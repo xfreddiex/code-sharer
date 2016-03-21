@@ -151,7 +151,7 @@ hr {
   border-top-color: #AB2C00; }
 
 /*----*/
-/*inputs*/
+/*form*/
 .form-control:not(.search-input) {
   color: black;
   box-shadow: none;
@@ -171,6 +171,9 @@ hr {
   outline: none !important;
   border: 1px solid #178599;
   box-shadow: none; }
+
+.form-group:last-of-type {
+  margin-bottom: 0px; }
 
 .has-error input, .has-error input:focus {
   outline: none !important;
@@ -240,6 +243,11 @@ hr {
     border: 0px;
     padding-top: 0px;
     padding-left: 10px; }
+  .panel-default .panel-footer {
+    background-color: #f0f0f0;
+    border: 0px;
+    padding: 0px;
+    padding-top: 10px; }
 
 /*----*/
 /*dropdowns*/
@@ -488,6 +496,20 @@ footer {
 .new-pack-wrapper textarea[name="tags"] {
   resize: vertical;
   min-height: 60px; }
+
+/*----*/
+/*newGroup*/
+.new-group-wrapper textarea[name="description"] {
+  resize: vertical;
+  min-height: 105px; }
+.new-group-wrapper textarea[name="users"] {
+  resize: vertical;
+  min-height: 60px; }
+
+/*----*/
+/*group*/
+.group-wrapper .added-at-wrapper i {
+  margin-right: 5px; }
 
 /*----*/
 

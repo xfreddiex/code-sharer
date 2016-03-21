@@ -191,6 +191,7 @@ class GroupTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'UserGroups', false);
+        $this->addRelation('User', '\\Models\\User', RelationMap::MANY_TO_MANY, array(), null, null, 'Users');
     } // buildRelations()
 
     /**
@@ -203,7 +204,7 @@ class GroupTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-            'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal group name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'Group name should not be blank.',),), 'rule3' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',),), ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal group name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'Group name should not be blank.',),), 'rule3' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',),), 'rule4' => array ('column' => 'name','validator' => 'Regex','options' => array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Group name should not contain whitespaces.',),), ),
         );
     } // getBehaviors()
 

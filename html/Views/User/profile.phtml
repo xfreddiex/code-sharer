@@ -33,19 +33,79 @@
 								<?=($loggedUser->getName() || $loggedUser->getSurname() ? "<h3>".$loggedUser->getName().($loggedUser->getName() && $loggedUser->getSurname() ? " ": null).$loggedUser->getSurname()."</h3>": null)?>
 								<h3><?=$loggedUser->getUsername()?></h3>
 								<p><?=$loggedUser->getEmail()?></p>
-								<a href="/settings" class="btn btn-info btn-block settings-button">Settings</a>
 							</div>
 						</div>
+					</div>
+					<div class="panel-footer">
+						<a href="/settings" class="btn btn-info btn-block"><i class="fa fa-cog"></i> Settings</a>
 					</div>
 				</div>
 			</div>
 			<div class="col-sm-8 col-md-9">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2>Your packs</h2>
+						<h2><i class="fa fa-archive"></i> Your packs</h2>
 					</div>
 					<div class="panel-body">
-						<p>You dont have any packs yet.</p>
+						<?php if($loggedUser->getPacks()->count()): ?>
+							<?php foreach($loggedUser->getPacks() as $index => $pack): ?>
+								<div class="row">
+									<div class="col-xs-5 col-md-6">
+										<a class="link" href="/pack/<?=$pack->getId()?>">
+											<?=$pack->getName()?>
+										</a>
+									</div>
+									<div class="col-xs-4 col-md-2">
+										<strong>
+											<?=($pack->getPrivate()?"private":"public")?>
+										</strong>
+									</div>
+									<div class="col-xs-3 col-md-4 text-right">
+										<i class="fa fa-pencil-square"></i>
+										<?=$pack->getUpdatedAt("j M o")?>
+									</div>
+								</div>
+								<?php if($index != $loggedUser->getPacks()->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You dont have any packs yet.</p>
+						<?php endif; ?>
+					</div>
+					<div class="panel-footer text-right">
+						<a href="/pack/new" class="btn btn-success">Add <i class="fa fa-plus"></i></a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2><i class="fa fa-users"></i> Your groups</h2>
+					</div>
+					<div class="panel-body">
+						<?php if($loggedUser->getMyGroups()->count()): ?>
+							<?php foreach($loggedUser->getMyGroups() as $index => $group): ?>
+								<div class="row">
+									<div class="col-xs-6">
+										<a class="link" href="/group/<?=$group->getId()?>">
+											<?=$group->getName()?>
+										</a>
+									</div>
+									<div class="col-xs-6 text-right">
+										<i class="fa fa-user"></i>
+										<?=$group->getUsers()->count()?>
+									</div>
+								</div>
+								<?php if($index != $loggedUser->getMyGroups()->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You dont have any groups yet.</p>
+						<?php endif; ?>
+					</div>
+					<div class="panel-footer text-right">
+						<a href="/group/new" class="btn btn-success">Add <i class="fa fa-plus"></i></a>
 					</div>
 				</div>
 			</div>

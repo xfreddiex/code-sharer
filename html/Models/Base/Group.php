@@ -34,6 +34,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextFactory;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
@@ -149,6 +150,16 @@ abstract class Group implements ActiveRecordInterface
     protected $collUserGroupsPartial;
 
     /**
+     * @var        ObjectCollection|ChildUser[] Cross Collection to store aggregation of ChildUser objects.
+     */
+    protected $collUsers;
+
+    /**
+     * @var bool
+     */
+    protected $collUsersPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -172,6 +183,12 @@ abstract class Group implements ActiveRecordInterface
      * @var     ConstraintViolationList
      */
     protected $validationFailures;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildUser[]
+     */
+    protected $usersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -796,6 +813,7 @@ abstract class Group implements ActiveRecordInterface
 
             $this->collUserGroups = null;
 
+            $this->collUsers = null;
         } // if (deep)
     }
 
@@ -929,6 +947,35 @@ abstract class Group implements ActiveRecordInterface
                 }
                 $this->resetModified();
             }
+
+            if ($this->usersScheduledForDeletion !== null) {
+                if (!$this->usersScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->usersScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[1] = $this->getId();
+                        $entryPk[0] = $entry->getId();
+                        $pks[] = $entryPk;
+                    }
+
+                    \Models\UserGroupQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->usersScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collUsers) {
+                foreach ($this->collUsers as $user) {
+                    if (!$user->isDeleted() && ($user->isNew() || $user->isModified())) {
+                        $user->save($con);
+                    }
+                }
+            }
+
 
             if ($this->packPermissionsScheduledForDeletion !== null) {
                 if (!$this->packPermissionsScheduledForDeletion->isEmpty()) {
@@ -1552,7 +1599,7 @@ abstract class Group implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildUser object, it will not be re-added.
         if ($v !== null) {
-            $v->addGroup($this);
+            $v->addMyGroup($this);
         }
 
 
@@ -1576,7 +1623,7 @@ abstract class Group implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aOwner->addGroups($this);
+                $this->aOwner->addMyGroups($this);
              */
         }
 
@@ -1997,7 +2044,10 @@ abstract class Group implements ActiveRecordInterface
         $userGroupsToDelete = $this->getUserGroups(new Criteria(), $con)->diff($userGroups);
 
 
-        $this->userGroupsScheduledForDeletion = $userGroupsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->userGroupsScheduledForDeletion = clone $userGroupsToDelete;
 
         foreach ($userGroupsToDelete as $userGroupRemoved) {
             $userGroupRemoved->setGroup(null);
@@ -2128,6 +2178,249 @@ abstract class Group implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collUsers collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addUsers()
+     */
+    public function clearUsers()
+    {
+        $this->collUsers = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collUsers crossRef collection.
+     *
+     * By default this just sets the collUsers collection to an empty collection (like clearUsers());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initUsers()
+    {
+        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collUsers = new $collectionClassName;
+        $this->collUsersPartial = true;
+        $this->collUsers->setModel('\Models\User');
+    }
+
+    /**
+     * Checks if the collUsers collection is loaded.
+     *
+     * @return bool
+     */
+    public function isUsersLoaded()
+    {
+        return null !== $this->collUsers;
+    }
+
+    /**
+     * Gets a collection of ChildUser objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildGroup is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildUser[] List of ChildUser objects
+     */
+    public function getUsers(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collUsers) {
+                    $this->initUsers();
+                }
+            } else {
+
+                $query = ChildUserQuery::create(null, $criteria)
+                    ->filterByGroup($this);
+                $collUsers = $query->find($con);
+                if (null !== $criteria) {
+                    return $collUsers;
+                }
+
+                if ($partial && $this->collUsers) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collUsers as $obj) {
+                        if (!$collUsers->contains($obj)) {
+                            $collUsers[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collUsers = $collUsers;
+                $this->collUsersPartial = false;
+            }
+        }
+
+        return $this->collUsers;
+    }
+
+    /**
+     * Sets a collection of User objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $users A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildGroup The current object (for fluent API support)
+     */
+    public function setUsers(Collection $users, ConnectionInterface $con = null)
+    {
+        $this->clearUsers();
+        $currentUsers = $this->getUsers();
+
+        $usersScheduledForDeletion = $currentUsers->diff($users);
+
+        foreach ($usersScheduledForDeletion as $toDelete) {
+            $this->removeUser($toDelete);
+        }
+
+        foreach ($users as $user) {
+            if (!$currentUsers->contains($user)) {
+                $this->doAddUser($user);
+            }
+        }
+
+        $this->collUsersPartial = false;
+        $this->collUsers = $users;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of User objects related by a many-to-many relationship
+     * to the current object by way of the user_group cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related User objects
+     */
+    public function countUsers(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collUsersPartial && !$this->isNew();
+        if (null === $this->collUsers || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collUsers) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getUsers());
+                }
+
+                $query = ChildUserQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByGroup($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collUsers);
+        }
+    }
+
+    /**
+     * Associate a ChildUser to this object
+     * through the user_group cross reference table.
+     *
+     * @param ChildUser $user
+     * @return ChildGroup The current object (for fluent API support)
+     */
+    public function addUser(ChildUser $user)
+    {
+        if ($this->collUsers === null) {
+            $this->initUsers();
+        }
+
+        if (!$this->getUsers()->contains($user)) {
+            // only add it if the **same** object is not already associated
+            $this->collUsers->push($user);
+            $this->doAddUser($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildUser $user
+     */
+    protected function doAddUser(ChildUser $user)
+    {
+        $userGroup = new ChildUserGroup();
+
+        $userGroup->setUser($user);
+
+        $userGroup->setGroup($this);
+
+        $this->addUserGroup($userGroup);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$user->isGroupsLoaded()) {
+            $user->initGroups();
+            $user->getGroups()->push($this);
+        } elseif (!$user->getGroups()->contains($this)) {
+            $user->getGroups()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove user of this object
+     * through the user_group cross reference table.
+     *
+     * @param ChildUser $user
+     * @return ChildGroup The current object (for fluent API support)
+     */
+    public function removeUser(ChildUser $user)
+    {
+        if ($this->getUsers()->contains($user)) { $userGroup = new ChildUserGroup();
+
+            $userGroup->setUser($user);
+            if ($user->isGroupsLoaded()) {
+                //remove the back reference if available
+                $user->getGroups()->removeObject($this);
+            }
+
+            $userGroup->setGroup($this);
+            $this->removeUserGroup(clone $userGroup);
+            $userGroup->clear();
+
+            $this->collUsers->remove($this->collUsers->search($user));
+
+            if (null === $this->usersScheduledForDeletion) {
+                $this->usersScheduledForDeletion = clone $this->collUsers;
+                $this->usersScheduledForDeletion->clear();
+            }
+
+            $this->usersScheduledForDeletion->push($user);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2135,7 +2428,7 @@ abstract class Group implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aOwner) {
-            $this->aOwner->removeGroup($this);
+            $this->aOwner->removeMyGroup($this);
         }
         $this->id = null;
         $this->name = null;
@@ -2172,10 +2465,16 @@ abstract class Group implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collUsers) {
+                foreach ($this->collUsers as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collPackPermissions = null;
         $this->collUserGroups = null;
+        $this->collUsers = null;
         $this->aOwner = null;
     }
 
@@ -2216,6 +2515,7 @@ abstract class Group implements ActiveRecordInterface
         $metadata->addPropertyConstraint('name', new Length(array ('max' => 32,'maxMessage' => 'Maximal group name length is {{ limit }} characters.',)));
         $metadata->addPropertyConstraint('name', new NotBlank(array ('message' => 'Group name should not be blank.',)));
         $metadata->addPropertyConstraint('description', new Length(array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',)));
+        $metadata->addPropertyConstraint('name', new Regex(array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Group name should not contain whitespaces.',)));
     }
 
     /**
