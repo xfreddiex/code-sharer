@@ -14,28 +14,15 @@
 		<input type="submit">
 	</form>
 
-	<form id="addperm">
+	<form id="addperm" action="/pack/7/update-permissions" method="POST">
 		<input type="password" name="authorizationPassword"/>
 		<br />
 		<input type="text" name="user[0][username]"/>
-		<input type="checkbox" name="user[0][view]" value="1">
-		<input type="checkbox" name="user[0][edit]" value="1">
-		<input type="checkbox" name="user[0][remove]" value="1">
+		<input type="checkbox" name="user[0][permission]" value="1">
+		<input type="checkbox" name="user[0][permission]" value="2">
 		<br />
 		<input type="submit">
 	</form>
-
-	<script>
-		$("#addperm").submit(function(event){
-			event.preventDefault();
-			$.ajax({
-				type: 'POST',
-				url: "/pack/7/update-permissions",
-				data: $(this).serialize(),
-				dataType : "json",
-			});
-		});
-	</script>
 
 	<form id="addperm2">
 		<h3>GG</h3>

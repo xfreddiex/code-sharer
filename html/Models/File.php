@@ -21,4 +21,14 @@ class File extends BaseFile
 		return $this->validate();
 	}
 
+	public function getContent(){
+		$content = stream_get_contents($this->content);
+		return $content;
+	}
+
+	public function getExtension(){
+		$ext = end(explode(".", $this->name));
+		return $ext;
+	}
+
 }

@@ -1,0 +1,72 @@
+<link rel="stylesheet" type="text/css" href="/Includes/highlight/styles/mystyle.css">
+<script src="/Includes/highlight/highlight.pack.js"></script>
+<div  class="file-wrapper">
+	<div class="container">
+		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<h1 id="topheading"><a href="/pack/<?=$pack->getId()?>" class="link text-muted"><?=$pack->getName()?></a> <span class="text-muted">/</span> <?=$file->getName()?></h1>
+		<div class="row">
+			<div class="col-sm-5 col-md-4 col-lg-3">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-xs-5 col-sm-6">
+								<p>Pack owner</p>
+							</div>
+							<div class="col-xs-7 col-sm-6">
+								<a href="/user/<?=$pack->getOwner()->getUsername()?>" class="link"><strong><?=$pack->getOwner()->getUsername()?></strong></a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-5 col-sm-6">
+								<p>Created</p>
+							</div>
+							<div class="col-xs-7 col-sm-6">
+								<strong><?=$file->getCreatedAt("j M o")?></strong>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-5 col-sm-6">
+								<p>Updated</p>
+							</div>
+							<div class="col-xs-7 col-sm-6">
+								<strong><?=$file->getUpdatedAt("j M o")?></strong>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-7 col-md-8 col-lg-9">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2>Description</h2>
+					</div>
+					<div class="panel-body">
+						<p><?=$file->getDescription()?></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default" id="user-info">
+			<div class="panel-heading">
+				<h2><?=$file->getName()?></h2>
+			</div>
+			<div class="panel-body">
+				<pre><code id="code" class="<?=$file->getExtension()?>">
+				</code></pre>
+				<script type="text/javascript">
+					$(document).ready(function(e){
+						$('#code').load('/pack/<?=$pack->getId()?>/<?=$file->getName()?>/content', function(){
+							$('pre code').each(function(i, block){
+								hljs.highlightBlock(block);
+							});
+						});
+					});
+					</script>
+			</div>
+			<div class="panel-footer text-right">
+				<a href="/pack/newFile" class="btn btn-success">Add <i class="fa fa-plus"></i></a>
+			</div>
+		</div>
+	</div>
+</div>

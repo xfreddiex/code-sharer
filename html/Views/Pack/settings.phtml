@@ -1,0 +1,83 @@
+<div  class="pack-settings-wrapper">
+	<div class="container">
+		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<h1><a href="/pack/<?=$pack->getId()?>" class="link text-muted"><?=$pack->getName()?></a> <span class="text-muted">/</span> Settings</h1>
+		<div class="panel panel-default" id="user-info">
+			<div class="panel-heading">
+				<h2>Permissions</h2>
+			</div>
+			
+			<form id="update-permissions-form" action="/pack/<?=$pack->getId()?>/update-permissions" method="POST">			
+				<div class="panel-body" id="permissions">
+					<?php if(!$pack->getPrivate()): ?>
+						<p>This pack is public. Every one can see it</p>
+					<?php endif; ?>
+					
+					<?php if($pack->getPackPermissions()->count()): ?>
+						<?php foreach($pack->getPackPermissions() as $index => $permission): ?>
+							<div class="row">
+								<?php if($permission->getUser()): ?>
+									<div class="col-xs-4 col-sm-8 col-md-8 col-lg-10">
+										<i class="fa fa-user"></i>
+										<a class="link" href="/user/<?=$permission->getUser()->getUsername()?>">
+											<?=$permission->getUser()->getUsername()?>
+										</a>
+										<input type="hidden" name="user[<?=$index?>][username]" number="<?=$index?>" value="<?=$permission->getUser()->getUsername()?>">
+									</div>
+									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-right">
+										<label class="checkbox">
+											<input type="checkbox" name="user[<?=$index?>][permission]" value="1" checked>
+											<i class="fa fa-eye"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
+									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1">
+										<label class="checkbox">
+											<input type="checkbox" name="user[<?=$index?>][permission]" value="2" <?=($permission->getValue() == 2 ? "checked" : null)?>>
+											<i class="fa fa-pencil-square-o"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
+								<?php else: ?>
+									<div class="col-xs-4 col-sm-8 col-md-8 col-lg-10">
+										<i class="fa fa-users"></i>
+										<a class="link" href="/group/<?=$permission->getGroup()->getId()?>">
+											<?=$permission->getGroup()->getName()?>
+										</a>
+										<input type="hidden" name="group[<?=$index?>][name]" value="<?=$permission->getGroup()->getName()?>">
+									</div>
+									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-right">
+										<label class="checkbox">
+											<input type="checkbox" name="group[<?=$index?>][permission]" value="1" checked>
+											<i class="fa fa-eye"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
+									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1">
+										<label class="checkbox">
+											<input type="checkbox" name="group[<?=$index?>][permission]" value="2" <?=($permission->getValue() == 2 ? "checked" : null)?>>
+											<i class="fa fa-pencil-square-o"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
+								<?php endif; ?>
+							</div>
+							<?php if($index != $pack->getPackPermissions()->count() - 1): ?>
+								<hr />
+							<?php endif; ?>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<p>Nobody have extra permissions for this pack.</p>
+					<?php endif; ?>
+				</div>
+
+				<div class="panel-footer text-right">
+					<button type="button" class="btn btn-info" id="new-permission-button"><i class="fa fa-plus"></i> Add</a>
+					<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
+				</div>
+			</form>
+
+		</div>
+	</div>
+
+</div>

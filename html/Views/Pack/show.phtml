@@ -11,7 +11,7 @@
 								<p>Owner</p>
 							</div>
 							<div class="col-xs-7 col-sm-6">
-								<strong><?=$pack->getOwner()->getUsername()?></strong>
+								<a href="/user/<?=$pack->getOwner()->getUsername()?>" class="link"><strong><?=$pack->getOwner()->getUsername()?></strong></a>
 							</div>
 						</div>
 						<div class="row">
@@ -61,10 +61,35 @@
 
 		<div class="panel panel-default" id="user-info">
 			<div class="panel-heading">
-				<h2>Files</h2>
+				<div class="row">
+					<div class="col-xs-8">
+						<h2>Files</h2>
+					</div>
+					<div class="col-xs-4 text-right">
+						<?php if($permission >=2): ?>
+							<button class="btn btn-success"data-toggle="collapse" data-target="#upload-files-form"><i class="fa fa-file"></i> Add</button>
+						<?php endif; ?>
+					</div>
+				</div>
 			</div>
-			<div class="panel-body">
-				
+
+			<?php if($permission >=2): ?>
+				<form action="/pack/<?=$pack->getId()?>/add-files" method="POST" enctype="multipart/form-data" id="upload-files-form" class="collapse">
+					<div class="panel-body">	
+						<div class="row">
+							<div class="col-sm-6">
+								<div class=""><input type="file" name="files[]" required multiple></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-footer text-right">
+						<button class="btn btn-success" type="submit"><i class="fa fa-upload"></i> Upload</button>
+					</div>
+				</form>
+			<?php endif; ?>
+
+			<div class="panel-body" id="files-list">
+				<?php $this->viewFile("Views/Pack/filesList.phtml"); ?>
 			</div>
 		</div>
 	</div>

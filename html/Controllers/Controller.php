@@ -34,19 +34,19 @@ abstract class Controller{
 	}
 
 	protected function view(){
-		$file = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml"));
-		$this->viewFile($file);
+		$f = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[1]["class"]."/".debug_backtrace()[1]["function"].".phtml"));
+		$this->viewFile($f);
 	}
 
 	protected function viewToTemplate(){
-		$file = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[3]["class"]."/".debug_backtrace()[3]["function"].".phtml"));
-		$this->viewFile($file);
+		$f = str_replace('Controller', '', str_replace('Controllers\\', 'Views/', debug_backtrace()[3]["class"]."/".debug_backtrace()[3]["function"].".phtml"));
+		$this->viewFile($f);
 	}
 
-	protected function viewFile($file){
-		if(file_exists($file)){
+	protected function viewFile($f){
+		if(file_exists($f)){
 			extract($this->data);
-			require($file);
+			require($f);
 		}
 	}
 
@@ -77,10 +77,10 @@ abstract class Controller{
 	}
 
 	protected function sendFlashMessage($message, $type = "info"){
-		/*if(in_array("application/json", array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))){
+		if(in_array("application/json", array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))){
 			$this->data["response"]["messages"][] = array("message" => $message, "type" => $type);
 			return;
-		}*/
+		}
 		$type = $type == "error" ? "danger" : $type;
 		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
 	}
@@ -128,5 +128,9 @@ abstract class Controller{
 		header("Location: /$url");
 		header("Connection: close");
 		exit;
+	}
+
+	protected function setContentType($type){
+		header("Content-Type: ".$type);
 	}
 }

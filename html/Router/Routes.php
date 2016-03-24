@@ -20,8 +20,9 @@ return array(
 	array('uri' => '/pack/[id]/update', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'update'),
 	array('uri' => '/pack/[id]/delete', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'delete'),
 	array('uri' => '/pack/[id]/settings', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'settings'),
-	array('uri' => '/pack/[id]/add-file', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addFile'),
-	array('uri' => '/pack/[id]/update-permissions', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updatePermissions'),
+	array('uri' => '/pack/[id]/add-files', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addFiles'),
+	array('uri' => '/pack/[id]/update-permissions', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updatePermissions'),
+	array('uri' => '/pack/[id]/files-list', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'filesList'),
 	array('uri' => '/pack/[id]/add-comment', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addComment'),
 	array('uri' => '/pack/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'validateOne'),
 	array('uri' => '/pack/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'show'),
@@ -38,7 +39,9 @@ return array(
 	array('uri' => '/group/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Group', 'method' => 'show'),
 
 	//File
-	array('uri' => '/pack/[id]/[name]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'File', 'method' => 'show'),
+	array('uri' => '/pack/[id]/[name]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'showFile'),
+	array('uri' => '/pack/[id]/[name]/content', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'getFileContent'),
+	array('uri' => '/pack/[id]/[name]/delete', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'deleteFile'),
 
 	//Errors
 	"error404" => array('uri' => '/404', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Error', 'method' => 'error404'),

@@ -5,6 +5,9 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 @font-face {
   font-family: "Ubuntu";
   src: url("Ubuntu-R.ttf"); }
+@font-face {
+  font-family: "Ubuntu-monospace";
+  src: url("UbuntuMono-R.ttf"); }
 html {
   min-width: 320px; }
 
@@ -14,7 +17,8 @@ section .container {
 /*text*/
 * {
   font-family: "Ubuntu";
-  word-wrap: break-word; }
+  word-wrap: normal;
+  text-overflow: ellipsis; }
 
 h1, h2, h3, p {
   color: #222222; }
@@ -27,9 +31,11 @@ h1 {
 
 h2 {
   font-size: 22px;
+  line-height: 22px;
   font-weight: bold;
   margin: 0px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  display: inline-block; }
 
 h3 {
   font-size: 16px;
@@ -40,6 +46,12 @@ h3 {
 p {
   font-size: 14px; }
 
+a {
+  text-decoration: none; }
+
+a:hover {
+  text-decoration: none; }
+
 .link {
   color: #025A6A; }
 
@@ -48,7 +60,8 @@ p {
   text-decoration: none; }
 
 hr {
-  border-top: 2px solid #f0f0f0; }
+  border-top: 2px solid #f0f0f0;
+  margin: 10px 0px; }
 
 .text-center {
   text-align: center !important; }
@@ -59,46 +72,70 @@ hr {
 .text-right {
   text-align: right !important; }
 
+.text-muted {
+  color: #cccccc; }
+
+.link.text-muted {
+  color: #cccccc; }
+
+.link.text-muted:hover {
+  color: #046D81; }
+
 /*----*/
 /*buttons*/
-.btn:not(.search-button) {
+section .btn, .modal .btn {
   border: 0px;
   color: white;
   font-size: 20px;
   height: 35px;
   line-height: 35px;
   padding: 0px 9px; }
-
-.btn-default:not(.search-button) {
+section .btn-sm, .modal .btn-sm {
+  height: 20px;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 0px 2px; }
+section .btn:hover, .modal .btn:hover {
+  color: white; }
+section .btn-default, .modal .btn-default {
   background-color: black; }
-
-.btn-default:not(.search-button):hover {
+section .btn-default:hover, .modal .btn-default:hover {
   background-color: black; }
-
-.btn-danger:not(.search-button) {
+section .btn-default:active, .modal .btn-default:active {
+  background-color: black; }
+section .btn-default:active:hover, .modal .btn-default:active:hover {
+  background-color: black; }
+section .btn-danger, .modal .btn-danger {
   background-color: #ab2c00; }
-
-.btn-danger:not(.search-button):hover {
+section .btn-danger:hover, .modal .btn-danger:hover {
   background-color: #822100; }
-
-.btn-success:not(.search-button) {
+section .btn-danger:active, .modal .btn-danger:active {
+  background-color: #822100; }
+section .btn-danger:active:hover, .modal .btn-danger:active:hover {
+  background-color: #822100; }
+section .btn-success, .modal .btn-success {
   background-color: #9DA900; }
-
-.btn-success:not(.search-button):hover {
+section .btn-success:hover, .modal .btn-success:hover {
   background-color: #778000; }
-
-.btn-info:not(.search-button) {
+section .btn-success:active, .modal .btn-success:active {
+  background-color: #778000; }
+section .btn-success:active:hover, .modal .btn-success:active:hover {
+  background-color: #778000; }
+section .btn-success:focus, .modal .btn-success:focus {
+  background-color: #778000; }
+section .btn-info, .modal .btn-info {
   background-color: #025a6a; }
-
-.btn-info:not(.search-button):hover {
+section .btn-info:hover, .modal .btn-info:hover {
   background-color: #014450; }
-
-.btn-upload {
+section .btn-info:active, .modal .btn-info:active {
+  background-color: #014450; }
+section .btn-info:active:hover, .modal .btn-info:active:hover {
+  background-color: #014450; }
+section .btn-upload, .modal .btn-upload {
   position: relative;
   overflow: hidden;
   display: inline-block; }
-
-.btn-upload input {
+section .btn-upload input, .modal .btn-upload input {
   position: absolute;
   top: 0;
   right: 0;
@@ -145,7 +182,8 @@ hr {
   padding: 7px 10px;
   margin: 0px;
   line-height: 21px;
-  margin-bottom: 15px; }
+  margin-bottom: 15px;
+  display: inline-block; }
 
 .popover.top.alert-danger .arrow:after {
   border-top-color: #AB2C00; }
@@ -205,9 +243,16 @@ hr {
 .checkbox .checkbox-button:before {
   content: '\f096';
   letter-spacing: 3px; }
-.checkbox input[type="checkbox"]:checked + .checkbox-button:before {
+.checkbox input[type="checkbox"]:checked ~ .checkbox-button:before {
   content: '\f046';
   letter-spacing: 0px; }
+
+.panel .checkbox {
+  margin: 0px;
+  height: 20px; }
+  .panel .checkbox .checkbox-button {
+    vertical-align: top;
+    line-height: 20px; }
 
 /*----*/
 /*pagination*/
@@ -234,20 +279,39 @@ hr {
   border-radius: 4px;
   box-shadow: none; }
   .panel .panel-heading h2 {
-    margin: 0px; }
+    line-height: 22px;
+    margin: 0px;
+    margin-left: 10px; }
 
 .panel-default {
   border: 10px solid #f0f0f0; }
   .panel-default .panel-heading {
     background-color: #f0f0f0;
     border: 0px;
-    padding-top: 0px;
-    padding-left: 10px; }
+    padding: 0px;
+    height: 22px;
+    box-sizing: content-box;
+    padding-bottom: 10px; }
+    .panel-default .panel-heading .row {
+      height: 22px; }
   .panel-default .panel-footer {
     background-color: #f0f0f0;
     border: 0px;
+    border-radius: 0px;
     padding: 0px;
-    padding-top: 10px; }
+    padding-top: 10px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    height: 32px; }
+  .panel-default .panel-heading .btn, .panel-default .panel-footer .btn {
+    height: 29px;
+    line-height: 29px;
+    font-size: 18px;
+    position: relative;
+    top: -3.5px; }
+  .panel-default .collapse .panel-footer {
+    height: 42px;
+    border-radius: 0px; }
 
 /*----*/
 /*dropdowns*/
@@ -452,7 +516,7 @@ footer {
 /*profile*/
 .user-wrapper #img-form-wrapper {
   display: none;
-  border-bottom: 10px solid #f8f8f8; }
+  border-bottom: 10px solid #f0f0f0; }
 .user-wrapper .cr-slider-wrap {
   margin-top: 16px !important; }
 .user-wrapper .croppie-container {
@@ -510,6 +574,50 @@ footer {
 /*group*/
 .group-wrapper .added-at-wrapper i {
   margin-right: 5px; }
+
+/*----*/
+/*file*/
+.file-wrapper code {
+  background: white;
+  padding: 0px;
+  font-family: "Ubuntu-monospace";
+  font-size: 14px;
+  text-overflow: initial;
+  overflow: visible;
+  overflow-x: scroll;
+  white-space: pre; }
+.file-wrapper code * {
+  padding: 0px;
+  font-family: "Ubuntu-monospace";
+  font-size: 14px; }
+.file-wrapper pre {
+  background: transparent;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  margin-bottom: -10px; }
+
+/*----*/
+/*pack-settings-wrapper*/
+.pack-settings-wrapper #update-permissions-form .fa-eye, .pack-settings-wrapper #update-permissions-form .fa-pencil-square-o {
+  font-size: 20px;
+  line-height: 20px;
+  margin-right: 5px; }
+.pack-settings-wrapper #update-permissions-form .fa-user, .pack-settings-wrapper #update-permissions-form .fa-users {
+  margin-right: 5px; }
+.pack-settings-wrapper #update-permissions-form .form-control {
+  height: 20px;
+  font-size: 14px;
+  padding: 0px 5px;
+  line-height: 18px;
+  border-left: 0px; }
+.pack-settings-wrapper #update-permissions-form .input-group-addon {
+  height: 20px;
+  padding: 0px 3px;
+  border-right: 0px;
+  background: white; }
+.pack-settings-wrapper #new-permission-button {
+  margin-right: 10px; }
 
 /*----*/
 

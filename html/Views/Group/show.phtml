@@ -11,7 +11,7 @@
 								<p>Owner</p>
 							</div>
 							<div class="col-xs-7 col-sm-6">
-								<strong><?=$group->getOwner()->getUsername()?></strong>
+								<a href="/user/<?=$group->getOwner()->getUsername()?>" class="link"><strong><?=$group->getOwner()->getUsername()?></strong></a>
 							</div>
 						</div>
 						<div class="row">
@@ -73,7 +73,7 @@
 						<?php endif; ?>
 					<?php endforeach; ?>
 				<?php else: ?>
-					<p>There is not any user here.</p>
+					<p>There are not any users here.</p>
 				<?php endif; ?>
 			</div>
 			<?php if($isOwner): ?>
