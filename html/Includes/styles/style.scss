@@ -56,6 +56,7 @@ h3{
 	margin-bottom: 10px;
 }
 p{
+	color: #222222;
 	font-size: 14px;
 }
 a{
@@ -127,6 +128,9 @@ section, .modal{
 	.btn-default:active:hover{
 		background-color: black;
 	}
+	.btn-default:focus{
+		background-color: black;
+	}
 	.btn-danger{
 		background-color: #ab2c00;
 	}
@@ -137,6 +141,9 @@ section, .modal{
 		background-color: #822100;
 	}
 	.btn-danger:active:hover{
+		background-color: #822100;
+	}
+	.btn-danger:focus{
 		background-color: #822100;
 	}
 	.btn-success{
@@ -164,6 +171,9 @@ section, .modal{
 		background-color: #014450;
 	}
 	.btn-info:active:hover{
+		background-color: #014450;
+	}
+	.btn-info:focus{
 		background-color: #014450;
 	}
 
@@ -825,10 +835,30 @@ footer{
 			padding: 0px 3px;
 			border-right: 0px;
 			background: white;
+			color: #222222;
 		}
 	}
-	#new-permission-button{
+	button[name="new-permission-button"]{
 		margin-right: 10px;
+	}
+}
+
+/*----*/
+
+/*pack-settings-wrapper*/
+
+.group-wrapper{
+	#users-list{
+		.form-control{
+			height: 20px;
+			font-size: 14px;
+			padding: 0px 5px;
+			line-height: 18px;
+		}
+	}
+	button[name="save-button"]{
+		margin-right: 10px;
+		display: none;
 	}
 }
 

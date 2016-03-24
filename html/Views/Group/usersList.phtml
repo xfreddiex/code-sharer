@@ -1,0 +1,30 @@
+<?php if($group->getUsers()->count()): ?>
+	<?php foreach($group->getUsers() as $index => $user): ?>
+		<div class="row">
+			<div class="col-xs-6">
+				<a class="link" href="/user/<?=$user->getUsername()?>">
+					<?=$user->getUsername()?>
+				</a>
+			</div>
+			<?php if($permission == 2): ?>
+				<div class="col-xs-5 text-right">
+					<i class="fa fa-user-plus"></i>
+					<?=$user->getAddedToGroup($group, "j M o")?>
+				</div>
+				<div class="col-xs-1 text-right">
+					<button class="btn btn-danger btn-sm" name="remove-user" group="<?=$group->getId()?>" user="<?=$user->getUsername()?>"><i class="fa fa-user-times"></i></button>
+				</div>
+			<?php else: ?>
+				<div class="col-xs-6 text-right">
+					<i class="fa fa-user-plus"></i>
+					<?=$user->getAddedToGroup($group, "j M o")?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php if($index != $group->getUsers()->count() - 1): ?>
+			<hr />
+		<?php endif; ?>
+	<?php endforeach; ?>
+<?php else: ?>
+	<p>There are no users here.</p>
+<?php endif; ?>

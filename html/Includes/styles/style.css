@@ -44,6 +44,7 @@ h3 {
   margin-bottom: 10px; }
 
 p {
+  color: #222222;
   font-size: 14px; }
 
 a {
@@ -105,6 +106,8 @@ section .btn-default:active, .modal .btn-default:active {
   background-color: black; }
 section .btn-default:active:hover, .modal .btn-default:active:hover {
   background-color: black; }
+section .btn-default:focus, .modal .btn-default:focus {
+  background-color: black; }
 section .btn-danger, .modal .btn-danger {
   background-color: #ab2c00; }
 section .btn-danger:hover, .modal .btn-danger:hover {
@@ -112,6 +115,8 @@ section .btn-danger:hover, .modal .btn-danger:hover {
 section .btn-danger:active, .modal .btn-danger:active {
   background-color: #822100; }
 section .btn-danger:active:hover, .modal .btn-danger:active:hover {
+  background-color: #822100; }
+section .btn-danger:focus, .modal .btn-danger:focus {
   background-color: #822100; }
 section .btn-success, .modal .btn-success {
   background-color: #9DA900; }
@@ -130,6 +135,8 @@ section .btn-info:hover, .modal .btn-info:hover {
 section .btn-info:active, .modal .btn-info:active {
   background-color: #014450; }
 section .btn-info:active:hover, .modal .btn-info:active:hover {
+  background-color: #014450; }
+section .btn-info:focus, .modal .btn-info:focus {
   background-color: #014450; }
 section .btn-upload, .modal .btn-upload {
   position: relative;
@@ -615,9 +622,21 @@ footer {
   height: 20px;
   padding: 0px 3px;
   border-right: 0px;
-  background: white; }
-.pack-settings-wrapper #new-permission-button {
+  background: white;
+  color: #222222; }
+.pack-settings-wrapper button[name="new-permission-button"] {
   margin-right: 10px; }
+
+/*----*/
+/*pack-settings-wrapper*/
+.group-wrapper #users-list .form-control {
+  height: 20px;
+  font-size: 14px;
+  padding: 0px 5px;
+  line-height: 18px; }
+.group-wrapper button[name="save-button"] {
+  margin-right: 10px;
+  display: none; }
 
 /*----*/
 

@@ -41,7 +41,7 @@
 					<div class="panel-body">
 						<p><?=$group->getDescription()?></p>
 					</div>
-					<?php if($isOwner): ?>
+					<?php if($permission == 2): ?>
 						<div class="panel-footer text-right">
 							<button class="btn btn-success">Edit description</button>	
 						</div>
@@ -50,35 +50,17 @@
 			</div>
 		</div>
 
-		<div class="panel panel-default" id="user-info">
+		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2>Users</h2>
 			</div>
-			<div class="panel-body">
-				<?php if($group->getUsers()->count()): ?>
-					<?php foreach($group->getUsers() as $index => $user): ?>
-						<div class="row">
-							<div class="col-xs-6">
-								<a class="link" href="/user/<?=$user->getUsername()?>">
-									<?=$user->getUsername()?>
-								</a>
-							</div>
-							<div class="col-xs-6 text-right added-at-wrapper">
-								<i class="fa fa-user-plus"></i>
-								<?=$user->getAddedToGroup($group, "j M o")?>
-							</div>
-						</div>
-						<?php if($index != $group->getUsers()->count() - 1): ?>
-							<hr />
-						<?php endif; ?>
-					<?php endforeach; ?>
-				<?php else: ?>
-					<p>There are not any users here.</p>
-				<?php endif; ?>
+			<div class="panel-body" id="users-list">
+				<?php $this->viewFile("Views/Group/usersList.phtml"); ?>
 			</div>
-			<?php if($isOwner): ?>
+			<?php if($permission == 2): ?>
 				<div class="panel-footer text-right">
-					<button class="btn btn-success">Add user <i class="fa fa-plus"></i></a>
+					<button class="btn btn-success" name="save-button" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save</a>
+					<button class="btn btn-success" name="add-user"><i class="fa fa-user-plus"></i> Add</a>
 				</div>
 			<?php endif; ?>
 		</div>

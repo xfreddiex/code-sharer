@@ -33,6 +33,7 @@ class PackController extends BaseController{
 		$this->addBefore("getFileContent", array("load", "loadPermission", "loadFile"));
 		$this->addBefore("filesList", array("load", "loadPermission"));
 		$this->addBefore("settings", array("userLogged", "load", "loadPermission"));
+		$this->addBefore("update", array("userLogged", "load", "loadPermission"));
 
 		$this->data["fileExtensionAccept"] = array(
 			"txt",
@@ -122,7 +123,7 @@ class PackController extends BaseController{
 
 	protected function filesList(){
 		if(!$this->data["permission"]){
-			$this->sendFlashMessage("You have not permission to delete pack with ID ".$this->data["pack"]->getId().".", "error");
+			$this->redirect("/");
 		}	
 		else{
 			$this->view();
@@ -276,7 +277,7 @@ class PackController extends BaseController{
 	protected function update(){
 		if($this->data["permission"] != 3 ){
 			$this->sendFlashMessage("You have not permission to change pack with ID ".$this->data["pack"]->getId().".", "error");
-			$this->redirect("/pack/".$this->data["pack"]->getId());
+			$this->redirect("/");
 		}
 		$pack = $this->data["pack"];
 		if(isset($_POST["name"]))
@@ -299,7 +300,7 @@ class PackController extends BaseController{
 		}
 		else
 			$this->sendFlashMessage("Pack data has been successfuly updated.", "success");
-		$this->redirect("/pack/".$pack->getId());
+		$this->redirect($this->data["referersURI"]);
 	}
 
 	protected function updatePermissions(){
@@ -311,7 +312,7 @@ class PackController extends BaseController{
 
 		if(isset($_POST["user"])){
 			foreach($_POST["user"] as $user){
-				if(!isset($user["username"]))
+				if(!isset($user["username"]) || $user["username"] == "")
 					continue;
 				$u = UserQuery::create()->findOneByUsername($user["username"]);
 				if($u){
@@ -337,7 +338,7 @@ class PackController extends BaseController{
 
 		if(isset($_POST["group"])){
 			foreach($_POST["group"] as $group){
-				if(!isset($group["name"]))
+				if(!isset($group["name"]) || $group["name"] == "")
 					continue;
 				$g = GroupQuery::create()->filterByOwner($this->data["loggedUser"])->filterByName($group["name"])->findOne();
 				if($g && $g->getOwnerId() == $this->data["loggedUser"]->getId()){

@@ -3,7 +3,7 @@ $(document).ready(function(){
 	bindDeleteButtons();
 
 	function bindDeleteButtons(){
-			$('button[name="delete-file"]').click(function(){
+		$('button[name="delete-file"]').click(function(){
 			var url = "/pack/" + $(this).attr("pack") + "/" + $(this).attr("file") + "/delete";
 			$.ajax({
 				type: 'GET',

@@ -19,10 +19,11 @@ class GroupController extends BaseController{
 		$this->addBefore("show", array("userLogged", "load"));
 		$this->addBefore("update", array("userLogged", "load"));
 		$this->addBefore("addUsers", array("userLogged", "load"));
-		$this->addBefore("removeUsers", array("userLogged", "load"));
+		$this->addBefore("removeUser", array("userLogged", "load"));
 		$this->addBefore("newGroup", array("userLogged"));
+		$this->addBefore("usersList", array("userLogged", "load"));
 
-		$this->data["isOwner"] = false;
+		$this->data["permission"] = 0;
 
 	}
 
@@ -36,7 +37,7 @@ class GroupController extends BaseController{
 			$this->redirect("/");
 		}
 		if($this->data["group"]->getOwnerId() == $this->data["loggedUser"]->getId()){
-			$this->data["isOwner"] = true;
+			$this->data["permission"] = 2;
 		}
 		$this->viewFile($this->template);
 	}
@@ -122,18 +123,17 @@ class GroupController extends BaseController{
 
 	protected function addUsers($users){
 		setContentType("json");
-		if(isset($_POST["users"])){
-			$users = explode(",", $_POST["users"]);
-			foreach($users as $username){
+		if(isset($_POST["username"])){
+			foreach($_POST["username"] as $username){
 				$u = UserQuery::create()->findOneByUsername($username);
 				if($u){
 					if($u == $this->data["loggedUser"]){
-						$response["messages"][] = "You can not add yourself to group.";
+						$this->data["response"]["messages"][] = "You can not add yourself to group.";
 						continue;
 					}
 					$userGroup = UserGroupQuery::create()->filterByUser($u)->filterByGroup($this->data["group"])->findOne();
 					if($userGroup){
-						$response["messages"][] = "User " . $username . " is already in this group.";
+						$this->data["response"]["messages"][] = "User " . $username . " is already in this group.";
 						continue;	
 					}
 					$this->data["group"]->addUser($u);
@@ -143,56 +143,37 @@ class GroupController extends BaseController{
 					$response["messages"][] = "User " . $username . " does not exist.";
 			}
 		}
-		/*
-		if(isset($_POST["group"])){
-			foreach($_POST["group"] as $group){
-				if(!isset($group["id"]))
-					continue;
-				$g = UserQuery::create()->filterByOwner($this->data["loggedUser"])->filterById($group["id"])->findOne();
-				if($g){
-					$users->getUsers();
-					foreach($users as $user) {
-						$userGroup = UserGroupQuery::create()->filterByUser($user)->filterByGroup($this->data["group"]);
-						if($userGroup){
-							$response["messages"][] = "User " . $user["username"] . " is already in this group.";
-							continue;	
-						}
-						$userGroup = new UserGroup();
-						$userGroup->setUser($user);
-						$userGroup->setGroup($this->data["group"]);	
-						$userGroup->save();
-					}
-				}
-				else
-					$response["messages"][] = "You can add groups owned only by you. Group with ID ". $group["id"] ." is not your.";
-			}
-		}*/
 
-		if(isset($response))
-			$this->viewString(json_encode($response));
+		$this->viewString(json_encode($this->data["response"]));
 	}
 
-	protected function removeUsers(){
+	protected function removeUser($params){
 		setContentType("json");
 		$response["messages"] = array();
-		if(isset($_POST["user"])){
-			foreach($_POST["user"] as $user){
-				if(!isset($user["username"]))
-					continue;
-				$user = UserQuery::create()->findOneByUsername($user["username"]);
-				if($user){
-					$userGroup = UserGroupQuery::create()->filterByUser($user)->filterByGroup($this->data["group"])->findOne();
-					if($userGroup)
-						$userGroup->delete();
-					else
-						$response["messages"][] = "User " . $user["username"] . " is not in group ".$this->data["group"]->getId().".";
-				}
+		if(isset($params["username"])){
+			$user = UserQuery::create()->findOneByUsername($params["username"]);
+			if($user){
+				$userGroup = UserGroupQuery::create()->filterByUser($user)->filterByGroup($this->data["group"])->findOne();
+				if($userGroup)
+					$userGroup->delete();
 				else
-					$response["messages"][] = "User " . $user["username"] . " does not exist.";
+					$response["messages"][] = "User " . $user["username"] . " is not in group ".$this->data["group"]->getId().".";
 			}
+			else
+				$response["messages"][] = "User " . $user["username"] . " does not exist.";
 		}
-
+		
 		$this->viewString(json_encode($response));
+	}
+
+	protected function usersList(){
+		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count()){
+			$this->redirect("/");
+		}
+		if($this->data["group"]->getOwnerId() == $this->data["loggedUser"]->getId()){
+			$this->data["permission"] = 2;
+		}
+		$this->view();
 	}
 
 	protected function delete(){
