@@ -1,6 +1,8 @@
 <div  class="pack-wrapper">
 	<div class="container">
-		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<div id="message-box">
+			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		</div>
 		<h1><?=$pack->getName()?></h1>
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">
@@ -48,11 +50,13 @@
 						<h2>Description</h2>
 					</div>
 					<div class="panel-body">
-						<p><?=$pack->getDescription()?></p>
+						<p id="description"><?=$pack->getDescription()?></p>
+						<textarea id="description-edit" rows="4" cols="50" class="form-control" name="description" validation="ajax" validation-event="keyup" validation-type="description" placeholder="Write something about this group."><?=$pack->getDescription()?></textarea>
 					</div>
 					<?php if($permission == 3): ?>
 						<div class="panel-footer text-right">
-							<button class="btn btn-success">Edit description</button>	
+							<button class="btn btn-info" name="edit-description"><i class="fa fa-pencil-square-o"></i> Edit</button>
+							<button class="btn btn-success" name="save-description" group="<?=$pack->getId()?>"><i class="fa fa-save"></i> Save</button>
 						</div>
 					<?php endif; ?>
 				</div>

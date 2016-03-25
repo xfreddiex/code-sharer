@@ -275,6 +275,8 @@ class PackController extends BaseController{
 	}
 
 	protected function update(){
+		setContentType("json");
+
 		if($this->data["permission"] != 3 ){
 			$this->sendFlashMessage("You have not permission to change pack with ID ".$this->data["pack"]->getId().".", "error");
 			$this->redirect("/");
@@ -290,7 +292,7 @@ class PackController extends BaseController{
 		}
 		$pack->setPrivate(isset($_POST["private"]));
 
-		if($pack->save()){
+		if(!$pack->save()){
     		$failures = $pack->getValidationFailures();
 			if(count($failures) > 0){
 				foreach($failures as $failure){
@@ -298,9 +300,14 @@ class PackController extends BaseController{
 				}
 			}
 		}
-		else
-			$this->sendFlashMessage("Pack data has been successfuly updated.", "success");
-		$this->redirect($this->data["referersURI"]);
+		else{
+			$this->data["response"]["data"]["description"] = $pack->getDescription();
+			$this->data["response"]["data"]["name"] = $pack->getName();
+			$this->data["response"]["data"]["tags"] = $pack->getTags();
+			$this->data["response"]["data"]["private"] = $pack->getPrivate();
+		}
+		
+		$this->viewString(json_encode($this->data["response"]));
 	}
 
 	protected function updatePermissions(){

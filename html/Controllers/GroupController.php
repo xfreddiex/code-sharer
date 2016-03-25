@@ -102,23 +102,30 @@ class GroupController extends BaseController{
 	}
 
 	protected function update(){
+		setContentType("json");
+
 		$group = $this->data["group"];
 		if(isset($_POST["name"]))
 			$group->setName($_POST["name"]);
 		if(isset($_POST["description"]))
 			$group->setDescription($_POST["description"]);
 
-		if($group->save()){
+		if(!$group->save()){
 			$failures = $group->getValidationFailures();
 			if(count($failures) > 0){
 				foreach($failures as $failure){
+					$this->setStatus("error");
 					$this->sendFlashMessage("Group data has not been changeg. ".$failure->getMessage(), "error");
 				}
 			}
 		}
-		else
-			$this->sendFlashMessage("Group data has been successfuly updated.", "success");
-		$this->redirect("/group/".$group->getId());	
+		else{
+			$this->data["response"]["data"]["description"] = $this->data["group"]->getDescription();
+			$this->data["response"]["data"]["name"] = $this->data["group"]->getName();
+		}
+		
+
+		$this->viewString(json_encode($this->data["response"]));
 	}
 
 	protected function addUsers($users){

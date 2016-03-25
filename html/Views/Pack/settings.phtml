@@ -1,31 +1,32 @@
 <div  class="pack-settings-wrapper">
 	<div class="container">
-		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<div id="message-box">
+			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		</div>
+		
 		<h1><a href="/pack/<?=$pack->getId()?>" class="link text-muted"><?=$pack->getName()?></a> <span class="text-muted">/</span> Settings</h1>
 		
 		<div class="panel panel-default" id="user-info">
 			<div class="panel-heading">
 				<h2>Accessibility</h2>
 			</div>
-			<form action="/pack/<?=$pack->getId()?>/update" method="POST" class="form-horizontal">
-				<div class="panel-body">
-					<div class="form-group">
-						<label for="private" class="col-sm-3 control-label">Private</label>
-						<div class="col-sm-1">
-							<label class="checkbox">
-								<input type="checkbox" class="form-control" name="private" value="1" <?=($pack->getPrivate() ? "checked" : null)?>>
-								<i class="fa checkbox-button"></i>
-							</label>
-						</div>
-						<p class="col-sm-8 help-block">
-							If your pack is private, nobody without permission will see it.
-						</p>
+			<div class="panel-body class="form-horizontal"">
+				<div class="form-group">
+					<label for="private" class="col-sm-3 control-label">Private</label>
+					<div class="col-sm-1">
+						<label class="checkbox">
+							<input type="checkbox" class="form-control" name="private" value="1" <?=($pack->getPrivate() ? "checked" : null)?>>
+							<i class="fa checkbox-button"></i>
+						</label>
 					</div>
+					<p class="col-sm-8 help-block">
+						If your pack is private, nobody without permission will see it.
+					</p>
 				</div>
-				<div class="panel-footer text-right">
-					<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
-				</div>
-			</form>	
+			</div>
+			<div class="panel-footer text-right">
+				<button type="submit" class="btn btn-success" name="save-private" pack="<?=$pack->getId()?>"><i class="fa fa-save"></i> Save</a>
+			</div>	
 		</div>	
 
 		<div class="panel panel-default">

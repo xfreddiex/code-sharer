@@ -22,7 +22,9 @@ abstract class Controller{
 		$this->data['description'] = '';
 
 		$this->data['flash_messages'] = array();
-		$this->data["response"] = array();
+		$this->data["response"]["status"] = "ok";
+		$this->data["response"]["messages"] = array();
+		$this->data["response"]["data"] = array();
 	}
 
 	public function __call($method, $params){
@@ -76,13 +78,13 @@ abstract class Controller{
 		}
 	}
 
-	protected function sendFlashMessage($message, $type = "info"){
+	protected function sendFlashMessage($text, $type = "info"){
 		if(in_array("application/json", array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))){
-			$this->data["response"]["messages"][] = array("message" => $message, "type" => $type);
+			$this->data["response"]["messages"][] = array("text" => $text, "type" => $type);
 			return;
 		}
 		$type = $type == "error" ? "danger" : $type;
-		$_SESSION["flash_messages"][] = array("message" => $message, "type" => $type);
+		$_SESSION["flash_messages"][] = array("message" => $text, "type" => $type);
 	}
 
 	protected function sendFlashMessageNow($message, $type = "info"){
@@ -132,5 +134,9 @@ abstract class Controller{
 
 	protected function setContentType($type){
 		header("Content-Type: ".$type);
+	}
+
+	protected function setStatus($status){
+		$this->data["response"]["status"] = $status;
 	}
 }

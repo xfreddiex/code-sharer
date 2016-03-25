@@ -603,6 +603,8 @@ footer {
   padding: 0px;
   border: 0px;
   margin-bottom: -10px; }
+.file-wrapper #description {
+  white-space: pre; }
 
 /*----*/
 /*pack-settings-wrapper*/
@@ -634,9 +636,30 @@ footer {
   font-size: 14px;
   padding: 0px 5px;
   line-height: 18px; }
-.group-wrapper button[name="save-button"] {
+.group-wrapper button[name="save-users"] {
   margin-right: 10px;
   display: none; }
+.group-wrapper button[name="save-description"] {
+  display: none; }
+.group-wrapper textarea[name="description"] {
+  resize: vertical;
+  min-height: 105px;
+  display: none; }
+.group-wrapper #description {
+  white-space: pre; }
+
+/*----*/
+/*pack*/
+.pack-wrapper #description {
+  white-space: pre; }
+.pack-wrapper button[name="save-description"] {
+  display: none; }
+.pack-wrapper textarea[name="description"] {
+  resize: vertical;
+  min-height: 105px;
+  display: none; }
+.pack-wrapper #description {
+  white-space: pre; }
 
 /*----*/
 

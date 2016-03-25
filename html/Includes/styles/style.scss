@@ -807,6 +807,9 @@ footer{
 		border: 0px;
 		margin-bottom: -10px;
 	}
+	#description{
+		white-space: pre;
+	}
 }
 
 /*----*/
@@ -856,9 +859,41 @@ footer{
 			line-height: 18px;
 		}
 	}
-	button[name="save-button"]{
+	button[name="save-users"]{
 		margin-right: 10px;
 		display: none;
+	}
+	button[name="save-description"]{
+		display: none;
+	}
+	textarea[name="description"]{
+		resize: vertical;
+		min-height: 105px;
+		display: none;
+	}
+	#description{
+		white-space: pre;
+	}
+}
+
+/*----*/
+
+/*pack*/
+
+.pack-wrapper{
+	#description{
+		white-space: pre;
+	}
+	button[name="save-description"]{
+		display: none;
+	}
+	textarea[name="description"]{
+		resize: vertical;
+		min-height: 105px;
+		display: none;
+	}
+	#description{
+		white-space: pre;
 	}
 }
 

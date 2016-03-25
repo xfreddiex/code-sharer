@@ -39,11 +39,13 @@
 						<h2>Description</h2>
 					</div>
 					<div class="panel-body">
-						<p><?=$group->getDescription()?></p>
+						<p id="description"><?=$group->getDescription()?></p>
+						<textarea id="description-edit" rows="4" cols="50" class="form-control" name="description" validation="ajax" validation-event="keyup" validation-type="description" placeholder="Write something about this group."><?=$group->getDescription()?></textarea>
 					</div>
 					<?php if($permission == 2): ?>
 						<div class="panel-footer text-right">
-							<button class="btn btn-success">Edit description</button>	
+							<button class="btn btn-info" name="edit-description"><i class="fa fa-pencil-square-o"></i> Edit</button>	
+							<button class="btn btn-success" name="save-description" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save</button>
 						</div>
 					<?php endif; ?>
 				</div>
@@ -59,7 +61,7 @@
 			</div>
 			<?php if($permission == 2): ?>
 				<div class="panel-footer text-right">
-					<button class="btn btn-success" name="save-button" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save</a>
+					<button class="btn btn-success" name="save-users" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save</a>
 					<button class="btn btn-success" name="add-user"><i class="fa fa-user-plus"></i> Add</a>
 				</div>
 			<?php endif; ?>
