@@ -23,7 +23,8 @@ return array(
 	array('uri' => '/pack/[id]/add-files', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addFiles'),
 	array('uri' => '/pack/[id]/update-permissions', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updatePermissions'),
 	array('uri' => '/pack/[id]/files-list', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'filesList'),
-	array('uri' => '/pack/[id]/add-comment', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addComment'),
+	array('uri' => '/pack/[id]/add-comment', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addComment'),
+	array('uri' => '/pack/[id]/get-comments', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'comments'),
 	array('uri' => '/pack/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'validateOne'),
 	array('uri' => '/pack/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'show'),
 
@@ -43,6 +44,7 @@ return array(
 	array('uri' => '/pack/[id]/[name]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'showFile'),
 	array('uri' => '/pack/[id]/[name]/content', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'getFileContent'),
 	array('uri' => '/pack/[id]/[name]/delete', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'deleteFile'),
+	array('uri' => '/pack/[id]/[name]/update', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updateFile'),
 
 	//Errors
 	"error404" => array('uri' => '/404', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Error', 'method' => 'error404'),

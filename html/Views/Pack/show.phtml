@@ -56,14 +56,14 @@
 					<?php if($permission == 3): ?>
 						<div class="panel-footer text-right">
 							<button class="btn btn-info" name="edit-description"><i class="fa fa-pencil-square-o"></i> Edit</button>
-							<button class="btn btn-success" name="save-description" group="<?=$pack->getId()?>"><i class="fa fa-save"></i> Save</button>
+							<button class="btn btn-success" name="save-description" pack="<?=$pack->getId()?>"><i class="fa fa-save"></i> Save</button>
 						</div>
 					<?php endif; ?>
 				</div>
 			</div>
 		</div>
 
-		<div class="panel panel-default" id="user-info">
+		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-xs-8">
@@ -71,7 +71,7 @@
 					</div>
 					<div class="col-xs-4 text-right">
 						<?php if($permission >=2): ?>
-							<button class="btn btn-success"data-toggle="collapse" data-target="#upload-files-form"><i class="fa fa-file"></i> Add</button>
+							<button class="btn btn-info"data-toggle="collapse" data-target="#upload-files-form"><i class="fa fa-file"></i> Add</button>
 						<?php endif; ?>
 					</div>
 				</div>
@@ -96,6 +96,41 @@
 				<?php $this->viewFile("Views/Pack/filesList.phtml"); ?>
 			</div>
 		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-8">
+						<h2>Comments</h2>
+					</div>
+					<div class="col-xs-4 text-right">
+						<?php if($loggedUser): ?>
+							<button class="btn btn-info" data-toggle="collapse" data-target="#comment-form"><i class="fa fa-commenting"></i> Comment</button>
+						<?php endif; ?>
+					</div>
+				</div>
+			</div>
+
+			<?php if($loggedUser): ?>
+				<form class="collapse" id="comment-form">	
+					<div class="panel-body">
+						<textarea id="comment" rows="2" cols="50" class="form-control" name="comment" validation="ajax" validation-event="keyup" validation-type="comment" placeholder="Write a comment for this pack."></textarea>
+					</div>
+					<div class="panel-footer text-right">
+						<button type="button" class="btn btn-success" name="send-comment" pack="<?=$pack->getId()?>"><i class="fa fa-send"></i> Send</button>
+					</div>
+				</form>
+			<?php endif; ?>
+
+			<div class="panel-body" id="comments">
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function(e){
+					$('#comments').load('/pack/<?=$pack->getId()?>/get-comments?page=1');
+				});
+			</script>
+		</div>
+
 	</div>
 
 </div>

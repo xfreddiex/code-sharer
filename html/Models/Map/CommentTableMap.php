@@ -203,7 +203,7 @@ class CommentTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-            'validate' => array('rule1' => array ('column' => 'text','validator' => 'Length','options' => array ('max' => 1024,'maxMessage' => 'Maximal text length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'textt','validator' => 'NotBlank','options' => array ('message' => 'Comment should not be blank.',),), ),
+            'validate' => array('rule1' => array ('column' => 'text','validator' => 'Length','options' => array ('max' => 1024,'maxMessage' => 'Maximal text length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'text','validator' => 'NotBlank','options' => array ('message' => 'Comment should not be blank.',),), ),
         );
     } // getBehaviors()
 

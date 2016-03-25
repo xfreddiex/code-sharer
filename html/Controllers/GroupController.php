@@ -15,11 +15,11 @@ class GroupController extends BaseController{
 		parent::__construct();
 
 		$this->addBefore("create", array("userLogged"));
-		$this->addBefore("delete", array("userLogged", "load"));
-		$this->addBefore("show", array("userLogged", "load"));
-		$this->addBefore("update", array("userLogged", "load"));
-		$this->addBefore("addUsers", array("userLogged", "load"));
-		$this->addBefore("removeUser", array("userLogged", "load"));
+		$this->addBefore("delete", array("userLogged", "load", "loadPermission", "isOwner"));
+		$this->addBefore("show", array("userLogged", "load", "loadPermission"));
+		$this->addBefore("update", array("userLogged", "load", "loadPermission", "isOwner"));
+		$this->addBefore("addUsers", array("userLogged", "load", "loadPermission", "isOwner"));
+		$this->addBefore("removeUser", array("userLogged", "load", "loadPermission", "isOwner"));
 		$this->addBefore("newGroup", array("userLogged"));
 		$this->addBefore("usersList", array("userLogged", "load"));
 
@@ -32,12 +32,9 @@ class GroupController extends BaseController{
 	*/
 
 	protected function show(){
-		if($this->data["group"]->getOwnerId() != $this->data["loggedUser"]->getId() && !UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count()){
+		if(!$this->data["permission"]){
 			$this->sendFlashMessage("You dont have permission to view this group.", "error");
 			$this->redirect("/");
-		}
-		if($this->data["group"]->getOwnerId() == $this->data["loggedUser"]->getId()){
-			$this->data["permission"] = 2;
 		}
 		$this->viewFile($this->template);
 	}
@@ -112,9 +109,9 @@ class GroupController extends BaseController{
 
 		if(!$group->save()){
 			$failures = $group->getValidationFailures();
+			$this->setStatus("error");
 			if(count($failures) > 0){
 				foreach($failures as $failure){
-					$this->setStatus("error");
 					$this->sendFlashMessage("Group data has not been changeg. ".$failure->getMessage(), "error");
 				}
 			}
@@ -236,6 +233,26 @@ class GroupController extends BaseController{
 		else if($this->data["group"]->getDeletedAt()){
 			$this->sendFlashMessage("Group with ID ".$params["id"]." was deleted on ".$this->data["group"]->getDeletedAt("j M o").".", "error");
 			$this->redirect("/404");	
+		}
+		return true;
+	}
+
+	protected function loadPermission(){
+		if($this->data["group"]->getOwnerId() == $this->data["loggedUser"]->getId()){
+			$this->data["permission"] = 2;
+			return;
+		}
+		if(UserGroupQuery::create()->filterByUser($this->data["loggedUser"])->filterByGroup($this->data["group"])->count()){
+			$this->data["permission"] = 1;
+			return;
+		}
+		return true;
+	}
+
+	protected function isOwner(){
+		if($this->data["permission"] != 2){	
+			$this->sendFlashMessage("You must be owner of this group.", "error");
+			$this->redirect("/");	
 		}
 		return true;
 	}

@@ -114,7 +114,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="64" required="true"/>
         <column name="description" type="varchar" size="256" required="false"/>
-        <column name="type" type="varchar" size="10" required="true"/>
+        <column name="type" type="varchar" size="32" required="true"/>
         <column name="size" type="integer" required="true"/>
         <column name="content" type="varbinary" required="true"/>
         <column name="pack_id" type="integer" required="true"/>
@@ -178,7 +178,7 @@
 
         <behavior name="validate">
             <parameter name="rule1" value='{column: text, validator: Length, options: {max : 1024, maxMessage: "Maximal text length is {{ limit }} characters."}}' />
-            <parameter name="rule2" value='{column: textt, validator: NotBlank, options: {message: "Comment should not be blank."}}' />
+            <parameter name="rule2" value='{column: text, validator: NotBlank, options: {message: "Comment should not be blank."}}' />
         </behavior>
 
     </table>

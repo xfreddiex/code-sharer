@@ -1,0 +1,74 @@
+<?php if(!$comments->isEmpty()): ?>
+	<?php foreach($comments as $index => $comment): ?>
+		<div class="row">
+			<div class="col-xs-4 col-sm-3 col-md-2">
+				<div>
+					<strong><?=$comment->getCreatedAt("j M o")?></strong>
+				</div>
+				<div>
+					<a href="/user/<?=$comment->getUser()->getUsername()?>" class="link"><strong><?=$comment->getUser()->getUsername()?></strong></a>
+				</div>
+			</div>
+			<div class="col-xs-8 col-sm-9 col-md-10">
+				<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+			</div>
+		</div>
+		<?php if($index != $comments->count() - 1): ?>
+			<hr />
+		<?php endif; ?>
+	<?php endforeach; ?>
+
+	<?php if($comments->haveToPaginate()): ?>
+		<hr />
+
+		<div class="text-center">
+			<ul class="pagination">
+				<li><button><i class="fa fa-chevron-left"></i></button></li>
+
+				<?php if($comments->getLastPage() <= 9): ?>
+
+					<?php for($i = 1; $i <= $comments->getLastPage(); $i++): ?>
+						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php endfor; ?>
+
+				<?php elseif($comments->getPage() <= 5): ?>
+
+					<?php for($i = 1; $i <= 8; $i++): ?>
+						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php endfor; ?>
+
+					<li><button>&#133;</button></li>
+					<li><button><?=$comments->getLastPage()?></button></li>
+
+				<?php elseif($comments->getLastPage() - $comments->getPage() <= 4): ?>
+
+					<li><button>1</button></li>
+					<li><button>&#133;</button></li>
+
+					<?php for($i = $comments->getLastPage() - 7; $i <= $comments->getLastPage(); $i++): ?>
+						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php endfor; ?>
+
+				<?php else: ?>
+
+					<li><button>1</button></li>
+					<li><button>&#133;</button></li>
+
+					<?php for($i = $comments->getPage() - 3; $i <= $comments->getPage() + 3; $i++): ?>
+						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php endfor; ?>
+
+					<li><button>&#133;</button></li>
+					<li><button><?=$comments->getLastPage()?></button></li>
+
+				<?php endif; ?>
+
+				<li><button><i class="fa fa-chevron-right"></i></span></button></li>
+			</ul>
+		</div>
+	<?php endif; ?>
+
+<?php else: ?>
+	<p>There are no comments here.</p>
+<?php endif; ?>
+

@@ -20,7 +20,7 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 }
 
 html{
-	min-width: 320px;
+	min-width: 420px;
 }
 section .container{
 	padding-top: 20px;
@@ -330,9 +330,23 @@ section, .modal{
 
 /*pagination*/
 
-.pagination a{
+.pagination button{
+	background: 0px;
 	border-radius: 0px !important;
 	border: 0px !important;
+	color: #025A6A;
+}
+.pagination button.active{
+	font-size: 16px;
+	line-height: 16px;
+	font-weight: bold;
+}
+.pagination button:hover{
+	color: #014450;
+	text-decoration: none;
+}
+.pagination{
+	margin: 10px 0px;
 }
 
 /*----*/
@@ -792,7 +806,7 @@ footer{
 		font-size: 14px;
 		text-overflow: initial;
     	overflow: visible;
-    	overflow-x: scroll;
+    	overflow-x: auto;
     	white-space: pre;
 	}
 	code *{
@@ -806,9 +820,6 @@ footer{
 		padding: 0px;
 		border: 0px;
 		margin-bottom: -10px;
-	}
-	#description{
-		white-space: pre;
 	}
 }
 
@@ -848,7 +859,7 @@ footer{
 
 /*----*/
 
-/*pack-settings-wrapper*/
+/*group-wrapper*/
 
 .group-wrapper{
 	#users-list{
@@ -863,17 +874,6 @@ footer{
 		margin-right: 10px;
 		display: none;
 	}
-	button[name="save-description"]{
-		display: none;
-	}
-	textarea[name="description"]{
-		resize: vertical;
-		min-height: 105px;
-		display: none;
-	}
-	#description{
-		white-space: pre;
-	}
 }
 
 /*----*/
@@ -881,20 +881,27 @@ footer{
 /*pack*/
 
 .pack-wrapper{
-	#description{
-		white-space: pre;
-	}
-	button[name="save-description"]{
-		display: none;
-	}
-	textarea[name="description"]{
-		resize: vertical;
-		min-height: 105px;
-		display: none;
-	}
-	#description{
-		white-space: pre;
-	}
+	
 }
 
 /*----*/
+
+#description{
+	word-wrap: break-word;
+	word-break: break-all;
+	white-space: pre-line;
+}
+button[name="save-description"]{
+	display: none;
+}
+textarea[name="description"]{
+	resize: vertical;
+	min-height: 70px;
+	display: none;
+	text-overflow: clip;
+}
+
+p.comment{
+	word-wrap: break-word;
+	word-break: break-all;
+}

@@ -27,13 +27,15 @@ class PackController extends BaseController{
 		$this->addBefore("updatePermissions", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("delete", array("userLogged", "userAuthorized", "load", "loadPermission"));
 		$this->addBefore("addFiles", array("userLogged", "load", "loadPermission"));
-		$this->addBefore("addComment", array("userLogged", "load"));
+		$this->addBefore("addComment", array("userLogged", "load", "loadPermission"));
+		$this->addBefore("comments", array("load", "loadPermission"));
 		$this->addBefore("deleteFile", array("userLogged", "load", "loadPermission", "loadFile"));
 		$this->addBefore("showFile", array("load", "loadPermission", "loadFile"));
 		$this->addBefore("getFileContent", array("load", "loadPermission", "loadFile"));
 		$this->addBefore("filesList", array("load", "loadPermission"));
 		$this->addBefore("settings", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("update", array("userLogged", "load", "loadPermission"));
+		$this->addBefore("updateFile", array("userLogged", "load", "loadPermission", "loadFile"));
 
 		$this->data["fileExtensionAccept"] = array(
 			"txt",
@@ -57,7 +59,7 @@ class PackController extends BaseController{
 	*/
 
 	protected function show(){
-		if($this->data["pack"]->getPrivate() && !$this->data["permission"]){
+		if(!$this->data["permission"]){
 			$this->sendFlashMessage("You have not permission to view pack with ID ".$this->data["pack"]->getId().".", "error");
 			$this->redirect("/");
 		}
@@ -206,7 +208,33 @@ class PackController extends BaseController{
 	}
 
 	protected function updateFile(){
+		setContentType("json");
+
+		if($this->data["permission"] < 2 ){
+			$this->sendFlashMessage("You have not permission to change file ".$this->data["file"]->getName(), "error");
+			$this->redirect("/");
+		}
+		$file = $this->data["file"];
+		if(isset($_POST["description"]))
+			$file->setDescription($_POST["description"]);
+		if(isset($_POST["content"]))
+			$file->setContent(unpack("H", $_POST["content"]));		
+
+		if(!$file->save()){
+			$failures = $file->getValidationFailures();
+			$this->setStatus("error");
+			if(count($failures) > 0){
+				foreach($failures as $failure){
+					$this->sendFlashMessage("Pack data has not been changed. ".$failure->getMessage(), "error");
+				}
+			}
+		}
+		else{
+			$this->data["response"]["data"]["description"] = htmlspecialchars($file->getDescription());
+			$this->data["response"]["data"]["content"] = htmlspecialchars($file->getContent());
+		}
 		
+		$this->viewString(json_encode($this->data["response"]));
 	}
 
 	protected function getFileContent(){
@@ -215,27 +243,50 @@ class PackController extends BaseController{
 	}
 
 	protected function addComment(){
-		if(isset($_POST["text"])){
-			$comment = new Comment();
-			$comment->setText($_POST["text"]);
-			$comment->setUser($this->data["loggedUser"]);
-			$comment->setPack($this->data["pack"]);
+		if(!$this->data["permission"]){
+			$this->sendFlashMessage("You do not have permission add comments to pack with ID " . $this->data["pack"]->getId() . ".", "error");
+		}
+		else{
 
-			if($comment->save() <= 0){
-    			$failures = $comment->getValidationFailures();
-				if(count($failures) > 0){
-					foreach($failures as $failure){
-						$this->sendFlashMessage("Your comment has not been added. ".$failure->getMessage(), "error");
+			if(isset($_POST["comment"])){
+				$comment = new Comment();
+				$comment->setText($_POST["comment"]);
+				$comment->setUser($this->data["loggedUser"]);
+				$comment->setPack($this->data["pack"]);
+
+				if($comment->save() <= 0){
+	    			$failures = $comment->getValidationFailures();
+	    			var_dump($failures);exit;
+	    			setStatus("error");
+					if(count($failures) > 0){
+						foreach($failures as $failure){
+							$this->sendFlashMessage("Your comment has not been added. ".$failure->getMessage(), "error");
+						}
 					}
-					$this->redirect("/pack/".$this->data["pack"]->getId());
 				}
 			}
+			else
+				setHTTPStatusCode("400");
 
-			$this->sendFlashMessage("Your comment has been added.", "success");
-			$this->redirect("/pack/".$this->data["pack"]->getId());
+			$this->viewString(json_encode($this->data["response"]));
 		}
-		else
-			setHTTPStatusCode("400");
+	}
+
+	protected function comments(){
+		if(!$this->data["permission"]){
+			$this->sendFlashMessage("You do not have permission to view comments of pack with ID " . $this->data["pack"]->getId() . ".", "error");
+			$this->redirect("/");
+		}
+		
+		$page = 1;
+		$perPage = 10;
+
+		if(isset($_GET["page"]) && $_GET["page"] > 0)
+			$page = $_GET["page"];
+		if(isset($_GET["perPage"]) && $_GET["perPage"] > 0)
+			$perPage = $_GET["perPage"];
+		$this->data["comments"] = CommentQuery::create()->filterByPack($this->data["pack"])->lastCreatedFirst()->paginate($page, $perPage);
+		$this->view();
 	}
 
 	protected function validateOne(){
@@ -294,6 +345,7 @@ class PackController extends BaseController{
 
 		if(!$pack->save()){
     		$failures = $pack->getValidationFailures();
+			$this->setStatus("error");
 			if(count($failures) > 0){
 				foreach($failures as $failure){
 					$this->sendFlashMessage("Pack data has not been changed. ".$failure->getMessage(), "error");
@@ -409,12 +461,16 @@ class PackController extends BaseController{
 			}
 			
 		}
+		if(!$this->data["pack"]->getPrivate()){
+			$this->data["permission"] = 1;
+			return true;
+		}
 		return true;
 	}
 
 	protected function loadFile($args){
 		$params = $args["params"];
-		$this->data["file"] = FileQuery::create()->filterByPack($this->data["pack"])->findOneByName($params["name"]);
+		$this->data["file"] = FileQuery::create()->filterByPack($this->data["pack"])->findOneByName(urldecode($params["name"]));
 		if(!$this->data["file"]){
 			$this->sendFlashMessage("File ".$params["name"]." does not exist in this pack.", "error");
 			$this->redirect("/404");

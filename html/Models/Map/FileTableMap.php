@@ -174,7 +174,7 @@ class FileTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 64, null);
         $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
-        $this->addColumn('type', 'Type', 'VARCHAR', true, 10, null);
+        $this->addColumn('type', 'Type', 'VARCHAR', true, 32, null);
         $this->addColumn('size', 'Size', 'INTEGER', true, null, null);
         $this->addColumn('content', 'Content', 'VARBINARY', true, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);

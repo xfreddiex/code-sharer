@@ -1705,7 +1705,7 @@ abstract class Comment implements ActiveRecordInterface
     static public function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraint('text', new Length(array ('max' => 1024,'maxMessage' => 'Maximal text length is {{ limit }} characters.',)));
-        $metadata->addPropertyConstraint('textt', new NotBlank(array ('message' => 'Comment should not be blank.',)));
+        $metadata->addPropertyConstraint('text', new NotBlank(array ('message' => 'Comment should not be blank.',)));
     }
 
     /**

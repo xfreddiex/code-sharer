@@ -1,13 +1,13 @@
 $(document).ready(function(){
 
-	$('button[name="edit-description"]').click(function(){
+	$('.pack-wrapper button[name="edit-description"]').click(function(){
 		$("#description").hide();
 		$('textarea[name="description"]').show();
 		$(this).hide();
 		$('button[name="save-description"]').show();
 	});
 
-	$('button[name="save-description"]').click(function(){
+	$('.pack-wrapper button[name="save-description"]').click(function(){
 		var url = "/pack/" + $(this).attr("pack") + "/update";
 		var data = $('textarea[name="description"]').serialize();
 		$.ajax({
@@ -29,4 +29,45 @@ $(document).ready(function(){
 			}
 		});
 	});
+
+
+	bindDeleteButtons();
+
+	function bindDeleteButtons(){
+		$('.pack-wrapper button[name="delete-file"]').click(function(){
+			var url = "/pack/" + $(this).attr("pack") + "/" + $(this).attr("file") + "/delete";
+			$.ajax({
+				type: 'GET',
+				url: url,
+				dataType : "json",
+				context: $(this),
+				success: function(response){
+					$("#files-list").load("/pack/" + this.attr("pack") + "/files-list", function(){
+			           bindDeleteButtons(); 
+			        });
+				}
+			});
+		});
+	}
+
+
+	$('.pack-wrapper button[name="send-comment"]').click(function(){
+		var url = "/pack/" + $(this).attr("pack") + "/add-comment";
+		var data = $('textarea[name="comment"]').serialize();
+		$.ajax({
+			url: url,
+			type: 'POST',
+			data: data,
+			dataType : "json",
+			context: $(this),
+			success: function(response){
+				if(response["status"] == "ok"){
+					$("#comment-form").collapse('hide');
+					$('textarea[name="comment"]').val("");
+					$("#comments").load("/pack/"+this.attr("pack")+"/get-comments");
+				};
+			}
+		});
+	});
+	
 });

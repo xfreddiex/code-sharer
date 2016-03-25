@@ -20,7 +20,7 @@ class UserController extends BaseController{
 	}
 
 	protected function show($params){
-		$this->data["user"] = UserQuery::create()->findOneByUsername($params["username"]);
+		$this->data["user"] = UserQuery::create()->findOneByUsername(urldecode($params["username"]));
 		if($this->data["user"] == $this->data["loggedUser"])
 			$this->redirect("/profile");
 		if($this->data["user"]){

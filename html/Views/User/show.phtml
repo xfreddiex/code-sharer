@@ -28,23 +28,21 @@
 						<h2><?=$user->getUsername()?>'s packs</h2>
 					</div>
 					<div class="panel-body">
-						<?php if($user->getPacks()->count()): ?>
-							<?php foreach($user->getPacks() as $index => $pack): ?>
-								<?php if(!$pack->getPrivate()): ?>
-									<div class="row">
-										<div class="col-xs-9">
-											<a class="link" href="/pack/<?=$pack->getId()?>">
-												<?=$pack->getName()?>
-											</a>
-										</div>
-										<div class="col-xs-3 text-right">
-											<i class="fa fa-pencil-square"></i>
-											<?=$pack->getUpdatedAt("j M o")?>
-										</div>
+						<?php if($user->getPublicPacks()->count()): ?>
+							<?php foreach($user->getPublicPacks() as $index => $pack): ?>
+								<div class="row">
+									<div class="col-xs-9">
+										<a class="link" href="/pack/<?=$pack->getId()?>">
+											<?=$pack->getName()?>
+										</a>
 									</div>
-									<?php if($index != $user->getPacks()->count() - 1): ?>
-										<hr />
-									<?php endif; ?>
+									<div class="col-xs-3 text-right">
+										<i class="fa fa-pencil-square"></i>
+										<?=$pack->getUpdatedAt("j M o")?>
+									</div>
+								</div>
+								<?php if($index != $user->getPublicPacks()->count() - 1): ?>
+									<hr />
 								<?php endif; ?>
 							<?php endforeach; ?>
 						<?php else: ?>

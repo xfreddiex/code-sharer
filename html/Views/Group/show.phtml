@@ -1,4 +1,4 @@
-<div  class="group-wrapper">
+<div class="group-wrapper">
 	<div class="container">
 		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
 		<h1><?=$group->getName()?></h1>
@@ -62,7 +62,7 @@
 			<?php if($permission == 2): ?>
 				<div class="panel-footer text-right">
 					<button class="btn btn-success" name="save-users" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save</a>
-					<button class="btn btn-success" name="add-user"><i class="fa fa-user-plus"></i> Add</a>
+					<button class="btn btn-info" name="add-user"><i class="fa fa-user-plus"></i> Add</a>
 				</div>
 			<?php endif; ?>
 		</div>

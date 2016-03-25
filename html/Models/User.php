@@ -7,6 +7,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Models\Map\UserTableMap;
 use Models\UserGroup as ChildUserGroup;
 use Models\UserGroupQuery as ChildUserGroupQuery;
+use Models\Pack as ChildPack;
+use Models\PackQuery as ChildPackQuery;
 
 /**
  * Skeleton subclass for representing a row from the 'user' table.
@@ -65,5 +67,10 @@ class User extends BaseUser
 	public function getAddedToGroup($group, $format){
 		$timestamp = ChildUserGroupQuery::create()->filterByUser($this)->filterByGroup($group)->findOne()->getCreatedAt($format);
 		return $timestamp;
+	}
+
+	public function getPublicPacks(){
+		$packs = ChildPackQuery::create()->filterByOwner($this)->filterByPrivate(0)->find();
+		return $packs;
 	}
 }
