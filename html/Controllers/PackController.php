@@ -21,14 +21,14 @@ class PackController extends BaseController{
 		parent::__construct();
 
 		$this->addBefore("new", array("userLogged"));
-		$this->addBefore("show", array("load", "loadPermission"));
+		$this->addBefore("show", array("load", "loadPermission", "loadComments"));
 		$this->addBefore("create", array("userLogged"));
 		$this->addBefore("createView", array("userLogged"));
 		$this->addBefore("updatePermissions", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("delete", array("userLogged", "userAuthorized", "load", "loadPermission"));
 		$this->addBefore("addFiles", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("addComment", array("userLogged", "load", "loadPermission"));
-		$this->addBefore("comments", array("load", "loadPermission"));
+		$this->addBefore("comments", array("load", "loadPermission", "loadComments"));
 		$this->addBefore("deleteFile", array("userLogged", "load", "loadPermission", "loadFile"));
 		$this->addBefore("showFile", array("load", "loadPermission", "loadFile"));
 		$this->addBefore("getFileContent", array("load", "loadPermission", "loadFile"));
@@ -277,15 +277,7 @@ class PackController extends BaseController{
 			$this->sendFlashMessage("You do not have permission to view comments of pack with ID " . $this->data["pack"]->getId() . ".", "error");
 			$this->redirect("/");
 		}
-		
-		$page = 1;
-		$perPage = 10;
 
-		if(isset($_GET["page"]) && $_GET["page"] > 0)
-			$page = $_GET["page"];
-		if(isset($_GET["perPage"]) && $_GET["perPage"] > 0)
-			$perPage = $_GET["perPage"];
-		$this->data["comments"] = CommentQuery::create()->filterByPack($this->data["pack"])->lastCreatedFirst()->paginate($page, $perPage);
 		$this->view();
 	}
 
@@ -480,6 +472,17 @@ class PackController extends BaseController{
 			$this->redirect("/404");	
 		}
 		return true;
+	}
+
+	protected function loadComments(){
+		$page = 1;
+		$perPage = 10;
+
+		if(isset($_GET["page"]) && $_GET["page"] > 0)
+			$page = $_GET["page"];
+		if(isset($_GET["perPage"]) && $_GET["perPage"] > 0)
+			$perPage = $_GET["perPage"];
+		$this->data["comments"] = CommentQuery::create()->filterByPack($this->data["pack"])->lastCreatedFirst()->paginate($page, $perPage);
 	}
 
 }

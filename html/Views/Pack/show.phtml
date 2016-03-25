@@ -122,13 +122,9 @@
 				</form>
 			<?php endif; ?>
 
-			<div class="panel-body" id="comments">
+			<div class="panel-body" id="comments" pack="<?=$pack->getId()?>">
+				<?php $this->viewFile('Views/Pack/comments.phtml'); ?>
 			</div>
-			<script type="text/javascript">
-				$(document).ready(function(e){
-					$('#comments').load('/pack/<?=$pack->getId()?>/get-comments?page=1');
-				});
-			</script>
 		</div>
 
 	</div>

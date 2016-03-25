@@ -69,5 +69,15 @@ $(document).ready(function(){
 			}
 		});
 	});
+
+	bindPaginationButtons();
+
+	function bindPaginationButtons(){
+		$('.pack-wrapper .pagination button').click(function(){
+			$("#comments").load('/pack/' + $("#comments").attr("pack") + '/get-comments?page=' + $(this).val(), function(){
+				bindPaginationButtons();
+			});
+		});	
+	}
 	
 });

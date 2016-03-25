@@ -267,7 +267,10 @@ section .btn-upload input, .modal .btn-upload input {
   background: 0px;
   border-radius: 0px !important;
   border: 0px !important;
-  color: #025A6A; }
+  color: #025A6A;
+  text-align: center;
+  width: 24px;
+  padding: 0px 3px; }
 
 .pagination button.active {
   font-size: 16px;

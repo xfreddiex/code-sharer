@@ -23,47 +23,47 @@
 
 		<div class="text-center">
 			<ul class="pagination">
-				<li><button><i class="fa fa-chevron-left"></i></button></li>
+				<li><button value="<?=($comments->getPage() - 1)?>"><i class="fa fa-chevron-left"></i></button></li>
 
 				<?php if($comments->getLastPage() <= 9): ?>
 
 					<?php for($i = 1; $i <= $comments->getLastPage(); $i++): ?>
-						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+						<li><button value="<?=$i?>" <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
 					<?php endfor; ?>
 
 				<?php elseif($comments->getPage() <= 5): ?>
 
-					<?php for($i = 1; $i <= 8; $i++): ?>
-						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php for($i = 1; $i <= 7; $i++): ?>
+						<li><button value="<?=$i?>" <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
 					<?php endfor; ?>
 
-					<li><button>&#133;</button></li>
-					<li><button><?=$comments->getLastPage()?></button></li>
+					<li><button value="<?=($comments->getPage() + 7)?>">&#133;</button></li>
+					<li><button value="<?=$comments->getLastPage()?>"><?=$comments->getLastPage()?></button></li>
 
 				<?php elseif($comments->getLastPage() - $comments->getPage() <= 4): ?>
 
-					<li><button>1</button></li>
-					<li><button>&#133;</button></li>
+					<li><button value="<?=1?>">1</button></li>
+					<li><button value="<?=($comments->getPage() - 7)?>">&#133;</button></li>
 
-					<?php for($i = $comments->getLastPage() - 7; $i <= $comments->getLastPage(); $i++): ?>
-						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php for($i = $comments->getLastPage() - 6; $i <= $comments->getLastPage(); $i++): ?>
+						<li><button value="<?=$i?>" <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
 					<?php endfor; ?>
 
 				<?php else: ?>
 
-					<li><button>1</button></li>
-					<li><button>&#133;</button></li>
+					<li><button value="<?=1?>">1</button></li>
+					<li><button value="<?=($comments->getPage() - 7)?>">&#133;</button></li>
 
-					<?php for($i = $comments->getPage() - 3; $i <= $comments->getPage() + 3; $i++): ?>
-						<li><button <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+					<?php for($i = $comments->getPage() - 2; $i <= $comments->getPage() + 2; $i++): ?>
+						<li><button value="<?=$i?>" <?=($i == $comments->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
 					<?php endfor; ?>
 
-					<li><button>&#133;</button></li>
-					<li><button><?=$comments->getLastPage()?></button></li>
+					<li><button value="<?=($comments->getPage() + 7)?>">&#133;</button></li>
+					<li><button value="<?=$comments->getLastPage()?>"><?=$comments->getLastPage()?></button></li>
 
 				<?php endif; ?>
 
-				<li><button><i class="fa fa-chevron-right"></i></span></button></li>
+				<li><button value="<?=($comments->getPage() + 1)?>"><i class="fa fa-chevron-right"></i></span></button></li>
 			</ul>
 		</div>
 	<?php endif; ?>
