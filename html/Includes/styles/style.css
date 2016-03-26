@@ -614,6 +614,8 @@ footer {
 .file-wrapper .CodeMirror {
   border: 1px solid #eee;
   height: auto; }
+.file-wrapper button[name="save-code"] {
+  display: none; }
 
 /*----*/
 /*pack-settings-wrapper*/

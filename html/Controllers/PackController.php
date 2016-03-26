@@ -219,7 +219,7 @@ class PackController extends BaseController{
 		if(isset($_POST["description"]))
 			$file->setDescription($_POST["description"]);
 		if(isset($_POST["content"]))
-			$file->setContent(unpack("H", $_POST["content"]));		
+			$file->setContent($_POST["content"]);		
 
 		if(!$file->save()){
 			$failures = $file->getValidationFailures();
@@ -232,7 +232,7 @@ class PackController extends BaseController{
 		}
 		else{
 			$this->data["response"]["data"]["description"] = htmlspecialchars($file->getDescription());
-			$this->data["response"]["data"]["content"] = htmlspecialchars($file->getContent());
+			$this->data["response"]["data"]["content"] = $file->getContent();
 		}
 		
 		$this->viewString(json_encode($this->data["response"]));

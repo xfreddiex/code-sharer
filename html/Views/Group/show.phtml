@@ -1,6 +1,8 @@
 <div class="group-wrapper">
 	<div class="container">
-		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		<div id="message-box">
+			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		</div>
 		<h1><?=$group->getName()?></h1>
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">

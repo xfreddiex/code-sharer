@@ -817,6 +817,9 @@ footer{
 	  border: 1px solid #eee;
 	  height: auto;
 	}
+	button[name="save-code"]{
+		display: none;
+	}
 }
 
 /*----*/
