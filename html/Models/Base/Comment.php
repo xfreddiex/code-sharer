@@ -7,8 +7,6 @@ use \Exception;
 use \PDO;
 use Models\Comment as ChildComment;
 use Models\CommentQuery as ChildCommentQuery;
-use Models\File as ChildFile;
-use Models\FileQuery as ChildFileQuery;
 use Models\Pack as ChildPack;
 use Models\PackQuery as ChildPackQuery;
 use Models\User as ChildUser;
@@ -94,13 +92,6 @@ abstract class Comment implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the file_id field.
-     *
-     * @var        int
-     */
-    protected $file_id;
-
-    /**
      * The value for the pack_id field.
      *
      * @var        int
@@ -132,11 +123,6 @@ abstract class Comment implements ActiveRecordInterface
      * @var        ChildUser
      */
     protected $aUser;
-
-    /**
-     * @var        ChildFile
-     */
-    protected $aFile;
 
     /**
      * @var        ChildPack
@@ -414,16 +400,6 @@ abstract class Comment implements ActiveRecordInterface
     }
 
     /**
-     * Get the [file_id] column value.
-     *
-     * @return int
-     */
-    public function getFileId()
-    {
-        return $this->file_id;
-    }
-
-    /**
      * Get the [pack_id] column value.
      *
      * @return int
@@ -526,30 +502,6 @@ abstract class Comment implements ActiveRecordInterface
 
         return $this;
     } // setUserId()
-
-    /**
-     * Set the value of [file_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Models\Comment The current object (for fluent API support)
-     */
-    public function setFileId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->file_id !== $v) {
-            $this->file_id = $v;
-            $this->modifiedColumns[CommentTableMap::COL_FILE_ID] = true;
-        }
-
-        if ($this->aFile !== null && $this->aFile->getId() !== $v) {
-            $this->aFile = null;
-        }
-
-        return $this;
-    } // setFileId()
 
     /**
      * Set the value of [pack_id] column.
@@ -677,22 +629,19 @@ abstract class Comment implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CommentTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CommentTableMap::translateFieldName('FileId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->file_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CommentTableMap::translateFieldName('PackId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CommentTableMap::translateFieldName('PackId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->pack_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CommentTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CommentTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
             $this->text = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CommentTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CommentTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : CommentTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CommentTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -705,7 +654,7 @@ abstract class Comment implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = CommentTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = CommentTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\Comment'), 0, $e);
@@ -729,9 +678,6 @@ abstract class Comment implements ActiveRecordInterface
     {
         if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
             $this->aUser = null;
-        }
-        if ($this->aFile !== null && $this->file_id !== $this->aFile->getId()) {
-            $this->aFile = null;
         }
         if ($this->aPack !== null && $this->pack_id !== $this->aPack->getId()) {
             $this->aPack = null;
@@ -776,7 +722,6 @@ abstract class Comment implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aUser = null;
-            $this->aFile = null;
             $this->aPack = null;
         } // if (deep)
     }
@@ -901,13 +846,6 @@ abstract class Comment implements ActiveRecordInterface
                 $this->setUser($this->aUser);
             }
 
-            if ($this->aFile !== null) {
-                if ($this->aFile->isModified() || $this->aFile->isNew()) {
-                    $affectedRows += $this->aFile->save($con);
-                }
-                $this->setFile($this->aFile);
-            }
-
             if ($this->aPack !== null) {
                 if ($this->aPack->isModified() || $this->aPack->isNew()) {
                     $affectedRows += $this->aPack->save($con);
@@ -958,9 +896,6 @@ abstract class Comment implements ActiveRecordInterface
         if ($this->isColumnModified(CommentTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(CommentTableMap::COL_FILE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'file_id';
-        }
         if ($this->isColumnModified(CommentTableMap::COL_PACK_ID)) {
             $modifiedColumns[':p' . $index++]  = 'pack_id';
         }
@@ -989,9 +924,6 @@ abstract class Comment implements ActiveRecordInterface
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
-                        break;
-                    case 'file_id':
-                        $stmt->bindValue($identifier, $this->file_id, PDO::PARAM_INT);
                         break;
                     case 'pack_id':
                         $stmt->bindValue($identifier, $this->pack_id, PDO::PARAM_INT);
@@ -1074,18 +1006,15 @@ abstract class Comment implements ActiveRecordInterface
                 return $this->getUserId();
                 break;
             case 2:
-                return $this->getFileId();
-                break;
-            case 3:
                 return $this->getPackId();
                 break;
-            case 4:
+            case 3:
                 return $this->getText();
                 break;
-            case 5:
+            case 4:
                 return $this->getCreatedAt();
                 break;
-            case 6:
+            case 5:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1120,18 +1049,17 @@ abstract class Comment implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
-            $keys[2] => $this->getFileId(),
-            $keys[3] => $this->getPackId(),
-            $keys[4] => $this->getText(),
-            $keys[5] => $this->getCreatedAt(),
-            $keys[6] => $this->getUpdatedAt(),
+            $keys[2] => $this->getPackId(),
+            $keys[3] => $this->getText(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
         }
 
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1154,21 +1082,6 @@ abstract class Comment implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aFile) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'file';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'file';
-                        break;
-                    default:
-                        $key = 'File';
-                }
-
-                $result[$key] = $this->aFile->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aPack) {
 
@@ -1226,18 +1139,15 @@ abstract class Comment implements ActiveRecordInterface
                 $this->setUserId($value);
                 break;
             case 2:
-                $this->setFileId($value);
-                break;
-            case 3:
                 $this->setPackId($value);
                 break;
-            case 4:
+            case 3:
                 $this->setText($value);
                 break;
-            case 5:
+            case 4:
                 $this->setCreatedAt($value);
                 break;
-            case 6:
+            case 5:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1273,19 +1183,16 @@ abstract class Comment implements ActiveRecordInterface
             $this->setUserId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setFileId($arr[$keys[2]]);
+            $this->setPackId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPackId($arr[$keys[3]]);
+            $this->setText($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setText($arr[$keys[4]]);
+            $this->setCreatedAt($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setCreatedAt($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setUpdatedAt($arr[$keys[6]]);
+            $this->setUpdatedAt($arr[$keys[5]]);
         }
     }
 
@@ -1333,9 +1240,6 @@ abstract class Comment implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CommentTableMap::COL_USER_ID)) {
             $criteria->add(CommentTableMap::COL_USER_ID, $this->user_id);
-        }
-        if ($this->isColumnModified(CommentTableMap::COL_FILE_ID)) {
-            $criteria->add(CommentTableMap::COL_FILE_ID, $this->file_id);
         }
         if ($this->isColumnModified(CommentTableMap::COL_PACK_ID)) {
             $criteria->add(CommentTableMap::COL_PACK_ID, $this->pack_id);
@@ -1436,7 +1340,6 @@ abstract class Comment implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setUserId($this->getUserId());
-        $copyObj->setFileId($this->getFileId());
         $copyObj->setPackId($this->getPackId());
         $copyObj->setText($this->getText());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -1521,57 +1424,6 @@ abstract class Comment implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildFile object.
-     *
-     * @param  ChildFile $v
-     * @return $this|\Models\Comment The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setFile(ChildFile $v = null)
-    {
-        if ($v === null) {
-            $this->setFileId(NULL);
-        } else {
-            $this->setFileId($v->getId());
-        }
-
-        $this->aFile = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildFile object, it will not be re-added.
-        if ($v !== null) {
-            $v->addComment($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildFile object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildFile The associated ChildFile object.
-     * @throws PropelException
-     */
-    public function getFile(ConnectionInterface $con = null)
-    {
-        if ($this->aFile === null && ($this->file_id !== null)) {
-            $this->aFile = ChildFileQuery::create()->findPk($this->file_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aFile->addComments($this);
-             */
-        }
-
-        return $this->aFile;
-    }
-
-    /**
      * Declares an association between this object and a ChildPack object.
      *
      * @param  ChildPack $v
@@ -1632,15 +1484,11 @@ abstract class Comment implements ActiveRecordInterface
         if (null !== $this->aUser) {
             $this->aUser->removeComment($this);
         }
-        if (null !== $this->aFile) {
-            $this->aFile->removeComment($this);
-        }
         if (null !== $this->aPack) {
             $this->aPack->removeComment($this);
         }
         $this->id = null;
         $this->user_id = null;
-        $this->file_id = null;
         $this->pack_id = null;
         $this->text = null;
         $this->created_at = null;
@@ -1666,7 +1514,6 @@ abstract class Comment implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aUser = null;
-        $this->aFile = null;
         $this->aPack = null;
     }
 
@@ -1740,12 +1587,6 @@ abstract class Comment implements ActiveRecordInterface
             if (method_exists($this->aUser, 'validate')) {
                 if (!$this->aUser->validate($validator)) {
                     $failureMap->addAll($this->aUser->getValidationFailures());
-                }
-            }
-            // If validate() method exists, the validate-behavior is configured for related object
-            if (method_exists($this->aFile, 'validate')) {
-                if (!$this->aFile->validate($validator)) {
-                    $failureMap->addAll($this->aFile->getValidationFailures());
                 }
             }
             // If validate() method exists, the validate-behavior is configured for related object

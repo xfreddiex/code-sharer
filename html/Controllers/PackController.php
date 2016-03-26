@@ -119,8 +119,7 @@ class PackController extends BaseController{
 			$this->sendFlashMessage("You have not permission to delete pack with ID ".$this->data["pack"]->getId().".", "error");
 			$this->redirect("/");
 		}
-		$this->data["pack"]->setDeletedAt(time());
-		$this->data["pack"]->save();
+		$this->data["pack"]->delete();
 		$this->sendFlashMessage("Pack has been successfuly deleted.", "info");
 		$this->redirect("/profile");	
 	}

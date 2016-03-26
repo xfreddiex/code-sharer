@@ -194,14 +194,7 @@ class FileTableMap extends TableMap
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, null, false);
-        $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':file_id',
-    1 => ':id',
-  ),
-), null, null, 'Comments', false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

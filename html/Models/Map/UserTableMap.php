@@ -212,28 +212,28 @@ class UserTableMap extends TableMap
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, 'Identities', false);
+), 'CASCADE', null, 'Identities', false);
         $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, 'PackPermissions', false);
+), 'CASCADE', null, 'PackPermissions', false);
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':owner_id',
     1 => ':id',
   ),
-), null, null, 'Packs', false);
+), 'CASCADE', null, 'Packs', false);
         $this->addRelation('MyGroup', '\\Models\\Group', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':owner_id',
     1 => ':id',
   ),
-), null, null, 'MyGroups', false);
+), 'CASCADE', null, 'MyGroups', false);
         $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -247,8 +247,8 @@ class UserTableMap extends TableMap
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, 'UserGroups', false);
-        $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_MANY, array(), null, null, 'Groups');
+), 'CASCADE', null, 'UserGroups', false);
+        $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Groups');
     } // buildRelations()
 
     /**
@@ -264,6 +264,19 @@ class UserTableMap extends TableMap
             'validate' => array('rule1' => array ('column' => 'username','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal username length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'username','validator' => 'NotBlank','options' => array ('message' => 'Username should not be blank.',),), 'rule3' => array ('column' => 'username','validator' => 'Uniqueness','options' => array ('message' => 'Username already exists.',),), 'rule4' => array ('column' => 'username','validator' => 'Regex','options' => array ('pattern' => '/^[a-zA-Z0-9]*$/','match' => true,'message' => 'Username must contain only alphanumeric characters.',),), 'rule5' => array ('column' => 'email','validator' => 'Length','options' => array ('max' => 70,'maxMessage' => 'Maximal email address length is {{ limit }} characters.',),), 'rule6' => array ('column' => 'email','validator' => 'NotBlank','options' => array ('message' => 'Email address should not be blank.',),), 'rule7' => array ('column' => 'email','validator' => 'Uniqueness','options' => array ('message' => 'Email address is already used.',),), 'rule8' => array ('column' => 'email','validator' => 'Email','options' => array ('message' => 'Entered email address must be valid.',),), 'rule9' => array ('column' => 'password','validator' => 'Length','options' => array ('min' => 6,'max' => 60,'minMessage' => 'Password must contain at least {{ limit }} characters.','maxMessage' => 'Maximal password length is {{ limit }} characters.',),), 'rule10' => array ('column' => 'password','validator' => 'NotBlank','options' => array ('message' => 'Password should not be blank.',),), 'rule11' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal name length is {{ limit }} characters.',),), 'rule12' => array ('column' => 'surname','validator' => 'Length','options' => array ('max' => 50,'maxMessage' => 'Maximal surname length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
+    /**
+     * Method to invalidate the instance pool of all tables related to user     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        IdentityTableMap::clearInstancePool();
+        PackPermissionTableMap::clearInstancePool();
+        PackTableMap::clearInstancePool();
+        GroupTableMap::clearInstancePool();
+        UserGroupTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

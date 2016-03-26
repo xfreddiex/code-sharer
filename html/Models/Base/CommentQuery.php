@@ -22,7 +22,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCommentQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildCommentQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildCommentQuery orderByFileId($order = Criteria::ASC) Order by the file_id column
  * @method     ChildCommentQuery orderByPackId($order = Criteria::ASC) Order by the pack_id column
  * @method     ChildCommentQuery orderByText($order = Criteria::ASC) Order by the text column
  * @method     ChildCommentQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -30,7 +29,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCommentQuery groupById() Group by the id column
  * @method     ChildCommentQuery groupByUserId() Group by the user_id column
- * @method     ChildCommentQuery groupByFileId() Group by the file_id column
  * @method     ChildCommentQuery groupByPackId() Group by the pack_id column
  * @method     ChildCommentQuery groupByText() Group by the text column
  * @method     ChildCommentQuery groupByCreatedAt() Group by the created_at column
@@ -54,16 +52,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCommentQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
  * @method     ChildCommentQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
- * @method     ChildCommentQuery leftJoinFile($relationAlias = null) Adds a LEFT JOIN clause to the query using the File relation
- * @method     ChildCommentQuery rightJoinFile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the File relation
- * @method     ChildCommentQuery innerJoinFile($relationAlias = null) Adds a INNER JOIN clause to the query using the File relation
- *
- * @method     ChildCommentQuery joinWithFile($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the File relation
- *
- * @method     ChildCommentQuery leftJoinWithFile() Adds a LEFT JOIN clause and with to the query using the File relation
- * @method     ChildCommentQuery rightJoinWithFile() Adds a RIGHT JOIN clause and with to the query using the File relation
- * @method     ChildCommentQuery innerJoinWithFile() Adds a INNER JOIN clause and with to the query using the File relation
- *
  * @method     ChildCommentQuery leftJoinPack($relationAlias = null) Adds a LEFT JOIN clause to the query using the Pack relation
  * @method     ChildCommentQuery rightJoinPack($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Pack relation
  * @method     ChildCommentQuery innerJoinPack($relationAlias = null) Adds a INNER JOIN clause to the query using the Pack relation
@@ -74,14 +62,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCommentQuery rightJoinWithPack() Adds a RIGHT JOIN clause and with to the query using the Pack relation
  * @method     ChildCommentQuery innerJoinWithPack() Adds a INNER JOIN clause and with to the query using the Pack relation
  *
- * @method     \Models\UserQuery|\Models\FileQuery|\Models\PackQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Models\UserQuery|\Models\PackQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildComment findOne(ConnectionInterface $con = null) Return the first ChildComment matching the query
  * @method     ChildComment findOneOrCreate(ConnectionInterface $con = null) Return the first ChildComment matching the query, or a new ChildComment object populated from the query conditions when no match is found
  *
  * @method     ChildComment findOneById(int $id) Return the first ChildComment filtered by the id column
  * @method     ChildComment findOneByUserId(int $user_id) Return the first ChildComment filtered by the user_id column
- * @method     ChildComment findOneByFileId(int $file_id) Return the first ChildComment filtered by the file_id column
  * @method     ChildComment findOneByPackId(int $pack_id) Return the first ChildComment filtered by the pack_id column
  * @method     ChildComment findOneByText(string $text) Return the first ChildComment filtered by the text column
  * @method     ChildComment findOneByCreatedAt(string $created_at) Return the first ChildComment filtered by the created_at column
@@ -92,7 +79,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildComment requireOneById(int $id) Return the first ChildComment filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildComment requireOneByUserId(int $user_id) Return the first ChildComment filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildComment requireOneByFileId(int $file_id) Return the first ChildComment filtered by the file_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildComment requireOneByPackId(int $pack_id) Return the first ChildComment filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildComment requireOneByText(string $text) Return the first ChildComment filtered by the text column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildComment requireOneByCreatedAt(string $created_at) Return the first ChildComment filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -101,7 +87,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildComment[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildComment objects based on current ModelCriteria
  * @method     ChildComment[]|ObjectCollection findById(int $id) Return ChildComment objects filtered by the id column
  * @method     ChildComment[]|ObjectCollection findByUserId(int $user_id) Return ChildComment objects filtered by the user_id column
- * @method     ChildComment[]|ObjectCollection findByFileId(int $file_id) Return ChildComment objects filtered by the file_id column
  * @method     ChildComment[]|ObjectCollection findByPackId(int $pack_id) Return ChildComment objects filtered by the pack_id column
  * @method     ChildComment[]|ObjectCollection findByText(string $text) Return ChildComment objects filtered by the text column
  * @method     ChildComment[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildComment objects filtered by the created_at column
@@ -198,7 +183,7 @@ abstract class CommentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, file_id, pack_id, text, created_at, updated_at FROM comment WHERE id = :p0';
+        $sql = 'SELECT id, user_id, pack_id, text, created_at, updated_at FROM comment WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -370,49 +355,6 @@ abstract class CommentQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(CommentTableMap::COL_USER_ID, $userId, $comparison);
-    }
-
-    /**
-     * Filter the query on the file_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByFileId(1234); // WHERE file_id = 1234
-     * $query->filterByFileId(array(12, 34)); // WHERE file_id IN (12, 34)
-     * $query->filterByFileId(array('min' => 12)); // WHERE file_id > 12
-     * </code>
-     *
-     * @see       filterByFile()
-     *
-     * @param     mixed $fileId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildCommentQuery The current query, for fluid interface
-     */
-    public function filterByFileId($fileId = null, $comparison = null)
-    {
-        if (is_array($fileId)) {
-            $useMinMax = false;
-            if (isset($fileId['min'])) {
-                $this->addUsingAlias(CommentTableMap::COL_FILE_ID, $fileId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($fileId['max'])) {
-                $this->addUsingAlias(CommentTableMap::COL_FILE_ID, $fileId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(CommentTableMap::COL_FILE_ID, $fileId, $comparison);
     }
 
     /**
@@ -648,83 +590,6 @@ abstract class CommentQuery extends ModelCriteria
         return $this
             ->joinUser($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'User', '\Models\UserQuery');
-    }
-
-    /**
-     * Filter the query by a related \Models\File object
-     *
-     * @param \Models\File|ObjectCollection $file The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildCommentQuery The current query, for fluid interface
-     */
-    public function filterByFile($file, $comparison = null)
-    {
-        if ($file instanceof \Models\File) {
-            return $this
-                ->addUsingAlias(CommentTableMap::COL_FILE_ID, $file->getId(), $comparison);
-        } elseif ($file instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(CommentTableMap::COL_FILE_ID, $file->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByFile() only accepts arguments of type \Models\File or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the File relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildCommentQuery The current query, for fluid interface
-     */
-    public function joinFile($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('File');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'File');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the File relation File object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \Models\FileQuery A secondary query class using the current class as primary query
-     */
-    public function useFileQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinFile($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'File', '\Models\FileQuery');
     }
 
     /**

@@ -170,7 +170,7 @@ class IdentityTableMap extends TableMap
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

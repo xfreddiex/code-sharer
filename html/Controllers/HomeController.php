@@ -41,6 +41,7 @@ class HomeController extends BaseController{
 				$qParts[$i] = $qParts[$i]."%";
 			}
 			$qMatch = $q."*";
+			$likeQuery = "";
 
 			if($this->data["search"] == "user"){
 

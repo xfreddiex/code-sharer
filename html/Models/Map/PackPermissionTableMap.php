@@ -116,10 +116,6 @@ class PackPermissionTableMap extends TableMap
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
 
-    /** The enumerated values for the value field */
-    const COL_VALUE_1 = '1';
-    const COL_VALUE_2 = '2';
-
     /**
      * holds an array of fieldnames
      *
@@ -148,35 +144,6 @@ class PackPermissionTableMap extends TableMap
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
-    /** The enumerated values for this table */
-    protected static $enumValueSets = array(
-                PackPermissionTableMap::COL_VALUE => array(
-                            self::COL_VALUE_1,
-            self::COL_VALUE_2,
-        ),
-    );
-
-    /**
-     * Gets the list of values for all ENUM and SET columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return static::$enumValueSets;
-    }
-
-    /**
-     * Gets the list of values for an ENUM or SET column
-     * @param string $colname
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet($colname)
-    {
-        $valueSets = self::getValueSets();
-
-        return $valueSets[$colname];
-    }
-
     /**
      * Initialize the table attributes and columns
      * Relations are not initialized by this method since they are lazy loaded
@@ -195,11 +162,7 @@ class PackPermissionTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('value', 'Value', 'ENUM', true, null, null);
-        $this->getColumn('value')->setValueSet(array (
-  0 => '1',
-  1 => '2',
-));
+        $this->addColumn('value', 'Value', 'TINYINT', true, null, null);
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', false, null, null);
         $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', false, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
@@ -219,21 +182,21 @@ class PackPermissionTableMap extends TableMap
     0 => ':user_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('Group', '\\Models\\Group', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':group_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

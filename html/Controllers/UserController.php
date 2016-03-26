@@ -37,6 +37,7 @@ class UserController extends BaseController{
 	}
 
 	protected function profile(){
+		$this->data["foreignPacks"] = $this->data["loggedUser"]->getForeignPacks();
 		$this->viewFile($this->template);	
 	}
 
@@ -60,7 +61,7 @@ class UserController extends BaseController{
 		if(isset($_POST["newPassword"]) && $_POST["newPassword"])
 			$user->setPassword($_POST["newPassword"]);
 
-		if($user->save()){
+		if(!$user->save()){
     		$failures = $user->getValidationFailures();
 			if(count($failures) > 0){
 				foreach($failures as $failure){
@@ -111,7 +112,7 @@ class UserController extends BaseController{
 				"Password" => $_POST["password"]
 			));
 			
-			if($user->save()){
+			if(!$user->save()){
     			$failures = $user->getValidationFailures();
 				if(count($failures) > 0){
 					foreach($failures as $failure){

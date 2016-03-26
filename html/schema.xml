@@ -65,7 +65,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="User" refPhpName="Identity">
+        <foreign-key foreignTable="user" phpName="User" refPhpName="Identity" onDelete="CASCADE">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
     
@@ -77,7 +77,7 @@
 
     <table name="pack_permission" phpName="PackPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="value" type="enum" valueSet="1, 2" required="true"/>
+        <column name="value" type="tinyint" sqlType='ENUM("1","2")' required="true"/>
         <column name="user_id" type="integer"/>
         <column name="group_id" type="integer"/>
         <column name="pack_id" type="integer" required="true"/>
@@ -85,14 +85,14 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="User" refPhpName="PackPermission">
+        <foreign-key foreignTable="user" phpName="User" refPhpName="PackPermission" onDelete="CASCADE">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="group_of_users" phpName="Group" refPhpName="PackPermission">
+        <foreign-key foreignTable="group_of_users" phpName="Group" refPhpName="PackPermission" onDelete="CASCADE">
             <reference local="group_id" foreign="id"/>
         </foreign-key>
 
-        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="PackPermission">
+        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="PackPermission" onDelete="CASCADE">
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
 
@@ -112,7 +112,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Pack">
+        <foreign-key foreignTable="user" phpName="Owner" refPhpName="Pack" onDelete="CASCADE">
             <reference local="owner_id" foreign="id"/>
         </foreign-key>
 
@@ -152,7 +152,7 @@
         <column name="pack_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
         
-        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="File">
+        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="File" onDelete="CASCADE">
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
         
@@ -179,7 +179,7 @@
         
         <behavior name="timestampable" />
         
-        <foreign-key foreignTable="user" phpName="Owner" refPhpName="MyGroup">
+        <foreign-key foreignTable="user" phpName="Owner" refPhpName="MyGroup" onDelete="CASCADE">
             <reference local="owner_id" foreign="id"/>
         </foreign-key>
 
@@ -200,7 +200,6 @@
     <table name="comment" phpName="Comment">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer" required="true"/>
-        <column name="file_id" type="integer"/>
         <column name="pack_id" type="integer"/>
         <column name="text" type="varchar" size="1024" required="true"/>
         
@@ -209,10 +208,7 @@
         <foreign-key foreignTable="user" phpName="User" refPhpName="Comment">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="file" phpName="File" refPhpName="Comment">
-            <reference local="file_id" foreign="id"/>
-        </foreign-key>
-        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="Comment">
+        <foreign-key foreignTable="pack" phpName="Pack" refPhpName="Comment" onDelete="CASCADE">
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
 
@@ -231,11 +227,11 @@
         <column name="user_id" type="integer" required="true" primaryKey="true"/>
         <column name="group_id" type="integer" required="true" primaryKey="true"/>
         
-        <foreign-key foreignTable="user">
+        <foreign-key foreignTable="user" onDelete="CASCADE">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
 
-        <foreign-key foreignTable="group_of_users">
+        <foreign-key foreignTable="group_of_users" onDelete="CASCADE">
             <reference local="group_id" foreign="id"/>
         </foreign-key>
 

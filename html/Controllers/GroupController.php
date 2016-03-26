@@ -181,10 +181,9 @@ class GroupController extends BaseController{
 	}
 
 	protected function delete(){
-		$this->data["group"]->setDeletedAt(time());
-		$this->data["group"]->save();
+		$this->data["group"]->delete();
 		$this->sendFlashMessage("Group has been successfuly deleted.", "info");
-		$this->redirect($this->data["referersURI"]);	
+		$this->redirect("/profile");	
 	}
 
 	protected function validateOne(){

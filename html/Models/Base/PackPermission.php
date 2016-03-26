@@ -385,20 +385,11 @@ abstract class PackPermission implements ActiveRecordInterface
     /**
      * Get the [value] column value.
      *
-     * @return string
-     * @throws \Propel\Runtime\Exception\PropelException
+     * @return int
      */
     public function getValue()
     {
-        if (null === $this->value) {
-            return null;
-        }
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_VALUE);
-        if (!isset($valueSet[$this->value])) {
-            throw new PropelException('Unknown stored enum key: ' . $this->value);
-        }
-
-        return $valueSet[$this->value];
+        return $this->value;
     }
 
     /**
@@ -514,18 +505,13 @@ abstract class PackPermission implements ActiveRecordInterface
     /**
      * Set the value of [value] column.
      *
-     * @param  string $v new value
+     * @param int $v new value
      * @return $this|\Models\PackPermission The current object (for fluent API support)
-     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function setValue($v)
     {
         if ($v !== null) {
-            $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_VALUE);
-            if (!in_array($v, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $v));
-            }
-            $v = array_search($v, $valueSet);
+            $v = (int) $v;
         }
 
         if ($this->value !== $v) {
@@ -1276,10 +1262,6 @@ abstract class PackPermission implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_VALUE);
-                if (isset($valueSet[$value])) {
-                    $value = $valueSet[$value];
-                }
                 $this->setValue($value);
                 break;
             case 2:

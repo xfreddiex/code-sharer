@@ -59,7 +59,7 @@ class CommentTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CommentTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -80,11 +80,6 @@ class CommentTableMap extends TableMap
      * the column name for the user_id field
      */
     const COL_USER_ID = 'comment.user_id';
-
-    /**
-     * the column name for the file_id field
-     */
-    const COL_FILE_ID = 'comment.file_id';
 
     /**
      * the column name for the pack_id field
@@ -118,11 +113,11 @@ class CommentTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'FileId', 'PackId', 'Text', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'fileId', 'packId', 'text', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(CommentTableMap::COL_ID, CommentTableMap::COL_USER_ID, CommentTableMap::COL_FILE_ID, CommentTableMap::COL_PACK_ID, CommentTableMap::COL_TEXT, CommentTableMap::COL_CREATED_AT, CommentTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'file_id', 'pack_id', 'text', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'PackId', 'Text', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'packId', 'text', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(CommentTableMap::COL_ID, CommentTableMap::COL_USER_ID, CommentTableMap::COL_PACK_ID, CommentTableMap::COL_TEXT, CommentTableMap::COL_CREATED_AT, CommentTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'pack_id', 'text', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -132,11 +127,11 @@ class CommentTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'FileId' => 2, 'PackId' => 3, 'Text' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'fileId' => 2, 'packId' => 3, 'text' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(CommentTableMap::COL_ID => 0, CommentTableMap::COL_USER_ID => 1, CommentTableMap::COL_FILE_ID => 2, CommentTableMap::COL_PACK_ID => 3, CommentTableMap::COL_TEXT => 4, CommentTableMap::COL_CREATED_AT => 5, CommentTableMap::COL_UPDATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'file_id' => 2, 'pack_id' => 3, 'text' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'PackId' => 2, 'Text' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'packId' => 2, 'text' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(CommentTableMap::COL_ID => 0, CommentTableMap::COL_USER_ID => 1, CommentTableMap::COL_PACK_ID => 2, CommentTableMap::COL_TEXT => 3, CommentTableMap::COL_CREATED_AT => 4, CommentTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'pack_id' => 2, 'text' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -158,7 +153,6 @@ class CommentTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addForeignKey('file_id', 'FileId', 'INTEGER', 'file', 'id', false, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', false, null, null);
         $this->addColumn('text', 'Text', 'VARCHAR', true, 1024, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -177,20 +171,13 @@ class CommentTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, null, false);
-        $this->addRelation('File', '\\Models\\File', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':file_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
         $this->addRelation('Pack', '\\Models\\Pack', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**
@@ -350,7 +337,6 @@ class CommentTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CommentTableMap::COL_ID);
             $criteria->addSelectColumn(CommentTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(CommentTableMap::COL_FILE_ID);
             $criteria->addSelectColumn(CommentTableMap::COL_PACK_ID);
             $criteria->addSelectColumn(CommentTableMap::COL_TEXT);
             $criteria->addSelectColumn(CommentTableMap::COL_CREATED_AT);
@@ -358,7 +344,6 @@ class CommentTableMap extends TableMap
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.file_id');
             $criteria->addSelectColumn($alias . '.pack_id');
             $criteria->addSelectColumn($alias . '.text');
             $criteria->addSelectColumn($alias . '.created_at');

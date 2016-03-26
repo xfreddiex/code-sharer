@@ -337,28 +337,36 @@ abstract class PackPermissionQuery extends ModelCriteria
     /**
      * Filter the query on the value column
      *
-     * @param     mixed $value The value to use as filter
+     * Example usage:
+     * <code>
+     * $query->filterByValue(1234); // WHERE value = 1234
+     * $query->filterByValue(array(12, 34)); // WHERE value IN (12, 34)
+     * $query->filterByValue(array('min' => 12)); // WHERE value > 12
+     * </code>
+     *
+     * @param     mixed $value The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
     public function filterByValue($value = null, $comparison = null)
     {
-        $valueSet = PackPermissionTableMap::getValueSet(PackPermissionTableMap::COL_VALUE);
-        if (is_scalar($value)) {
-            if (!in_array($value, $valueSet)) {
-                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
+        if (is_array($value)) {
+            $useMinMax = false;
+            if (isset($value['min'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_VALUE, $value['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
             }
-            $value = array_search($value, $valueSet);
-        } elseif (is_array($value)) {
-            $convertedValues = array();
-            foreach ($value as $value) {
-                if (!in_array($value, $valueSet)) {
-                    throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $value));
-                }
-                $convertedValues []= array_search($value, $valueSet);
+            if (isset($value['max'])) {
+                $this->addUsingAlias(PackPermissionTableMap::COL_VALUE, $value['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
             }
-            $value = $convertedValues;
+            if ($useMinMax) {
+                return $this;
+            }
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }

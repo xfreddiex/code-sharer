@@ -182,28 +182,28 @@ class PackTableMap extends TableMap
     0 => ':owner_id',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('PackPermission', '\\Models\\PackPermission', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, 'PackPermissions', false);
+), 'CASCADE', null, 'PackPermissions', false);
         $this->addRelation('File', '\\Models\\File', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, 'Files', false);
+), 'CASCADE', null, 'Files', false);
         $this->addRelation('Comment', '\\Models\\Comment', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':pack_id',
     1 => ':id',
   ),
-), null, null, 'Comments', false);
+), 'CASCADE', null, 'Comments', false);
     } // buildRelations()
 
     /**
@@ -219,6 +219,17 @@ class PackTableMap extends TableMap
             'validate' => array('rule1' => array ('column' => 'name','validator' => 'Length','options' => array ('max' => 32,'maxMessage' => 'Maximal pack name length is {{ limit }} characters.',),), 'rule2' => array ('column' => 'name','validator' => 'Regex','options' => array ('pattern' => '/^[^\\s]*$/','match' => true,'message' => 'Pack name should not contain whitespaces.',),), 'rule3' => array ('column' => 'name','validator' => 'NotBlank','options' => array ('message' => 'Pack name should not be blank.',),), 'rule4' => array ('column' => 'description','validator' => 'Length','options' => array ('max' => 256,'maxMessage' => 'Maximal pack description length is {{ limit }} characters.',),), ),
         );
     } // getBehaviors()
+    /**
+     * Method to invalidate the instance pool of all tables related to pack     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        PackPermissionTableMap::clearInstancePool();
+        FileTableMap::clearInstancePool();
+        CommentTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

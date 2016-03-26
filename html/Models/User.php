@@ -9,6 +9,8 @@ use Models\UserGroup as ChildUserGroup;
 use Models\UserGroupQuery as ChildUserGroupQuery;
 use Models\Pack as ChildPack;
 use Models\PackQuery as ChildPackQuery;
+use Models\PackPermission as ChildPackPermission;
+use Models\PackPermissionQuery as ChildPackPermissionQuery;
 
 /**
  * Skeleton subclass for representing a row from the 'user' table.
@@ -71,6 +73,19 @@ class User extends BaseUser
 
 	public function getPublicPacks(){
 		$packs = ChildPackQuery::create()->filterByOwner($this)->filterByPrivate(0)->find();
+		return $packs;
+	}
+
+	public function getForeignPacks(){
+		$packs = ChildPackQuery::create()
+			->select(array("pack.name", "user.username", "pack.id", "pack_permission.value"))
+			->useOwnerQuery()
+				->select("user.username")
+			->endUse()
+			->usePackPermissionQuery()
+				->filterByUser($this)
+			->endUse()
+		->find();
 		return $packs;
 	}
 }

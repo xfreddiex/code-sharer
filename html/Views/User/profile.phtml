@@ -40,7 +40,80 @@
 						<a href="/settings" class="btn btn-info btn-block"><i class="fa fa-cog"></i> Settings</a>
 					</div>
 				</div>
+
+				<div class="hidden-xs panel panel-default">
+					<div class="panel-heading">
+						<h2>Permissions</h2>
+					</div>
+					<div class="panel-body">
+						<?php if($foreignPacks->count()): ?>
+							<?php foreach($foreignPacks as $index => $pack): ?>
+								<div class="row">
+									<div class="col-xs-10">
+										<div class="row">
+											<div class="col-sm-12">
+												<a class="link" href="/pack/<?=$pack["pack.id"]?>">
+													<?=$pack["pack.name"]?>
+												</a>
+											</div>
+											<div class="col-sm-12">
+												<a class="link text-muted" href="/user/<?=$pack["user.username"]?>">
+													<i class="fa fa-user"></i>
+													<?=$pack["user.username"]?>
+												</a>
+											</div>
+										</div>
+									</div>
+									<div class="col-xs-2">
+										<?php if($pack["pack_permission.value"] == 1): ?>
+											<i class="fa fa-eye"></i>
+										<?php elseif($pack["pack_permission.value"] == 2): ?>
+											<i class="fa fa-pencil-square-o"></i>
+										<?php endif;?>
+									</div>
+								</div>
+								<?php if($index != $foreignPacks->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You do not have permissions to any packs.</p>
+						<?php endif; ?>
+					</div>
+				</div>
+
+				<div class="hidden-xs panel panel-default">
+					<div class="panel-heading">
+						<h2>Groups</h2>
+					</div>
+					<div class="panel-body">
+						<?php if($loggedUser->getGroups()->count()): ?>
+							<?php foreach($loggedUser->getGroups() as $index => $group): ?>
+								<div class="row">
+									<div class="col-xs-6">
+										<a class="link" href="/group/<?=$group->getId()?>">
+											<?=$group->getName()?>
+										</a>
+									</div>
+									<div class="col-xs-6">
+										<a class="link text-muted" href="/user/<?=$group->getOwner()->getUsername()?>">
+											<i class="fa fa-user"></i>
+											<?=$group->getOwner()->getUsername()?>
+										</a>
+									</div>
+								</div>
+								<?php if($index != $loggedUser->getGroups()->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You are not in any groups.</p>
+						<?php endif; ?>
+					</div>
+				</div>
+
 			</div>
+
 			<div class="col-sm-8 col-md-9">
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -106,6 +179,72 @@
 					</div>
 					<div class="panel-footer text-right">
 						<a href="/group/new" class="btn btn-success">New <i class="fa fa-users"></i></a>
+					</div>
+				</div>
+
+				<div class="visible-xs panel panel-default">
+					<div class="panel-heading">
+						<h2>Permissions</h2>
+					</div>
+					<div class="panel-body">
+						<?php if($foreignPacks->count()): ?>
+							<?php foreach($foreignPacks as $index => $pack): ?>
+								<div class="row">
+									<div class="col-xs-5">
+										<a class="link" href="/pack/<?=$pack["pack.id"]?>">
+											<?=$pack["pack.name"]?>
+										</a>
+									</div>
+									<div class="col-xs-5">
+										<a class="link text-muted" href="/user/<?=$pack["user.username"]?>">
+											<i class="fa fa-user"></i>
+											<?=$pack["user.username"]?>
+										</a>
+									</div>
+									<div class="col-xs-2">
+										<?php if($pack["pack_permission.value"] == 1): ?>
+											<i class="fa fa-eye"></i>
+										<?php elseif($pack["pack_permission.value"] == 2): ?>
+											<i class="fa fa-pencil-square-o"></i>
+										<?php endif;?>
+									</div>
+								</div>
+								<?php if($index != $foreignPacks->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You do not have permissions to any packs.</p>
+						<?php endif; ?>
+					</div>
+				</div>
+				<div class="visible-xs panel panel-default">
+					<div class="panel-heading">
+						<h2>Groups</h2>
+					</div>
+					<div class="panel-body">
+						<?php if($loggedUser->getGroups()->count()): ?>
+							<?php foreach($loggedUser->getGroups() as $index => $group): ?>
+								<div class="row">
+									<div class="col-xs-6">
+										<a class="link" href="/group/<?=$group->getId()?>">
+											<?=$group->getName()?>
+										</a>
+									</div>
+									<div class="col-xs-6">
+										<a class="link text-muted" href="/user/<?=$group->getOwner()->getUsername()?>">
+											<i class="fa fa-user"></i>
+											<?=$group->getOwner()->getUsername()?>
+										</a>
+									</div>
+								</div>
+								<?php if($index != $loggedUser->getGroups()->count() - 1): ?>
+									<hr />
+								<?php endif; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p>You are not in any groups.</p>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>

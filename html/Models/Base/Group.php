@@ -979,10 +979,9 @@ abstract class Group implements ActiveRecordInterface
 
             if ($this->packPermissionsScheduledForDeletion !== null) {
                 if (!$this->packPermissionsScheduledForDeletion->isEmpty()) {
-                    foreach ($this->packPermissionsScheduledForDeletion as $packPermission) {
-                        // need to save related object because we set the relation to null
-                        $packPermission->save($con);
-                    }
+                    \Models\PackPermissionQuery::create()
+                        ->filterByPrimaryKeys($this->packPermissionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
                     $this->packPermissionsScheduledForDeletion = null;
                 }
             }
