@@ -8,14 +8,15 @@
 			<div class="col-md-3">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						<h2><?=$search?></h2>
+						<a href="/search?q=<?=$q?>&amp;search=pack" class="btn btn-block <?=($search == "pack" ? "btn-info" : "btn-default")?>">Packs</a>
+						<a href="/search?q=<?=$q?>&amp;search=user" class="btn btn-block <?=($search == "user" ? "btn-info" : "btn-default")?>">Users</a>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-9">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2><?=$search?></h2>
+						<h2><?=($search == "user" ? "Users" : "Packs")?></h2>
 					</div>
 					<div class="panel-body" id="results" q="<?=$q?>" search="<?=$search?>">
 						<?php if(!$items->isEmpty()): ?>	
@@ -23,7 +24,7 @@
 								<?php foreach($items as $index => $user): ?>
 									<div class="user-row">
 										<div class="user-avatar">
-											<img class="img-responsive" src="<?=$user->getAvatar40()?>">
+											<a href="/user/<?=$user->getUsername()?>"><img class="img-responsive" src="<?=$user->getAvatar40()?>"></a>
 										</div>
 										<div class="row">
 											<div class="col-sm-4">
@@ -137,7 +138,7 @@
 							<?php endif; ?>
 
 						<?php else: ?>
-							<p>There are no results.</p>
+							<p>There are no results.<?=($search == "pack" ? " Try to extend your query." : null)?></p>
 						<?php endif; ?>
 					</div>
 				</div>

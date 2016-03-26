@@ -292,6 +292,15 @@ section .btn-upload input, .modal .btn-upload input {
 .modal-content {
   border: 1px solid #dddddd; }
 
+.panel-default .panel-footer .modal-footer .btn {
+  border: 0px;
+  color: white;
+  font-size: 20px;
+  height: 35px;
+  line-height: 35px;
+  padding: 0px 9px;
+  top: 0px; }
+
 /*----*/
 /*thumbnails*/
 .thumbnail {
@@ -657,6 +666,9 @@ footer {
 
 /*----*/
 /*pack*/
+.pack-wrapper .modal .form-group {
+  max-width: 160px; }
+
 /*----*/
 .pack-wrapper #description, .file-wrapper #description, .group-wrapper #description {
   word-wrap: break-word;

@@ -56,7 +56,8 @@
 							<form class="navbar-form" role="search" action="/search" method="get">
 								<div class="form-group">
 									<div class="input-group">
-										<input type="text" class="form-control search-input" placeholder="Search" name="q">
+										<input type="text" class="form-control search-input" placeholder="Search" name="q" <?=(isset($q) ? 'value="'.$q.'"' : null)?>>
+										<?=(isset($search) ? '<input type="hidden" name="search" value="'.$search.'">' : null)?>
 										<span class="input-group-btn">
 											<button type="submit" class="btn btn-default search-button"><i class="fa fa-search"></i></button>
 										</span>
