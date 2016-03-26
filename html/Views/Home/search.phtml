@@ -1,0 +1,149 @@
+<div  class="search-wrapper">
+	<div class="container">
+		<div id="message-box">
+			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
+		</div>
+		<h1>Search</h1>
+		<div class="row">
+			<div class="col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<h2><?=$search?></h2>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2><?=$search?></h2>
+					</div>
+					<div class="panel-body" id="results" q="<?=$q?>" search="<?=$search?>">
+						<?php if(!$items->isEmpty()): ?>	
+							<?php if($search == "user"): ?>
+								<?php foreach($items as $index => $user): ?>
+									<div class="user-row">
+										<div class="user-avatar">
+											<img class="img-responsive" src="<?=$user->getAvatar40()?>">
+										</div>
+										<div class="row">
+											<div class="col-sm-4">
+												<div>
+													<a href="/user/<?=$user->getUsername()?>" class="link"><strong><?=$user->getUsername()?></strong></a>
+												</div>
+												<div>
+													<i class="fa fa-user-plus"></i>
+													<?=$user->getCreatedAt("j M o")?>
+												</div>
+											</div>
+											<div class="col-sm-7">
+												<div>
+													<?=($user->getName() || $user->getSurname() ? "<h3>".$user->getName().($user->getName() && $user->getSurname() ? " ": null).$user->getSurname()."</h3>": null)?>
+												</div>
+											</div>
+											<div class="col-sm-1 text-right">
+												<div>
+													<i class="fa fa-archive"></i>
+													<?=$user->getPacks()->count()?>
+												</div>
+											</div>
+										</div>
+									</div>
+									<?php if($index != $items->count() - 1): ?>
+										<hr />
+									<?php endif; ?>
+								<?php endforeach; ?>
+							<?php elseif($search == "pack"): ?>
+								<?php foreach($items as $index => $pack): ?>
+									<div class="pack-row">
+										<div class="row">
+											<div class="col-xs-12 col-sm-5 col-md-5">
+												<div class="row">
+													<div class="col-xs-4 col-sm-12">
+														<a href="/pack/<?=$pack->getId()?>" class="link"><strong><?=$pack->getName()?></strong></a>
+													</div>
+													<div class="col-xs-4 col-sm-6" id="created">
+														<i class="fa fa-share-square"></i>
+														<?=$pack->getCreatedAt("j M o")?>
+													</div>
+													<div class="col-xs-4 col-sm-6" id="updated">
+														<i class="fa fa-pencil-square"></i>
+														<?=$pack->getUpdatedAt("j M o")?>
+													</div>
+												</div>
+											</div>
+											<div class="col-xs-9 col-sm-6 col-md-6">
+												<p><?=$pack->getDescription()?></p>
+											</div>
+											<div class="col-xs-3 col-sm-1 text-right">
+												<i class="fa fa-file"></i>
+												<?=$pack->getFiles()->count()?>
+											</div>
+										</div>
+									</div>
+									<?php if($index != $items->count() - 1): ?>
+										<hr />
+									<?php endif; ?>
+								<?php endforeach; ?>
+							<?php endif; ?>	
+
+							<?php if($items->haveToPaginate()): ?>
+								<hr />
+
+								<div class="text-center">
+									<ul class="pagination">
+										<li><button value="<?=($items->getPage() - 1)?>"><i class="fa fa-chevron-left"></i></button></li>
+
+										<?php if($items->getLastPage() <= 9): ?>
+
+											<?php for($i = 1; $i <= $items->getLastPage(); $i++): ?>
+												<li><button value="<?=$i?>" <?=($i == $items->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+											<?php endfor; ?>
+
+										<?php elseif($items->getPage() <= 5): ?>
+
+											<?php for($i = 1; $i <= 7; $i++): ?>
+												<li><button value="<?=$i?>" <?=($i == $items->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+											<?php endfor; ?>
+
+											<li><button value="<?=($items->getPage() + 7)?>">&#133;</button></li>
+											<li><button value="<?=$items->getLastPage()?>"><?=$items->getLastPage()?></button></li>
+
+										<?php elseif($items->getLastPage() - $items->getPage() <= 4): ?>
+
+											<li><button value="<?=1?>">1</button></li>
+											<li><button value="<?=($items->getPage() - 7)?>">&#133;</button></li>
+
+											<?php for($i = $items->getLastPage() - 6; $i <= $items->getLastPage(); $i++): ?>
+												<li><button value="<?=$i?>" <?=($i == $items->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+											<?php endfor; ?>
+
+										<?php else: ?>
+
+											<li><button value="<?=1?>">1</button></li>
+											<li><button value="<?=($items->getPage() - 7)?>">&#133;</button></li>
+
+											<?php for($i = $items->getPage() - 2; $i <= $items->getPage() + 2; $i++): ?>
+												<li><button value="<?=$i?>" <?=($i == $items->getPage() ? 'class="active"' : null)?>><?=$i?></button></li>
+											<?php endfor; ?>
+
+											<li><button value="<?=($items->getPage() + 7)?>">&#133;</button></li>
+											<li><button value="<?=$items->getLastPage()?>"><?=$items->getLastPage()?></button></li>
+
+										<?php endif; ?>
+
+										<li><button value="<?=($items->getPage() + 1)?>"><i class="fa fa-chevron-right"></i></button></li>
+									</ul>
+								</div>
+							<?php endif; ?>
+
+						<?php else: ?>
+							<p>There are no results.</p>
+						<?php endif; ?>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>

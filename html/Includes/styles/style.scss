@@ -330,7 +330,7 @@ section, .modal{
 
 /*pagination*/
 
-.pagination button{
+.pagination button, .pagination a{
 	background: 0px;
 	border-radius: 0px !important;
 	border: 0px !important;
@@ -339,12 +339,12 @@ section, .modal{
 	width: 24px;
 	padding: 0px 3px;
 }
-.pagination button.active{
+.pagination button.active, .pagination a.active{
 	font-size: 16px;
 	line-height: 16px;
 	font-weight: bold;
 }
-.pagination button:hover{
+.pagination button:hover, .pagination a:hover{
 	color: #014450;
 	text-decoration: none;
 }
@@ -888,23 +888,56 @@ footer{
 }
 
 /*----*/
-
-#description{
-	word-wrap: break-word;
-	word-break: break-all;
-	white-space: pre-line;
-}
-button[name="save-description"]{
-	display: none;
-}
-textarea[name="description"]{
-	resize: vertical;
-	min-height: 70px;
-	display: none;
-	text-overflow: clip;
+.pack-wrapper, .file-wrapper, .group-wrapper{
+	#description{
+		word-wrap: break-word;
+		word-break: break-all;
+		white-space: pre-line;
+	}
+	button[name="save-description"]{
+		display: none;
+	}
+	textarea[name="description"]{
+		resize: vertical;
+		min-height: 70px;
+		display: none;
+		text-overflow: clip;
+	}
 }
 
 p.comment{
 	word-wrap: break-word;
 	word-break: break-all;
+}
+
+#results{
+	.user-row{
+		height: 40px;
+		.user-avatar{
+			float: left;
+			height: 40px;
+		}
+		.user-avatar + .row{
+			margin-left: 40px; 
+		}
+	}
+	.pack-row{
+		p{
+			height: 40px;
+			overflow: hidden;
+    		text-overflow: ellipsis;
+			white-space: pre-line;
+			word-wrap: break-word;
+			margin: 0px;
+			@media screen and (max-width: 767px){
+				padding-top: 4px;
+			}
+		}
+		#created, #updated{
+			color: #666666;
+			@media screen and (max-width: 767px){
+				text-align: right;
+			}
+		}
+	}
 }

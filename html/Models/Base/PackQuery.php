@@ -26,7 +26,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery orderByPrivate($order = Criteria::ASC) Order by the private column
  * @method     ChildPackQuery orderByOwnerId($order = Criteria::ASC) Order by the owner_id column
  * @method     ChildPackQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
- * @method     ChildPackQuery orderByTags($order = Criteria::ASC) Order by the tags column
  * @method     ChildPackQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildPackQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -36,7 +35,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackQuery groupByPrivate() Group by the private column
  * @method     ChildPackQuery groupByOwnerId() Group by the owner_id column
  * @method     ChildPackQuery groupByDeletedAt() Group by the deleted_at column
- * @method     ChildPackQuery groupByTags() Group by the tags column
  * @method     ChildPackQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildPackQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -99,7 +97,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack findOneByPrivate(boolean $private) Return the first ChildPack filtered by the private column
  * @method     ChildPack findOneByOwnerId(int $owner_id) Return the first ChildPack filtered by the owner_id column
  * @method     ChildPack findOneByDeletedAt(string $deleted_at) Return the first ChildPack filtered by the deleted_at column
- * @method     ChildPack findOneByTags(array $tags) Return the first ChildPack filtered by the tags column
  * @method     ChildPack findOneByCreatedAt(string $created_at) Return the first ChildPack filtered by the created_at column
  * @method     ChildPack findOneByUpdatedAt(string $updated_at) Return the first ChildPack filtered by the updated_at column *
 
@@ -112,7 +109,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack requireOneByPrivate(boolean $private) Return the first ChildPack filtered by the private column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByOwnerId(int $owner_id) Return the first ChildPack filtered by the owner_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByDeletedAt(string $deleted_at) Return the first ChildPack filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPack requireOneByTags(array $tags) Return the first ChildPack filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByCreatedAt(string $created_at) Return the first ChildPack filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPack requireOneByUpdatedAt(string $updated_at) Return the first ChildPack filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -123,7 +119,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPack[]|ObjectCollection findByPrivate(boolean $private) Return ChildPack objects filtered by the private column
  * @method     ChildPack[]|ObjectCollection findByOwnerId(int $owner_id) Return ChildPack objects filtered by the owner_id column
  * @method     ChildPack[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildPack objects filtered by the deleted_at column
- * @method     ChildPack[]|ObjectCollection findByTags(array $tags) Return ChildPack objects filtered by the tags column
  * @method     ChildPack[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildPack objects filtered by the created_at column
  * @method     ChildPack[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildPack objects filtered by the updated_at column
  * @method     ChildPack[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -218,7 +213,7 @@ abstract class PackQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, private, owner_id, deleted_at, tags, created_at, updated_at FROM pack WHERE id = :p0';
+        $sql = 'SELECT id, name, description, private, owner_id, deleted_at, created_at, updated_at FROM pack WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -518,87 +513,6 @@ abstract class PackQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(PackTableMap::COL_DELETED_AT, $deletedAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the tags column
-     *
-     * @param     array $tags The values to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildPackQuery The current query, for fluid interface
-     */
-    public function filterByTags($tags = null, $comparison = null)
-    {
-        $key = $this->getAliasedColName(PackTableMap::COL_TAGS);
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            foreach ($tags as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_SOME) {
-            foreach ($tags as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addOr($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            foreach ($tags as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::NOT_LIKE);
-                }
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
-
-            return $this;
-        }
-
-        return $this->addUsingAlias(PackTableMap::COL_TAGS, $tags, $comparison);
-    }
-
-    /**
-     * Filter the query on the tags column
-     * @param     mixed $tags The value to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
-     *
-     * @return $this|ChildPackQuery The current query, for fluid interface
-     */
-    public function filterByTag($tags = null, $comparison = null)
-    {
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            if (is_scalar($tags)) {
-                $tags = '%| ' . $tags . ' |%';
-                $comparison = Criteria::LIKE;
-            }
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            $tags = '%| ' . $tags . ' |%';
-            $comparison = Criteria::NOT_LIKE;
-            $key = $this->getAliasedColName(PackTableMap::COL_TAGS);
-            if ($this->containsKey($key)) {
-                $this->addAnd($key, $tags, $comparison);
-            } else {
-                $this->addAnd($key, $tags, $comparison);
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
-
-            return $this;
-        }
-
-        return $this->addUsingAlias(PackTableMap::COL_TAGS, $tags, $comparison);
     }
 
     /**

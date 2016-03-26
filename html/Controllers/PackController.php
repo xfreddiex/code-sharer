@@ -28,6 +28,7 @@ class PackController extends BaseController{
 		$this->addBefore("delete", array("userLogged", "userAuthorized", "load", "loadPermission"));
 		$this->addBefore("addFiles", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("addComment", array("userLogged", "load", "loadPermission"));
+		$this->addBefore("deleteComment", array("userLogged", "load", "loadPermission"));
 		$this->addBefore("comments", array("load", "loadPermission", "loadComments"));
 		$this->addBefore("deleteFile", array("userLogged", "load", "loadPermission", "loadFile"));
 		$this->addBefore("showFile", array("load", "loadPermission", "loadFile"));
@@ -47,10 +48,15 @@ class PackController extends BaseController{
 			"js",
 			"xml",
 			"json",
-			"jpg",
-			"pdf",
-			"",
-			""
+			"yaml",
+			"yml",
+			"htm",
+			"xml",
+			"c",
+			"cpp",
+			"h",
+			"class",
+			"dist"
 		);
 	}
 
@@ -89,10 +95,6 @@ class PackController extends BaseController{
 			$pack->setOwner($this->data["loggedUser"]);
 			$pack->setPrivate(isset($_POST["private"]));
 			$pack->setDescription(isset($_POST["description"]) ? $_POST["description"] : null);
-			if(isset($_POST["tags"])){
-				$tags = array_map("trim", explode(",", $_POST["tags"]));
-				$pack->setTags($tags);
-			}
 
 			if($pack->save() <= 0){
     			$failures = $pack->getValidationFailures();
@@ -272,6 +274,19 @@ class PackController extends BaseController{
 		}
 	}
 
+	protected function deleteComment($params){
+		if($this->data["permission"] != 3 ){
+			$this->sendFlashMessage("You have not permission to delete pack with ID ".$this->data["pack"]->getId().".", "error");
+			$this->redirect("/");
+		}
+
+		$comment = CommentQuery::create()->findPK($params["comment_id"]);
+		if($comment)
+			$comment->delete();	
+
+		$this->viewString(json_encode($this->data["response"]));
+	}
+
 	protected function comments(){
 		if(!$this->data["permission"]){
 			$this->sendFlashMessage("You do not have permission to view comments of pack with ID " . $this->data["pack"]->getId() . ".", "error");
@@ -292,10 +307,6 @@ class PackController extends BaseController{
 			}
 			else if($given[0] == "description"){
 				$pack->setDescription($_POST["description"]);
-			}
-			else if($given[0] == "tags"){
-				$tags = array_map("trim", explode(",", $_POST["tags"]));
-				$pack->setTags($tags);
 			}
 			else{
 				setHTTPStatusCode("400");
@@ -329,10 +340,6 @@ class PackController extends BaseController{
 			$pack->setName($_POST["name"]);
 		if(isset($_POST["description"]))
 			$pack->setDescription($_POST["description"]);
-		if(isset($_POST["tags"])){
-			$tags = array_map("trim", explode(",", $_POST["tags"]));
-			$pack->setTags($tags);
-		}
 		$pack->setPrivate(isset($_POST["private"]));
 
 		if(!$pack->save()){
@@ -347,7 +354,6 @@ class PackController extends BaseController{
 		else{
 			$this->data["response"]["data"]["description"] = $pack->getDescription();
 			$this->data["response"]["data"]["name"] = $pack->getName();
-			$this->data["response"]["data"]["tags"] = $pack->getTags();
 			$this->data["response"]["data"]["private"] = $pack->getPrivate();
 		}
 		

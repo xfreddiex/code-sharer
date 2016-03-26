@@ -79,11 +79,11 @@ abstract class Controller{
 	}
 
 	protected function sendFlashMessage($text, $type = "info"){
+		$type = $type == "error" ? "danger" : $type;
 		if(in_array("application/json", array_map('trim', explode(',', $_SERVER["HTTP_ACCEPT"])))){
 			$this->data["response"]["messages"][] = array("text" => $text, "type" => $type);
 			return;
 		}
-		$type = $type == "error" ? "danger" : $type;
 		$_SESSION["flash_messages"][] = array("message" => $text, "type" => $type);
 	}
 

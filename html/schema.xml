@@ -42,6 +42,19 @@
             <parameter name="rule12" value='{column: surname, validator: Length, options: {max : 50, maxMessage: "Maximal surname length is {{ limit }} characters."}}' />
         </behavior>
 
+        <index name="fulltext">
+            <index-column name="username"/>
+            <index-column name="name"/>
+            <index-column name="surname"/>
+            <vendor type="mysql">
+                <parameter name="Index_type" value="FULLTEXT"/>
+            </vendor>
+        </index>
+
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+
     </table>
 
     <table name="identity" phpName="Identity">
@@ -56,6 +69,10 @@
             <reference local="user_id" foreign="id"/>
         </foreign-key>
     
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+
     </table>
 
     <table name="pack_permission" phpName="PackPermission">
@@ -79,6 +96,10 @@
             <reference local="pack_id" foreign="id"/>
         </foreign-key>
 
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+
     </table>
 
     <table name="pack" phpName="Pack">
@@ -88,7 +109,6 @@
         <column name="private" type="boolean" required="true"/>
         <column name="owner_id" type="integer" required="true"/>
         <column name="deleted_at" type="timestamp" required="false"/>
-        <column name="tags" type="array" required="false"/>
         
         <behavior name="timestampable" />
         
@@ -107,6 +127,18 @@
             <parameter name="rule3" value='{column: name, validator: NotBlank, options: {message: "Pack name should not be blank."}}' />
             <parameter name="rule4" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal pack description length is {{ limit }} characters."}}' />
         </behavior>
+
+        <index name="fulltext">
+            <index-column name="name"/>
+            <index-column name="description"/>
+            <vendor type="mysql">
+                <parameter name="Index_type" value="FULLTEXT"/>
+            </vendor>
+        </index>
+
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
 
     </table>
 
@@ -132,6 +164,10 @@
             <parameter name="rule3" value='{column: description, validator: Length, options: {max : 256, maxMessage: "Maximal file description length is {{ limit }} characters."}}' />
         </behavior>
     
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+
     </table>
 
     <table name="group_of_users" phpName="Group">
@@ -154,6 +190,10 @@
             <parameter name="rule4" value='{column: name, validator: Regex, options: {pattern: "/^[^\\s]*$/", match: true, message: "Group name should not contain whitespaces."}}' />
 
         </behavior>
+
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
 
     </table>
 
@@ -181,6 +221,10 @@
             <parameter name="rule2" value='{column: text, validator: NotBlank, options: {message: "Comment should not be blank."}}' />
         </behavior>
 
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
+
     </table>
 
     <table name="user_group" isCrossRef="true">
@@ -198,6 +242,10 @@
         <behavior name="auto_add_pk" />
 
         <behavior name="timestampable" />
+
+        <vendor type="mysql">
+            <parameter name="Engine" value="MyISAM"/>
+        </vendor>
 
     </table>
 

@@ -263,7 +263,7 @@ section .btn-upload input, .modal .btn-upload input {
 
 /*----*/
 /*pagination*/
-.pagination button {
+.pagination button, .pagination a {
   background: 0px;
   border-radius: 0px !important;
   border: 0px !important;
@@ -272,12 +272,12 @@ section .btn-upload input, .modal .btn-upload input {
   width: 24px;
   padding: 0px 3px; }
 
-.pagination button.active {
+.pagination button.active, .pagination a.active {
   font-size: 16px;
   line-height: 16px;
   font-weight: bold; }
 
-.pagination button:hover {
+.pagination button:hover, .pagination a:hover {
   color: #014450;
   text-decoration: none; }
 
@@ -658,15 +658,13 @@ footer {
 /*----*/
 /*pack*/
 /*----*/
-#description {
+.pack-wrapper #description, .file-wrapper #description, .group-wrapper #description {
   word-wrap: break-word;
   word-break: break-all;
   white-space: pre-line; }
-
-button[name="save-description"] {
+.pack-wrapper button[name="save-description"], .file-wrapper button[name="save-description"], .group-wrapper button[name="save-description"] {
   display: none; }
-
-textarea[name="description"] {
+.pack-wrapper textarea[name="description"], .file-wrapper textarea[name="description"], .group-wrapper textarea[name="description"] {
   resize: vertical;
   min-height: 70px;
   display: none;
@@ -675,5 +673,28 @@ textarea[name="description"] {
 p.comment {
   word-wrap: break-word;
   word-break: break-all; }
+
+#results .user-row {
+  height: 40px; }
+  #results .user-row .user-avatar {
+    float: left;
+    height: 40px; }
+  #results .user-row .user-avatar + .row {
+    margin-left: 40px; }
+#results .pack-row p {
+  height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  word-wrap: break-word;
+  margin: 0px; }
+  @media screen and (max-width: 767px) {
+    #results .pack-row p {
+      padding-top: 4px; } }
+#results .pack-row #created, #results .pack-row #updated {
+  color: #666666; }
+  @media screen and (max-width: 767px) {
+    #results .pack-row #created, #results .pack-row #updated {
+      text-align: right; } }
 
 /*# sourceMappingURL=style.css.map */

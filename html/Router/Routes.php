@@ -2,6 +2,7 @@
 return array(
 	array('uri' => '/', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Home', 'method' => 'index'),
 	array('uri' => '/home', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Home', 'method' => 'index'),
+	array('uri' => '/search', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Home', 'method' => 'search'),
 	
 	//User
 	array('uri' => '/user/update-avatar', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'updateAvatar'),
@@ -25,6 +26,7 @@ return array(
 	array('uri' => '/pack/[id]/files-list', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'filesList'),
 	array('uri' => '/pack/[id]/add-comment', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'addComment'),
 	array('uri' => '/pack/[id]/get-comments', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'comments'),
+	array('uri' => '/pack/[id]/comment/[comment_id]/delete', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'deleteComment'),
 	array('uri' => '/pack/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'validateOne'),
 	array('uri' => '/pack/[id]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'show'),
 

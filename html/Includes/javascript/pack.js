@@ -70,14 +70,30 @@ $(document).ready(function(){
 		});
 	});
 
-	bindPaginationButtons();
+	bindCommentButtons();
 
-	function bindPaginationButtons(){
+	function bindCommentButtons(){
 		$('.pack-wrapper .pagination button').click(function(){
 			$("#comments").load('/pack/' + $("#comments").attr("pack") + '/get-comments?page=' + $(this).val(), function(){
-				bindPaginationButtons();
+				bindCommentButtons();
+			});
+		});
+
+		$('.pack-wrapper button[name="delete-comment"]').click(function(){
+			var url = "/pack/" + $("#comments").attr("pack") + "/comment/" + $(this).attr("comment") + "/delete";
+			$.ajax({
+				type: 'GET',
+				url: url,
+				dataType : "json",
+				context: $(this),
+				success: function(response){
+					$("#comments").load('/pack/' + $("#comments").attr("pack") + '/get-comments?page=' + $(".pagination button.active").val(), function(){
+						bindCommentButtons();
+					});
+				}
 			});
 		});	
 	}
-	
+
+
 });

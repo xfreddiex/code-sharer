@@ -9,9 +9,18 @@
 					<a href="/user/<?=$comment->getUser()->getUsername()?>" class="link"><strong><?=$comment->getUser()->getUsername()?></strong></a>
 				</div>
 			</div>
-			<div class="col-xs-8 col-sm-9 col-md-10">
-				<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
-			</div>
+			<?php if($permission == 3): ?>
+				<div class="col-xs-6 col-sm-8 col-md-9">
+					<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+				</div>
+				<div class="col-xs-2 col-sm-1 text-right">
+					<button class="btn btn-danger btn-sm" name="delete-comment" comment="<?=$comment->getId()?>"><i class="fa fa-trash"></i></button>
+				</div>
+			<?php else: ?>
+				<div class="col-xs-8 col-sm-9 col-md-10">
+					<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php if($index != $comments->count() - 1): ?>
 			<hr />
@@ -63,7 +72,7 @@
 
 				<?php endif; ?>
 
-				<li><button value="<?=($comments->getPage() + 1)?>"><i class="fa fa-chevron-right"></i></span></button></li>
+				<li><button value="<?=($comments->getPage() + 1)?>"><i class="fa fa-chevron-right"></i></button></li>
 			</ul>
 		</div>
 	<?php endif; ?>
