@@ -813,27 +813,9 @@ footer{
 /*file*/
 
 .file-wrapper{
-	code{
-		background: white;
-		padding: 0px;
-		font-family: "Ubuntu-monospace";
-		font-size: 14px;
-		text-overflow: initial;
-    	overflow: visible;
-    	overflow-x: auto;
-    	white-space: pre;
-	}
-	code *{
-		padding: 0px;
-		font-family: "Ubuntu-monospace";
-		font-size: 14px;
-	}
-	pre{
-		background: transparent;
-		margin: 0px;
-		padding: 0px;
-		border: 0px;
-		margin-bottom: -10px;
+	.CodeMirror{
+	  border: 1px solid #eee;
+	  height: auto;
 	}
 }
 

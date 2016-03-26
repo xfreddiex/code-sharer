@@ -1,5 +1,12 @@
-<link rel="stylesheet" type="text/css" href="/Includes/highlight/styles/mystyle.css">
-<script src="/Includes/highlight/highlight.pack.js"></script>
+
+<script src="/Includes/codemirror/lib/codemirror.js"></script>
+<link rel="stylesheet" href="/Includes/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="/Includes/codemirror/theme/elegant.css">
+<script src="/Includes/codemirror/addon/mode/loadmode.js"></script>
+<script src="/Includes/codemirror/mode/meta.js"></script>
+
+<script src="/Includes/javascript/codemirror.conf.js"></script>
+
 <div  class="file-wrapper">
 	<div class="container">
 		<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
@@ -54,22 +61,14 @@
 			</div>
 		</div>
 
-		<div class="panel panel-default" id="user-info">
+		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2><?=$file->getName()?></h2>
 			</div>
 			<div class="panel-body">
-				<pre><code id="code" class="<?=$file->getExtension()?>">
-				</code></pre>
-				<script type="text/javascript">
-					$(document).ready(function(e){
-						$('#code').load('/pack/<?=$pack->getId()?>/<?=$file->getName()?>/content', function(){
-							$('pre code').each(function(i, block){
-								hljs.highlightBlock(block);
-							});
-						});
-					});
-				</script>
+				<form class="code">
+					<textarea id="code" name="code" lang="<?=$file->getExtension()?>"><?=$file->getContent()?></textarea>
+				</form>
 			</div>
 		</div>
 	</div>
