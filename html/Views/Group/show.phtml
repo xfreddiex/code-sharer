@@ -3,7 +3,8 @@
 		<div id="message-box">
 			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
 		</div>
-		<h1><?=$group->getName()?></h1>
+		<h1 id="name"><?=$group->getName()?></h1>
+		<input class="form-control" name="name" validation="ajax" validation-event="keyup" validation-type="name" value="<?=$group->getName()?>">
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">
 				<div class="panel panel-default">
@@ -34,22 +35,30 @@
 						</div>
 					</div>
 					<?php if($permission == 2): ?>
-						<div class="panel-footer text-right">
-							<button class="btn btn-danger" data-toggle="modal" data-target="#delete-group-modal"><i class="fa fa-trash"></i></button>
-							<div class="modal fade text-left" id="delete-group-modal">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
-											<h2 class="modal-title">Delete group</h2>
-										</div>
-										<div class="modal-body">
-											<p>Do you realy want to delete this group?</p>
-										</div>
-										<div class="modal-footer">
-											<form action="/group/<?=$group->getId()?>/delete" method="POST">
-												<button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>	
-											</form>
+						<div class="panel-footer">	
+							<div class="row">
+								<div class="col-xs-9">
+									<button class="btn btn-info" name="edit-name"><i class="fa fa-pencil-square-o"></i> Change name</button>
+									<button class="btn btn-success" name="save-name" group="<?=$group->getId()?>"><i class="fa fa-save"></i> Save name</button>
+								</div>
+								<div class="col-xs-3 text-right">
+									<button class="btn btn-danger" data-toggle="modal" data-target="#delete-group-modal"><i class="fa fa-trash"></i></button>
+									<div class="modal fade text-left" id="delete-group-modal">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
+													<h2 class="modal-title">Delete group</h2>
+												</div>
+												<div class="modal-body">
+													<p>Do you realy want to delete this group?</p>
+												</div>
+												<div class="modal-footer">
+													<form action="/group/<?=$group->getId()?>/delete" method="POST">
+														<button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>	
+													</form>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>

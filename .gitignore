@@ -1,5 +1,6 @@
 html/Includes/styles/.sass-cache
 html/Includes/images/avatars
+html/generated-conf
 vendor
 propel.yml
 propel.yml.dist

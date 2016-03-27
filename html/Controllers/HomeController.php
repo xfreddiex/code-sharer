@@ -58,7 +58,7 @@ class HomeController extends BaseController{
 				}
 				$qParts = array_merge($qParts, $qParts, $qParts);
 
-				$this->data["items"] = UserQuery::create()->where("MATCH(user.username, user.name, user.surname) AGAINST(? IN BOOLEAN MODE)", $qMatch)->_or()->where($likeQuery, $qParts)->paginate($page, $perPage);
+				$this->data["items"] = UserQuery::create()->condition("cond1", "MATCH(user.username, user.name, user.surname) AGAINST(? IN BOOLEAN MODE)", $qMatch)->condition("cond2", "user.deleted_at IS NULL")->condition("cond3", $likeQuery, $qParts)->combine(array("cond1", "cond3"), "or", "cond13")->where(array("cond13", "cond2"), "and")->paginate($page, $perPage);
 				
 				$this->viewFile($this->template);
 				return;

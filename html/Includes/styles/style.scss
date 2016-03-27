@@ -520,7 +520,7 @@ header{
 		border-radius: 0px;
 	}
 	.navbar-brand{
-		padding: 7px 15px;
+		padding: 8px 15px;
 		width: 224px;
 	}
 	.form-control{
@@ -763,6 +763,11 @@ footer{
 			max-width: 320px;
 		}
 	}
+	.modal{
+		.form-group{
+			max-width: 160px;
+		}
+	}
 }
 
 /*----*/
@@ -806,6 +811,15 @@ footer{
 			margin-right: 5px;
 		}
 	}
+	input[name="name"]{
+		height: 35.2px;
+
+		display: none;
+		margin-bottom: 15px;
+	}
+	button[name="save-name"]{
+		display: none;
+	}
 }
 
 /*----*/
@@ -820,6 +834,9 @@ footer{
 	button[name="save-code"]{
 		display: none;
 	}
+	.code *{
+		font-family: "Ubuntu-monospace";
+	}
 }
 
 /*----*/
@@ -828,7 +845,7 @@ footer{
 
 .pack-settings-wrapper{
 	#update-permissions-form{
-		.fa-eye, .fa-pencil-square-o{
+		.fa-eye, .fa-pencil-square-o, .fa-ban{
 			font-size: 20px;
 			line-height: 20px;
 			margin-right: 5px;	
@@ -842,6 +859,7 @@ footer{
 			padding: 0px 5px;
 			line-height: 18px;
 			border-left: 0px;
+			max-width: 320px;
 		}
 		.input-group-addon{
 			height: 20px;

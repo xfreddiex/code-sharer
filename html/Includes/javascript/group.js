@@ -75,4 +75,35 @@ $(document).ready(function(){
 			}
 		});
 	});
+
+
+	$('.group-wrapper button[name="edit-name"]').click(function(){
+		$("#name").hide();
+		$('input[name="name"]').show();
+		$(this).hide();
+		$('button[name="save-name"]').show();
+	});
+
+	$('.group-wrapper button[name="save-name"]').click(function(){
+		var url = "/group/" + $(this).attr("group") + "/update";
+		var data = $('input[name="name"]').serialize();
+		$.ajax({
+			url: url,
+			type: 'POST',
+			data: data,
+			dataType : "json",
+			context: $(this),
+			success: function(response){
+				if(response["status"] == "ok"){
+					$('input[name="name"]').hide();
+					if(typeof response["data"]["name"] != "undefined"){
+						$("#name").text(response["data"]["name"]).show();
+					}
+					$("#name").show();
+					$('button[name="save-name"]').hide();
+					$('button[name="edit-name"]').show();
+				};
+			}
+		});
+	});
 });

@@ -412,7 +412,7 @@ header .navbar {
   border: 0px;
   border-radius: 0px; }
 header .navbar-brand {
-  padding: 7px 15px;
+  padding: 8px 15px;
   width: 224px; }
 header .form-control {
   padding: 5px 10px;
@@ -585,6 +585,8 @@ footer {
 @media screen and (max-width: 767px) {
   .settings-wrapper #avatar-settings {
     max-width: 320px; } }
+.settings-wrapper .modal .form-group {
+  max-width: 160px; }
 
 /*----*/
 /*newPack*/
@@ -608,6 +610,12 @@ footer {
 /*group*/
 .group-wrapper .added-at-wrapper i {
   margin-right: 5px; }
+.group-wrapper input[name="name"] {
+  height: 35.2px;
+  display: none;
+  margin-bottom: 15px; }
+.group-wrapper button[name="save-name"] {
+  display: none; }
 
 /*----*/
 /*file*/
@@ -616,10 +624,12 @@ footer {
   height: auto; }
 .file-wrapper button[name="save-code"] {
   display: none; }
+.file-wrapper .code * {
+  font-family: "Ubuntu-monospace"; }
 
 /*----*/
 /*pack-settings-wrapper*/
-.pack-settings-wrapper #update-permissions-form .fa-eye, .pack-settings-wrapper #update-permissions-form .fa-pencil-square-o {
+.pack-settings-wrapper #update-permissions-form .fa-eye, .pack-settings-wrapper #update-permissions-form .fa-pencil-square-o, .pack-settings-wrapper #update-permissions-form .fa-ban {
   font-size: 20px;
   line-height: 20px;
   margin-right: 5px; }
@@ -630,7 +640,8 @@ footer {
   font-size: 14px;
   padding: 0px 5px;
   line-height: 18px;
-  border-left: 0px; }
+  border-left: 0px;
+  max-width: 320px; }
 .pack-settings-wrapper #update-permissions-form .input-group-addon {
   height: 20px;
   padding: 0px 3px;

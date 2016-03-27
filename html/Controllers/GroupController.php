@@ -109,8 +109,8 @@ class GroupController extends BaseController{
 
 		if(!$group->save()){
 			$failures = $group->getValidationFailures();
-			$this->setStatus("error");
 			if(count($failures) > 0){
+				$this->setStatus("error");
 				foreach($failures as $failure){
 					$this->sendFlashMessage("Group data has not been changeg. ".$failure->getMessage(), "error");
 				}

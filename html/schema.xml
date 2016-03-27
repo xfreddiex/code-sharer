@@ -77,7 +77,7 @@
 
     <table name="pack_permission" phpName="PackPermission">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="value" type="tinyint" sqlType='ENUM("1","2")' required="true"/>
+        <column name="value" type="varchar" sqlType='ENUM("0","1","2")' required="true"/>
         <column name="user_id" type="integer"/>
         <column name="group_id" type="integer"/>
         <column name="pack_id" type="integer" required="true"/>

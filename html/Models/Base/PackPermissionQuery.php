@@ -82,7 +82,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission findOneOrCreate(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query, or a new ChildPackPermission object populated from the query conditions when no match is found
  *
  * @method     ChildPackPermission findOneById(int $id) Return the first ChildPackPermission filtered by the id column
- * @method     ChildPackPermission findOneByValue(int $value) Return the first ChildPackPermission filtered by the value column
+ * @method     ChildPackPermission findOneByValue(string $value) Return the first ChildPackPermission filtered by the value column
  * @method     ChildPackPermission findOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column
  * @method     ChildPackPermission findOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column
  * @method     ChildPackPermission findOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column
@@ -94,7 +94,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission requireOne(ConnectionInterface $con = null) Return the first ChildPackPermission matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildPackPermission requireOneById(int $id) Return the first ChildPackPermission filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByValue(int $value) Return the first ChildPackPermission filtered by the value column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildPackPermission requireOneByValue(string $value) Return the first ChildPackPermission filtered by the value column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -104,7 +104,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildPackPermission[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildPackPermission objects based on current ModelCriteria
  * @method     ChildPackPermission[]|ObjectCollection findById(int $id) Return ChildPackPermission objects filtered by the id column
- * @method     ChildPackPermission[]|ObjectCollection findByValue(int $value) Return ChildPackPermission objects filtered by the value column
+ * @method     ChildPackPermission[]|ObjectCollection findByValue(string $value) Return ChildPackPermission objects filtered by the value column
  * @method     ChildPackPermission[]|ObjectCollection findByUserId(int $user_id) Return ChildPackPermission objects filtered by the user_id column
  * @method     ChildPackPermission[]|ObjectCollection findByGroupId(int $group_id) Return ChildPackPermission objects filtered by the group_id column
  * @method     ChildPackPermission[]|ObjectCollection findByPackId(int $pack_id) Return ChildPackPermission objects filtered by the pack_id column
@@ -339,36 +339,24 @@ abstract class PackPermissionQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByValue(1234); // WHERE value = 1234
-     * $query->filterByValue(array(12, 34)); // WHERE value IN (12, 34)
-     * $query->filterByValue(array('min' => 12)); // WHERE value > 12
+     * $query->filterByValue('fooValue');   // WHERE value = 'fooValue'
+     * $query->filterByValue('%fooValue%'); // WHERE value LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $value The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $value The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildPackPermissionQuery The current query, for fluid interface
      */
     public function filterByValue($value = null, $comparison = null)
     {
-        if (is_array($value)) {
-            $useMinMax = false;
-            if (isset($value['min'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_VALUE, $value['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($value['max'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_VALUE, $value['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($value)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $value)) {
+                $value = str_replace('*', '%', $value);
+                $comparison = Criteria::LIKE;
             }
         }
 

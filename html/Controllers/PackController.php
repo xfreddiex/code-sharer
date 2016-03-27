@@ -377,8 +377,9 @@ class PackController extends BaseController{
 						continue;
 					}
 					$permission = PackPermissionQuery::create()->filterByUser($u)->filterByPack($this->data["pack"])->findOneOrCreate();
-					if(isset($user["permission"]))
+					if(isset($user["permission"])){
 						$permission->setValue($user["permission"]);
+					}
 					else{
 						$permission->delete();
 						continue;
@@ -445,18 +446,13 @@ class PackController extends BaseController{
 				return true;
 			}
 
-			$permission = PackPermissionQuery::create()->filterByPack($this->data["pack"])->filterByUser($this->data["loggedUser"])->findOne();
-			if($permission){
-				$this->data["permission"] = $permission->getValue();
-				return true;
-			}
-
-			$permission = PackPermissionQuery::create()->filterByPack($this->data["pack"])->useGroupQuery()->useUserGroupQuery()->filterByUser($this->data["loggedUser"])->endUse()->endUse()->findOne();
-			if($permission){
-				$this->data["permission"] = $permission->getValue();
-				return true;
-			}
+			$permissionUser = PackPermissionQuery::create()->filterByPack($this->data["pack"])->filterByUser($this->data["loggedUser"])->findOne();
+			$permissionGroup = PackPermissionQuery::create()->filterByPack($this->data["pack"])->useGroupQuery()->useUserGroupQuery()->filterByUser($this->data["loggedUser"])->endUse()->endUse()->findOne();
 			
+			if($permissionUser)
+				$this->data["permission"] = $permissionUser->getValue();
+			else if($permissionGroup)
+				$this->data["permission"] = $permissionGroup->getValue();		
 		}
 		if(!$this->data["pack"]->getPrivate()){
 			$this->data["permission"] = 1;

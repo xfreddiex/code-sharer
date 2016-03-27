@@ -45,46 +45,60 @@
 						<?php foreach($pack->getPackPermissions() as $index => $permission): ?>
 							<div class="row">
 								<?php if($permission->getUser()): ?>
-									<div class="col-xs-4 col-sm-8 col-md-8 col-lg-10">
+									<div class="col-xs-3 col-sm-6 col-md-6 col-lg-9">
 										<i class="fa fa-user"></i>
 										<a class="link" href="/user/<?=$permission->getUser()->getUsername()?>">
 											<?=$permission->getUser()->getUsername()?>
 										</a>
 										<input type="hidden" name="user[<?=$index?>][username]" number="<?=$index?>" value="<?=$permission->getUser()->getUsername()?>">
 									</div>
-									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-right">
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
 										<label class="checkbox">
-											<input type="checkbox" name="user[<?=$index?>][permission]" value="1" checked>
+											<input type="checkbox" name="user[<?=$index?>][permission]" value="1" <?=($permission->getValue() >= 1 ? "checked" : null)?>>
 											<i class="fa fa-eye"></i>
 											<i class="fa checkbox-button"></i>
 										</label>
 									</div>
-									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1">
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
 										<label class="checkbox">
 											<input type="checkbox" name="user[<?=$index?>][permission]" value="2" <?=($permission->getValue() == 2 ? "checked" : null)?>>
 											<i class="fa fa-pencil-square-o"></i>
 											<i class="fa checkbox-button"></i>
 										</label>
 									</div>
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
+										<label class="checkbox">
+											<input type="checkbox" name="user[<?=$index?>][permission]" value="0" <?=($permission->getValue() == 0 ? "checked" : null)?>>
+											<i class="fa fa-ban"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
 								<?php else: ?>
-									<div class="col-xs-4 col-sm-8 col-md-8 col-lg-10">
+									<div class="col-xs-3 col-sm-6 col-md-6 col-lg-9">
 										<i class="fa fa-users"></i>
 										<a class="link" href="/group/<?=$permission->getGroup()->getId()?>">
 											<?=$permission->getGroup()->getName()?>
 										</a>
 										<input type="hidden" name="group[<?=$index?>][name]" value="<?=$permission->getGroup()->getName()?>">
 									</div>
-									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1 text-right">
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
 										<label class="checkbox">
-											<input type="checkbox" name="group[<?=$index?>][permission]" value="1" checked>
+											<input type="checkbox" name="group[<?=$index?>][permission]" value="1" <?=($permission->getValue() >= 1 ? "checked" : null)?>>
 											<i class="fa fa-eye"></i>
 											<i class="fa checkbox-button"></i>
 										</label>
 									</div>
-									<div class="col-xs-4 col-sm-2 col-md-2 col-lg-1">
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
 										<label class="checkbox">
 											<input type="checkbox" name="group[<?=$index?>][permission]" value="2" <?=($permission->getValue() == 2 ? "checked" : null)?>>
 											<i class="fa fa-pencil-square-o"></i>
+											<i class="fa checkbox-button"></i>
+										</label>
+									</div>
+									<div class="col-xs-3 col-sm-2 col-md-2 col-lg-1 text-right">
+										<label class="checkbox">
+											<input type="checkbox" name="group[<?=$index?>][permission]" value="0" <?=($permission->getValue() == 0 ? "checked" : null)?>>
+											<i class="fa fa-ban"></i>
 											<i class="fa checkbox-button"></i>
 										</label>
 									</div>

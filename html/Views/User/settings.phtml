@@ -7,7 +7,7 @@
 		<div class="row">
 			<div class="col-sm-8">
 				<div class="panel panel-default">
-					<form action="/user/update" method="POST" class="form-horizontal" id="settings-form">
+					<form action="/update" method="POST" class="form-horizontal" id="settings-form">
 						<div class="panel-body form-wrapper">
 							<div class="form-group">
 								<label for="newUsername" class="col-sm-3 control-label">Username</label>
@@ -60,6 +60,40 @@
 						</div>
 					</form>
 				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h2>Delete acount</h2>
+					</div>
+					<div class="panel-body">
+						<p>If you delete your account, you have 3 months to restore it.</p>
+					</div>
+					<div class="panel-footer text-right">
+						<button class="btn btn-danger" data-toggle="modal" data-target="#delete-account-modal"><i class="fa fa-trash"></i> Delete account</button>
+						<div class="modal fade text-left" id="delete-account-modal">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
+										<h2 class="modal-title">Delete account</h2>
+									</div>
+									<div class="modal-body">
+										<p>Do you realy want to delete your account?</p>
+									</div>
+									<div class="modal-footer">
+										<form action="/delete" method="POST">
+											<div class="col-xs-8">
+												<input type="password" class="form-control" placeholder="password" name="authorizationPassword">
+											</div>
+											<div class="col-xs-4">
+												<button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+											</div>	
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="col-sm-4">
 				<div class="panel panel-default" id="avatar-settings">
@@ -74,7 +108,7 @@
 						<div id="croppbox"></div>
 					</div>
 					<div id="img-form-wrapper" class="panel-body">
-						<form action="user/update-avatar" method="POST" enctype="multipart/form-data" id="upload-img-form">
+						<form action="update-avatar" method="POST" enctype="multipart/form-data" id="upload-img-form">
 							<div class="btn btn-default btn-upload"><i class="fa fa-upload"></i><input type="file" accept="image/*" name="avatar-input" required></div>
 							<button class="btn btn-success pull-right" type="submit"><i class="fa fa-floppy-o"></i> Save</button>
 						</form>

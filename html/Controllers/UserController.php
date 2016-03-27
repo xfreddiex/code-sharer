@@ -48,6 +48,17 @@ class UserController extends BaseController{
 	protected function delete(){
 		$this->data["loggedUser"]->setDeletedAt(time());
 		$this->data["loggedUser"]->save();
+		unset($_SESSION["userId"]);
+		if(isset($_COOKIE["identityId"])){
+			$identity = IdentityQuery::create()->findPK($_COOKIE["identityId"]);
+			if($identity){
+				$identity->delete();
+				setcookie("identityId", "", time() - 86400);
+				setcookie("identityToken", "", time() - 86400);
+			}
+		}
+		$this->sendFlashMessage("Your account has been deleted.", "info");
+		$this->redirect("/");
 	}
 
 	protected function update(){

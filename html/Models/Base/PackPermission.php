@@ -78,7 +78,7 @@ abstract class PackPermission implements ActiveRecordInterface
     /**
      * The value for the value field.
      *
-     * @var        int
+     * @var        string
      */
     protected $value;
 
@@ -385,7 +385,7 @@ abstract class PackPermission implements ActiveRecordInterface
     /**
      * Get the [value] column value.
      *
-     * @return int
+     * @return string
      */
     public function getValue()
     {
@@ -505,13 +505,13 @@ abstract class PackPermission implements ActiveRecordInterface
     /**
      * Set the value of [value] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return $this|\Models\PackPermission The current object (for fluent API support)
      */
     public function setValue($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
         if ($this->value !== $v) {
@@ -694,7 +694,7 @@ abstract class PackPermission implements ActiveRecordInterface
             $this->id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PackPermissionTableMap::translateFieldName('Value', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->value = (null !== $col) ? (int) $col : null;
+            $this->value = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PackPermissionTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
@@ -1016,7 +1016,7 @@ abstract class PackPermission implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
                     case 'value':
-                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->value, PDO::PARAM_STR);
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);

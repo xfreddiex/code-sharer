@@ -7,7 +7,6 @@ $(document).ready(function(){
         editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             lineNumbers: true,
             theme: "elegant",
-            tabSize: 8,
             readOnly: true,
             viewportMargin: Infinity
         });

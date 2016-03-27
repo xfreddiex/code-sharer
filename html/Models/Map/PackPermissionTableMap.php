@@ -162,7 +162,7 @@ class PackPermissionTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('value', 'Value', 'TINYINT', true, null, null);
+        $this->addColumn('value', 'Value', 'VARCHAR', true, null, null);
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', false, null, null);
         $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', false, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
