@@ -14,6 +14,7 @@ use Models\File;
 use Models\FileQuery;
 use Models\Comment;
 use Models\CommentQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 class PackController extends BaseController{
 
@@ -447,12 +448,17 @@ class PackController extends BaseController{
 			}
 
 			$permissionUser = PackPermissionQuery::create()->filterByPack($this->data["pack"])->filterByUser($this->data["loggedUser"])->findOne();
-			$permissionGroup = PackPermissionQuery::create()->filterByPack($this->data["pack"])->useGroupQuery()->useUserGroupQuery()->filterByUser($this->data["loggedUser"])->endUse()->endUse()->findOne();
+			$permissionGroup = PackPermissionQuery::create()->filterByPack($this->data["pack"])->useGroupQuery()->filterByUser($this->data["loggedUser"])->endUse()->orderByValue(Criteria::DESC)->findOne();
 			
 			if($permissionUser)
 				$this->data["permission"] = $permissionUser->getValue();
 			else if($permissionGroup)
-				$this->data["permission"] = $permissionGroup->getValue();		
+				$this->data["permission"] = $permissionGroup->getValue();
+
+			if(!$this->data["pack"]->getPrivate() && !$this->data["permission"]){
+				$this->data["permission"] = 1;
+			}		
+			return true;
 		}
 		if(!$this->data["pack"]->getPrivate()){
 			$this->data["permission"] = 1;

@@ -666,6 +666,11 @@ footer {
 /*pack*/
 .pack-wrapper .modal .form-group {
   max-width: 160px; }
+.pack-wrapper .user-avatar {
+  float: left;
+  /*height: 40px;*/ }
+.pack-wrapper .user-avatar + .row {
+  margin-left: 40px; }
 
 /*----*/
 .pack-wrapper #description, .file-wrapper #description, .group-wrapper #description {

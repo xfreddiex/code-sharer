@@ -120,7 +120,9 @@
 								</a>
 							</div>
 							<div class="col-xs-2 text-right">
-								<?php if($permission->getValue() == 1): ?>
+								<?php if($permission->getValue() == 0): ?>
+									<i class="fa fa-ban"></i>
+								<?php elseif($permission->getValue() == 1): ?>
 									<i class="fa fa-eye"></i>
 								<?php elseif($permission->getValue() == 2): ?>
 									<i class="fa fa-pencil-square-o"></i>

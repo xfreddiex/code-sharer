@@ -903,6 +903,13 @@ footer{
 			max-width: 160px;
 		}
 	}
+	.user-avatar{
+		float: left;
+		/*height: 40px;*/
+	}
+	.user-avatar + .row{
+		margin-left: 40px; 
+	}
 }
 
 /*----*/

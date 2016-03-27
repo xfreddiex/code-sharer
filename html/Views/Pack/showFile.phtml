@@ -43,7 +43,7 @@
 					</div>
 					<div class="panel-body">
 						<p id="description"><?=$file->getDescription()?></p>
-						<textarea id="description-edit" rows="4" cols="50" class="form-control" name="description" validation="ajax" validation-event="keyup" validation-type="description" placeholder="Write something about this group."><?=$file->getDescription()?></textarea>
+						<textarea id="description-edit" rows="4" cols="50" class="form-control" name="description" validation="ajax" validation-event="keyup" validation-type="description" placeholder="Write something about this file."><?=$file->getDescription()?></textarea>
 					</div>
 					<?php if($permission >= 2): ?>
 						<div class="panel-footer text-right">

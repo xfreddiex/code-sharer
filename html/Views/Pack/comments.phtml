@@ -1,26 +1,31 @@
 <?php if(!$comments->isEmpty()): ?>
 	<?php foreach($comments as $index => $comment): ?>
-		<div class="row">
-			<div class="col-xs-4 col-sm-3 col-md-2">
-				<div>
-					<strong><?=$comment->getCreatedAt("j M o")?></strong>
-				</div>
-				<div>
-					<a href="/user/<?=$comment->getUser()->getUsername()?>" class="link"><strong><?=$comment->getUser()->getUsername()?></strong></a>
-				</div>
+		<div>
+			<div class="user-avatar">
+				<a href="/user/<?=$comment->getUser()->getUsername()?>"><img src="<?=$comment->getUser()->getAvatar40()?>"></a>
 			</div>
-			<?php if($permission == 3): ?>
-				<div class="col-xs-6 col-sm-8 col-md-9">
-					<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+			<div class="row">
+				<div class="col-xs-4 col-sm-3 col-md-2">
+					<div>
+						<strong><?=$comment->getCreatedAt("j M o")?></strong>
+					</div>
+					<div>
+						<a href="/user/<?=$comment->getUser()->getUsername()?>" class="link"><strong><?=$comment->getUser()->getUsername()?></strong></a>
+					</div>
 				</div>
-				<div class="col-xs-2 col-sm-1 text-right">
-					<button class="btn btn-danger btn-sm" name="delete-comment" comment="<?=$comment->getId()?>"><i class="fa fa-trash"></i></button>
-				</div>
-			<?php else: ?>
-				<div class="col-xs-8 col-sm-9 col-md-10">
-					<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
-				</div>
-			<?php endif; ?>
+				<?php if($permission == 3): ?>
+					<div class="col-xs-6 col-sm-8 col-md-9">
+						<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+					</div>
+					<div class="col-xs-2 col-sm-1 text-right">
+						<button class="btn btn-danger btn-sm" name="delete-comment" comment="<?=$comment->getId()?>"><i class="fa fa-trash"></i></button>
+					</div>
+				<?php else: ?>
+					<div class="col-xs-8 col-sm-9 col-md-10">
+						<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
+					</div>
+				<?php endif; ?>
+			</div>
 		</div>
 		<?php if($index != $comments->count() - 1): ?>
 			<hr />
