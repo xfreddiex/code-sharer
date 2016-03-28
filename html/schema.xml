@@ -20,6 +20,7 @@
         <column name="email_confirm_token" type="varchar" size="64" required="false"/>
         <column name="email_confirmed_at" type="timestamp" required="false"/>
         <column name="deleted_at" type="timestamp" required="false"/>
+        <column name="account_restore_token" type="varchar" size="64" required="false"/>
         <behavior name="timestampable" />
         <unique name="unique_username">
             <unique-column name="username" />
@@ -81,7 +82,6 @@
         <column name="user_id" type="integer"/>
         <column name="group_id" type="integer"/>
         <column name="pack_id" type="integer" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
         
         <behavior name="timestampable" />
         
@@ -108,7 +108,6 @@
         <column name="description" type="varchar" size="256" required="false"/>
         <column name="private" type="boolean" required="true"/>
         <column name="owner_id" type="integer" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
         
         <behavior name="timestampable" />
         
@@ -150,7 +149,6 @@
         <column name="size" type="integer" required="true"/>
         <column name="content" type="varbinary" required="true"/>
         <column name="pack_id" type="integer" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
         
         <foreign-key foreignTable="pack" phpName="Pack" refPhpName="File" onDelete="CASCADE">
             <reference local="pack_id" foreign="id"/>
@@ -175,7 +173,6 @@
         <column name="name" type="varchar" size="32" required="true"/>
         <column name="description" type="varchar" size="256" required="false"/>
         <column name="owner_id" type="integer" required="true"/>
-        <column name="deleted_at" type="timestamp" required="false"/>
         
         <behavior name="timestampable" />
         

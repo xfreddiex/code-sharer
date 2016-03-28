@@ -15,7 +15,12 @@ return array(
 	array('uri' => '/update', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'update'),
 	array('uri' => '/user/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'User', 'method' => 'validateOne'),
 	array('uri' => '/user/[username]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'show'),
-	
+	array('uri' => '/user/[username]/email-confirm/[token]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'emailConfirm'),
+	array('uri' => '/user/[username]/send-email-confirm-email', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'sendEmailConfirmEmail'),
+	array('uri' => '/user/[username]/send-restore-account-email', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'sendRestoreAccountEmail'),
+	array('uri' => '/user/[username]/restore-account/[token]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'restoreAccount'),
+	array('uri' => '/user/[email]/send-password-reset-email', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'sendPasswordResetEmail'),
+	array('uri' => '/user/[username]/reset-password/[token]', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'User', 'method' => 'resetPassword'),
 	//Pack
 	array('uri' => '/pack/create', 'content_type' => 'text/html', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'create'),
 	array('uri' => '/pack/new', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'newPack'),

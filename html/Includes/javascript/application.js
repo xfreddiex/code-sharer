@@ -8,4 +8,9 @@ $(document).ready(function(){
 	var packDescriptionValidator = new Validator($(".pack-wrapper #description").parent(), "/pack/validate-one");
 	var fileDescriptionValidator = new Validator($(".file-wrapper #description").parent(), "/file/validate-one");
 	var packCommentValidator = new Validator($(".pack-wrapper #comment").parent(), "/comment/validate-one");
+
+	$('#forgotten-password-modal button').click(function(){
+		var url = "/user/" + $("#forgotten-password-modal input").val() + "/send-password-reset-email";
+		window.location.href = url;
+	});
 });

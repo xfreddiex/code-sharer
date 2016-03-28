@@ -19,12 +19,6 @@ use Models\User as ChildUser;
 use Models\UserGroup as ChildUserGroup;
 use Models\UserGroupQuery as ChildUserGroupQuery;
 use Models\UserQuery as ChildUserQuery;
-use Models\Map\CommentTableMap;
-use Models\Map\GroupTableMap;
-use Models\Map\IdentityTableMap;
-use Models\Map\PackPermissionTableMap;
-use Models\Map\PackTableMap;
-use Models\Map\UserGroupTableMap;
 use Models\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -171,6 +165,13 @@ abstract class User implements ActiveRecordInterface
      * @var        \DateTime
      */
     protected $deleted_at;
+
+    /**
+     * The value for the account_restore_token field.
+     *
+     * @var        string
+     */
+    protected $account_restore_token;
 
     /**
      * The value for the created_at field.
@@ -655,6 +656,16 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [account_restore_token] column value.
+     *
+     * @return string
+     */
+    public function getAccountRestoreToken()
+    {
+        return $this->account_restore_token;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -915,6 +926,26 @@ abstract class User implements ActiveRecordInterface
     } // setDeletedAt()
 
     /**
+     * Set the value of [account_restore_token] column.
+     *
+     * @param string $v new value
+     * @return $this|\Models\User The current object (for fluent API support)
+     */
+    public function setAccountRestoreToken($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->account_restore_token !== $v) {
+            $this->account_restore_token = $v;
+            $this->modifiedColumns[UserTableMap::COL_ACCOUNT_RESTORE_TOKEN] = true;
+        }
+
+        return $this;
+    } // setAccountRestoreToken()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -1029,13 +1060,16 @@ abstract class User implements ActiveRecordInterface
             }
             $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : UserTableMap::translateFieldName('AccountRestoreToken', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->account_restore_token = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -1048,7 +1082,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 14; // 14 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\User'), 0, $e);
@@ -1434,6 +1468,9 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'deleted_at';
         }
+        if ($this->isColumnModified(UserTableMap::COL_ACCOUNT_RESTORE_TOKEN)) {
+            $modifiedColumns[':p' . $index++]  = 'account_restore_token';
+        }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -1483,6 +1520,9 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case 'deleted_at':
                         $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'account_restore_token':
+                        $stmt->bindValue($identifier, $this->account_restore_token, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1586,9 +1626,12 @@ abstract class User implements ActiveRecordInterface
                 return $this->getDeletedAt();
                 break;
             case 11:
-                return $this->getCreatedAt();
+                return $this->getAccountRestoreToken();
                 break;
             case 12:
+                return $this->getCreatedAt();
+                break;
+            case 13:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1632,8 +1675,9 @@ abstract class User implements ActiveRecordInterface
             $keys[8] => $this->getEmailConfirmToken(),
             $keys[9] => $this->getEmailConfirmedAt(),
             $keys[10] => $this->getDeletedAt(),
-            $keys[11] => $this->getCreatedAt(),
-            $keys[12] => $this->getUpdatedAt(),
+            $keys[11] => $this->getAccountRestoreToken(),
+            $keys[12] => $this->getCreatedAt(),
+            $keys[13] => $this->getUpdatedAt(),
         );
         if ($result[$keys[9]] instanceof \DateTime) {
             $result[$keys[9]] = $result[$keys[9]]->format('c');
@@ -1643,12 +1687,12 @@ abstract class User implements ActiveRecordInterface
             $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
 
-        if ($result[$keys[11]] instanceof \DateTime) {
-            $result[$keys[11]] = $result[$keys[11]]->format('c');
-        }
-
         if ($result[$keys[12]] instanceof \DateTime) {
             $result[$keys[12]] = $result[$keys[12]]->format('c');
+        }
+
+        if ($result[$keys[13]] instanceof \DateTime) {
+            $result[$keys[13]] = $result[$keys[13]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1815,9 +1859,12 @@ abstract class User implements ActiveRecordInterface
                 $this->setDeletedAt($value);
                 break;
             case 11:
-                $this->setCreatedAt($value);
+                $this->setAccountRestoreToken($value);
                 break;
             case 12:
+                $this->setCreatedAt($value);
+                break;
+            case 13:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1880,10 +1927,13 @@ abstract class User implements ActiveRecordInterface
             $this->setDeletedAt($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setCreatedAt($arr[$keys[11]]);
+            $this->setAccountRestoreToken($arr[$keys[11]]);
         }
         if (array_key_exists($keys[12], $arr)) {
-            $this->setUpdatedAt($arr[$keys[12]]);
+            $this->setCreatedAt($arr[$keys[12]]);
+        }
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setUpdatedAt($arr[$keys[13]]);
         }
     }
 
@@ -1958,6 +2008,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_DELETED_AT)) {
             $criteria->add(UserTableMap::COL_DELETED_AT, $this->deleted_at);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_ACCOUNT_RESTORE_TOKEN)) {
+            $criteria->add(UserTableMap::COL_ACCOUNT_RESTORE_TOKEN, $this->account_restore_token);
         }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $criteria->add(UserTableMap::COL_CREATED_AT, $this->created_at);
@@ -2061,6 +2114,7 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setEmailConfirmToken($this->getEmailConfirmToken());
         $copyObj->setEmailConfirmedAt($this->getEmailConfirmedAt());
         $copyObj->setDeletedAt($this->getDeletedAt());
+        $copyObj->setAccountRestoreToken($this->getAccountRestoreToken());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -2205,10 +2259,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collIdentities && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = IdentityTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collIdentities = new $collectionClassName;
+        $this->collIdentities = new ObjectCollection();
         $this->collIdentities->setModel('\Models\Identity');
     }
 
@@ -2430,10 +2481,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collPackPermissions && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = PackPermissionTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collPackPermissions = new $collectionClassName;
+        $this->collPackPermissions = new ObjectCollection();
         $this->collPackPermissions->setModel('\Models\PackPermission');
     }
 
@@ -2705,10 +2753,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collPacks && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = PackTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collPacks = new $collectionClassName;
+        $this->collPacks = new ObjectCollection();
         $this->collPacks->setModel('\Models\Pack');
     }
 
@@ -2930,10 +2975,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collMyGroups && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = GroupTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collMyGroups = new $collectionClassName;
+        $this->collMyGroups = new ObjectCollection();
         $this->collMyGroups->setModel('\Models\Group');
     }
 
@@ -3155,10 +3197,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collComments && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = CommentTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collComments = new $collectionClassName;
+        $this->collComments = new ObjectCollection();
         $this->collComments->setModel('\Models\Comment');
     }
 
@@ -3405,10 +3444,7 @@ abstract class User implements ActiveRecordInterface
         if (null !== $this->collUserGroups && !$overrideExisting) {
             return;
         }
-
-        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collUserGroups = new $collectionClassName;
+        $this->collUserGroups = new ObjectCollection();
         $this->collUserGroups->setModel('\Models\UserGroup');
     }
 
@@ -3644,10 +3680,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function initGroups()
     {
-        $collectionClassName = UserGroupTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collGroups = new $collectionClassName;
+        $this->collGroups = new ObjectCollection();
         $this->collGroupsPartial = true;
+
         $this->collGroups->setModel('\Models\Group');
     }
 
@@ -3880,6 +3915,7 @@ abstract class User implements ActiveRecordInterface
         $this->email_confirm_token = null;
         $this->email_confirmed_at = null;
         $this->deleted_at = null;
+        $this->account_restore_token = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

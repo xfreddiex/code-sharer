@@ -59,7 +59,7 @@ class PackPermissionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class PackPermissionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
@@ -97,11 +97,6 @@ class PackPermissionTableMap extends TableMap
     const COL_PACK_ID = 'pack_permission.pack_id';
 
     /**
-     * the column name for the deleted_at field
-     */
-    const COL_DELETED_AT = 'pack_permission.deleted_at';
-
-    /**
      * the column name for the created_at field
      */
     const COL_CREATED_AT = 'pack_permission.created_at';
@@ -123,11 +118,11 @@ class PackPermissionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Value', 'UserId', 'GroupId', 'PackId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'value', 'userId', 'groupId', 'packId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID, PackPermissionTableMap::COL_VALUE, PackPermissionTableMap::COL_USER_ID, PackPermissionTableMap::COL_GROUP_ID, PackPermissionTableMap::COL_PACK_ID, PackPermissionTableMap::COL_DELETED_AT, PackPermissionTableMap::COL_CREATED_AT, PackPermissionTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'value', 'user_id', 'group_id', 'pack_id', 'deleted_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Value', 'UserId', 'GroupId', 'PackId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'value', 'userId', 'groupId', 'packId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID, PackPermissionTableMap::COL_VALUE, PackPermissionTableMap::COL_USER_ID, PackPermissionTableMap::COL_GROUP_ID, PackPermissionTableMap::COL_PACK_ID, PackPermissionTableMap::COL_CREATED_AT, PackPermissionTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'value', 'user_id', 'group_id', 'pack_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -137,11 +132,11 @@ class PackPermissionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Value' => 1, 'UserId' => 2, 'GroupId' => 3, 'PackId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'value' => 1, 'userId' => 2, 'groupId' => 3, 'packId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID => 0, PackPermissionTableMap::COL_VALUE => 1, PackPermissionTableMap::COL_USER_ID => 2, PackPermissionTableMap::COL_GROUP_ID => 3, PackPermissionTableMap::COL_PACK_ID => 4, PackPermissionTableMap::COL_DELETED_AT => 5, PackPermissionTableMap::COL_CREATED_AT => 6, PackPermissionTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'value' => 1, 'user_id' => 2, 'group_id' => 3, 'pack_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Value' => 1, 'UserId' => 2, 'GroupId' => 3, 'PackId' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'value' => 1, 'userId' => 2, 'groupId' => 3, 'packId' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(PackPermissionTableMap::COL_ID => 0, PackPermissionTableMap::COL_VALUE => 1, PackPermissionTableMap::COL_USER_ID => 2, PackPermissionTableMap::COL_GROUP_ID => 3, PackPermissionTableMap::COL_PACK_ID => 4, PackPermissionTableMap::COL_CREATED_AT => 5, PackPermissionTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'value' => 1, 'user_id' => 2, 'group_id' => 3, 'pack_id' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -166,7 +161,6 @@ class PackPermissionTableMap extends TableMap
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'user', 'id', false, null, null);
         $this->addForeignKey('group_id', 'GroupId', 'INTEGER', 'group_of_users', 'id', false, null, null);
         $this->addForeignKey('pack_id', 'PackId', 'INTEGER', 'pack', 'id', true, null, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -358,7 +352,6 @@ class PackPermissionTableMap extends TableMap
             $criteria->addSelectColumn(PackPermissionTableMap::COL_USER_ID);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_GROUP_ID);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_PACK_ID);
-            $criteria->addSelectColumn(PackPermissionTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(PackPermissionTableMap::COL_UPDATED_AT);
         } else {
@@ -367,7 +360,6 @@ class PackPermissionTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.group_id');
             $criteria->addSelectColumn($alias . '.pack_id');
-            $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

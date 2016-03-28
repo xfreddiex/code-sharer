@@ -27,7 +27,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFileQuery orderBySize($order = Criteria::ASC) Order by the size column
  * @method     ChildFileQuery orderByContent($order = Criteria::ASC) Order by the content column
  * @method     ChildFileQuery orderByPackId($order = Criteria::ASC) Order by the pack_id column
- * @method     ChildFileQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildFileQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildFileQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -38,7 +37,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFileQuery groupBySize() Group by the size column
  * @method     ChildFileQuery groupByContent() Group by the content column
  * @method     ChildFileQuery groupByPackId() Group by the pack_id column
- * @method     ChildFileQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildFileQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildFileQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -72,7 +70,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFile findOneBySize(int $size) Return the first ChildFile filtered by the size column
  * @method     ChildFile findOneByContent(string $content) Return the first ChildFile filtered by the content column
  * @method     ChildFile findOneByPackId(int $pack_id) Return the first ChildFile filtered by the pack_id column
- * @method     ChildFile findOneByDeletedAt(string $deleted_at) Return the first ChildFile filtered by the deleted_at column
  * @method     ChildFile findOneByCreatedAt(string $created_at) Return the first ChildFile filtered by the created_at column
  * @method     ChildFile findOneByUpdatedAt(string $updated_at) Return the first ChildFile filtered by the updated_at column *
 
@@ -86,7 +83,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFile requireOneBySize(int $size) Return the first ChildFile filtered by the size column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFile requireOneByContent(string $content) Return the first ChildFile filtered by the content column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFile requireOneByPackId(int $pack_id) Return the first ChildFile filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildFile requireOneByDeletedAt(string $deleted_at) Return the first ChildFile filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFile requireOneByCreatedAt(string $created_at) Return the first ChildFile filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFile requireOneByUpdatedAt(string $updated_at) Return the first ChildFile filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -98,7 +94,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFile[]|ObjectCollection findBySize(int $size) Return ChildFile objects filtered by the size column
  * @method     ChildFile[]|ObjectCollection findByContent(string $content) Return ChildFile objects filtered by the content column
  * @method     ChildFile[]|ObjectCollection findByPackId(int $pack_id) Return ChildFile objects filtered by the pack_id column
- * @method     ChildFile[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildFile objects filtered by the deleted_at column
  * @method     ChildFile[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildFile objects filtered by the created_at column
  * @method     ChildFile[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildFile objects filtered by the updated_at column
  * @method     ChildFile[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -193,7 +188,7 @@ abstract class FileQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, description, type, size, content, pack_id, deleted_at, created_at, updated_at FROM file WHERE id = :p0';
+        $sql = 'SELECT id, name, description, type, size, content, pack_id, created_at, updated_at FROM file WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -507,49 +502,6 @@ abstract class FileQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FileTableMap::COL_PACK_ID, $packId, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildFileQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(FileTableMap::COL_DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(FileTableMap::COL_DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(FileTableMap::COL_DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

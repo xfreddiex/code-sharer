@@ -158,6 +158,10 @@ section .btn-upload input, .modal .btn-upload input {
   margin: 15px 0px;
   border: 0px;
   color: white; }
+  .alert .link {
+    color: white !important; }
+  .alert .link:hover {
+    text-decoration: underline !important; }
 
 .alert-danger {
   background-color: #AB2C00; }

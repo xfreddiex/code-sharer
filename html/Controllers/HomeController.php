@@ -16,10 +16,16 @@ class HomeController extends BaseController{
 		$this->data["items"] = null;
 	}
 	protected function index(){
+		$this->data['title'] = 'Starling';
+		$this->data['keywords'] .= 'home, homepage, registration, sign up';
+		$this->data['description'] .= 'Main page of this application.';
 		$this->viewFile($this->template);
 	}
 
 	protected function search(){
+		$this->data['title'] = 'Starling';
+		$this->data['keywords'] .= 'search, results';
+		$this->data['description'] .= 'Results of searching.';
 		if(isset($_GET["q"]) && $_GET["q"] != ""){
 			
 			$q = urldecode($_GET["q"]);

@@ -59,7 +59,7 @@ class PackTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class PackTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
@@ -97,11 +97,6 @@ class PackTableMap extends TableMap
     const COL_OWNER_ID = 'pack.owner_id';
 
     /**
-     * the column name for the deleted_at field
-     */
-    const COL_DELETED_AT = 'pack.deleted_at';
-
-    /**
      * the column name for the created_at field
      */
     const COL_CREATED_AT = 'pack.created_at';
@@ -123,11 +118,11 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'OwnerId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'ownerId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PRIVATE, PackTableMap::COL_OWNER_ID, PackTableMap::COL_DELETED_AT, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'owner_id', 'deleted_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'Private', 'OwnerId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'private', 'ownerId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID, PackTableMap::COL_NAME, PackTableMap::COL_DESCRIPTION, PackTableMap::COL_PRIVATE, PackTableMap::COL_OWNER_ID, PackTableMap::COL_CREATED_AT, PackTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'private', 'owner_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -137,11 +132,11 @@ class PackTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'OwnerId' => 4, 'DeletedAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'ownerId' => 4, 'deletedAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PRIVATE => 3, PackTableMap::COL_OWNER_ID => 4, PackTableMap::COL_DELETED_AT => 5, PackTableMap::COL_CREATED_AT => 6, PackTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'owner_id' => 4, 'deleted_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'Private' => 3, 'OwnerId' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'ownerId' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(PackTableMap::COL_ID => 0, PackTableMap::COL_NAME => 1, PackTableMap::COL_DESCRIPTION => 2, PackTableMap::COL_PRIVATE => 3, PackTableMap::COL_OWNER_ID => 4, PackTableMap::COL_CREATED_AT => 5, PackTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'private' => 3, 'owner_id' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -166,7 +161,6 @@ class PackTableMap extends TableMap
         $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
         $this->addColumn('private', 'Private', 'BOOLEAN', true, 1, null);
         $this->addForeignKey('owner_id', 'OwnerId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -377,7 +371,6 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn(PackTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(PackTableMap::COL_PRIVATE);
             $criteria->addSelectColumn(PackTableMap::COL_OWNER_ID);
-            $criteria->addSelectColumn(PackTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(PackTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(PackTableMap::COL_UPDATED_AT);
         } else {
@@ -386,7 +379,6 @@ class PackTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.private');
             $criteria->addSelectColumn($alias . '.owner_id');
-            $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

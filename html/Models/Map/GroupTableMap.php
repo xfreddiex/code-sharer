@@ -59,7 +59,7 @@ class GroupTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class GroupTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -90,11 +90,6 @@ class GroupTableMap extends TableMap
      * the column name for the owner_id field
      */
     const COL_OWNER_ID = 'group_of_users.owner_id';
-
-    /**
-     * the column name for the deleted_at field
-     */
-    const COL_DELETED_AT = 'group_of_users.deleted_at';
 
     /**
      * the column name for the created_at field
@@ -118,11 +113,11 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'OwnerId', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'ownerId', 'deletedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_OWNER_ID, GroupTableMap::COL_DELETED_AT, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'owner_id', 'deleted_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Description', 'OwnerId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'description', 'ownerId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID, GroupTableMap::COL_NAME, GroupTableMap::COL_DESCRIPTION, GroupTableMap::COL_OWNER_ID, GroupTableMap::COL_CREATED_AT, GroupTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'description', 'owner_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -132,11 +127,11 @@ class GroupTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'OwnerId' => 3, 'DeletedAt' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'ownerId' => 3, 'deletedAt' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_OWNER_ID => 3, GroupTableMap::COL_DELETED_AT => 4, GroupTableMap::COL_CREATED_AT => 5, GroupTableMap::COL_UPDATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'owner_id' => 3, 'deleted_at' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Description' => 2, 'OwnerId' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'ownerId' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(GroupTableMap::COL_ID => 0, GroupTableMap::COL_NAME => 1, GroupTableMap::COL_DESCRIPTION => 2, GroupTableMap::COL_OWNER_ID => 3, GroupTableMap::COL_CREATED_AT => 4, GroupTableMap::COL_UPDATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'description' => 2, 'owner_id' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -160,7 +155,6 @@ class GroupTableMap extends TableMap
         $this->addColumn('name', 'Name', 'VARCHAR', true, 32, null);
         $this->addColumn('description', 'Description', 'VARCHAR', false, 256, null);
         $this->addForeignKey('owner_id', 'OwnerId', 'INTEGER', 'user', 'id', true, null, null);
-        $this->addColumn('deleted_at', 'DeletedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -363,7 +357,6 @@ class GroupTableMap extends TableMap
             $criteria->addSelectColumn(GroupTableMap::COL_NAME);
             $criteria->addSelectColumn(GroupTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(GroupTableMap::COL_OWNER_ID);
-            $criteria->addSelectColumn(GroupTableMap::COL_DELETED_AT);
             $criteria->addSelectColumn(GroupTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(GroupTableMap::COL_UPDATED_AT);
         } else {
@@ -371,7 +364,6 @@ class GroupTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.owner_id');
-            $criteria->addSelectColumn($alias . '.deleted_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

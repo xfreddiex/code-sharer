@@ -104,13 +104,6 @@ abstract class PackPermission implements ActiveRecordInterface
     protected $pack_id;
 
     /**
-     * The value for the deleted_at field.
-     *
-     * @var        \DateTime
-     */
-    protected $deleted_at;
-
-    /**
      * The value for the created_at field.
      *
      * @var        \DateTime
@@ -423,26 +416,6 @@ abstract class PackPermission implements ActiveRecordInterface
     }
 
     /**
-     * Get the [optionally formatted] temporal [deleted_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getDeletedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->deleted_at;
-        } else {
-            return $this->deleted_at instanceof \DateTime ? $this->deleted_at->format($format) : null;
-        }
-    }
-
-    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -595,26 +568,6 @@ abstract class PackPermission implements ActiveRecordInterface
     } // setPackId()
 
     /**
-     * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Models\PackPermission The current object (for fluent API support)
-     */
-    public function setDeletedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->deleted_at !== null || $dt !== null) {
-            if ($this->deleted_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->deleted_at->format("Y-m-d H:i:s")) {
-                $this->deleted_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[PackPermissionTableMap::COL_DELETED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setDeletedAt()
-
-    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -705,19 +658,13 @@ abstract class PackPermission implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : PackPermissionTableMap::translateFieldName('PackId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->pack_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackPermissionTableMap::translateFieldName('DeletedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->deleted_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PackPermissionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : PackPermissionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : PackPermissionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : PackPermissionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -730,7 +677,7 @@ abstract class PackPermission implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = PackPermissionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = PackPermissionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\PackPermission'), 0, $e);
@@ -992,9 +939,6 @@ abstract class PackPermission implements ActiveRecordInterface
         if ($this->isColumnModified(PackPermissionTableMap::COL_PACK_ID)) {
             $modifiedColumns[':p' . $index++]  = 'pack_id';
         }
-        if ($this->isColumnModified(PackPermissionTableMap::COL_DELETED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'deleted_at';
-        }
         if ($this->isColumnModified(PackPermissionTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -1026,9 +970,6 @@ abstract class PackPermission implements ActiveRecordInterface
                         break;
                     case 'pack_id':
                         $stmt->bindValue($identifier, $this->pack_id, PDO::PARAM_INT);
-                        break;
-                    case 'deleted_at':
-                        $stmt->bindValue($identifier, $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1114,12 +1055,9 @@ abstract class PackPermission implements ActiveRecordInterface
                 return $this->getPackId();
                 break;
             case 5:
-                return $this->getDeletedAt();
-                break;
-            case 6:
                 return $this->getCreatedAt();
                 break;
-            case 7:
+            case 6:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1157,9 +1095,8 @@ abstract class PackPermission implements ActiveRecordInterface
             $keys[2] => $this->getUserId(),
             $keys[3] => $this->getGroupId(),
             $keys[4] => $this->getPackId(),
-            $keys[5] => $this->getDeletedAt(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
         if ($result[$keys[5]] instanceof \DateTime) {
             $result[$keys[5]] = $result[$keys[5]]->format('c');
@@ -1167,10 +1104,6 @@ abstract class PackPermission implements ActiveRecordInterface
 
         if ($result[$keys[6]] instanceof \DateTime) {
             $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1274,12 +1207,9 @@ abstract class PackPermission implements ActiveRecordInterface
                 $this->setPackId($value);
                 break;
             case 5:
-                $this->setDeletedAt($value);
-                break;
-            case 6:
                 $this->setCreatedAt($value);
                 break;
-            case 7:
+            case 6:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1324,13 +1254,10 @@ abstract class PackPermission implements ActiveRecordInterface
             $this->setPackId($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setDeletedAt($arr[$keys[5]]);
+            $this->setCreatedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setUpdatedAt($arr[$keys[6]]);
         }
     }
 
@@ -1387,9 +1314,6 @@ abstract class PackPermission implements ActiveRecordInterface
         }
         if ($this->isColumnModified(PackPermissionTableMap::COL_PACK_ID)) {
             $criteria->add(PackPermissionTableMap::COL_PACK_ID, $this->pack_id);
-        }
-        if ($this->isColumnModified(PackPermissionTableMap::COL_DELETED_AT)) {
-            $criteria->add(PackPermissionTableMap::COL_DELETED_AT, $this->deleted_at);
         }
         if ($this->isColumnModified(PackPermissionTableMap::COL_CREATED_AT)) {
             $criteria->add(PackPermissionTableMap::COL_CREATED_AT, $this->created_at);
@@ -1487,7 +1411,6 @@ abstract class PackPermission implements ActiveRecordInterface
         $copyObj->setUserId($this->getUserId());
         $copyObj->setGroupId($this->getGroupId());
         $copyObj->setPackId($this->getPackId());
-        $copyObj->setDeletedAt($this->getDeletedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1692,7 +1615,6 @@ abstract class PackPermission implements ActiveRecordInterface
         $this->user_id = null;
         $this->group_id = null;
         $this->pack_id = null;
-        $this->deleted_at = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

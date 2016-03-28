@@ -31,6 +31,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByEmailConfirmToken($order = Criteria::ASC) Order by the email_confirm_token column
  * @method     ChildUserQuery orderByEmailConfirmedAt($order = Criteria::ASC) Order by the email_confirmed_at column
  * @method     ChildUserQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
+ * @method     ChildUserQuery orderByAccountRestoreToken($order = Criteria::ASC) Order by the account_restore_token column
  * @method     ChildUserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildUserQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -45,6 +46,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupByEmailConfirmToken() Group by the email_confirm_token column
  * @method     ChildUserQuery groupByEmailConfirmedAt() Group by the email_confirmed_at column
  * @method     ChildUserQuery groupByDeletedAt() Group by the deleted_at column
+ * @method     ChildUserQuery groupByAccountRestoreToken() Group by the account_restore_token column
  * @method     ChildUserQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildUserQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -132,6 +134,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column
  * @method     ChildUser findOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column
  * @method     ChildUser findOneByDeletedAt(string $deleted_at) Return the first ChildUser filtered by the deleted_at column
+ * @method     ChildUser findOneByAccountRestoreToken(string $account_restore_token) Return the first ChildUser filtered by the account_restore_token column
  * @method     ChildUser findOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column
  * @method     ChildUser findOneByUpdatedAt(string $updated_at) Return the first ChildUser filtered by the updated_at column *
 
@@ -149,6 +152,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByEmailConfirmToken(string $email_confirm_token) Return the first ChildUser filtered by the email_confirm_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByEmailConfirmedAt(string $email_confirmed_at) Return the first ChildUser filtered by the email_confirmed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByDeletedAt(string $deleted_at) Return the first ChildUser filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByAccountRestoreToken(string $account_restore_token) Return the first ChildUser filtered by the account_restore_token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByUpdatedAt(string $updated_at) Return the first ChildUser filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -164,6 +168,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByEmailConfirmToken(string $email_confirm_token) Return ChildUser objects filtered by the email_confirm_token column
  * @method     ChildUser[]|ObjectCollection findByEmailConfirmedAt(string $email_confirmed_at) Return ChildUser objects filtered by the email_confirmed_at column
  * @method     ChildUser[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildUser objects filtered by the deleted_at column
+ * @method     ChildUser[]|ObjectCollection findByAccountRestoreToken(string $account_restore_token) Return ChildUser objects filtered by the account_restore_token column
  * @method     ChildUser[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildUser objects filtered by the created_at column
  * @method     ChildUser[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildUser objects filtered by the updated_at column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -258,7 +263,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, username, name, surname, password, email, avatar_path, password_reset_token, email_confirm_token, email_confirmed_at, deleted_at, created_at, updated_at FROM user WHERE id = :p0';
+        $sql = 'SELECT id, username, name, surname, password, email, avatar_path, password_reset_token, email_confirm_token, email_confirmed_at, deleted_at, account_restore_token, created_at, updated_at FROM user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -705,6 +710,35 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_DELETED_AT, $deletedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the account_restore_token column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAccountRestoreToken('fooValue');   // WHERE account_restore_token = 'fooValue'
+     * $query->filterByAccountRestoreToken('%fooValue%'); // WHERE account_restore_token LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $accountRestoreToken The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByAccountRestoreToken($accountRestoreToken = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($accountRestoreToken)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $accountRestoreToken)) {
+                $accountRestoreToken = str_replace('*', '%', $accountRestoreToken);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_ACCOUNT_RESTORE_TOKEN, $accountRestoreToken, $comparison);
     }
 
     /**

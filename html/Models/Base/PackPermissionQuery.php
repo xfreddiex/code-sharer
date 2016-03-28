@@ -25,7 +25,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermissionQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildPackPermissionQuery orderByGroupId($order = Criteria::ASC) Order by the group_id column
  * @method     ChildPackPermissionQuery orderByPackId($order = Criteria::ASC) Order by the pack_id column
- * @method     ChildPackPermissionQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     ChildPackPermissionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildPackPermissionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -34,7 +33,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermissionQuery groupByUserId() Group by the user_id column
  * @method     ChildPackPermissionQuery groupByGroupId() Group by the group_id column
  * @method     ChildPackPermissionQuery groupByPackId() Group by the pack_id column
- * @method     ChildPackPermissionQuery groupByDeletedAt() Group by the deleted_at column
  * @method     ChildPackPermissionQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildPackPermissionQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -86,7 +84,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission findOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column
  * @method     ChildPackPermission findOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column
  * @method     ChildPackPermission findOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column
- * @method     ChildPackPermission findOneByDeletedAt(string $deleted_at) Return the first ChildPackPermission filtered by the deleted_at column
  * @method     ChildPackPermission findOneByCreatedAt(string $created_at) Return the first ChildPackPermission filtered by the created_at column
  * @method     ChildPackPermission findOneByUpdatedAt(string $updated_at) Return the first ChildPackPermission filtered by the updated_at column *
 
@@ -98,7 +95,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission requireOneByUserId(int $user_id) Return the first ChildPackPermission filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByGroupId(int $group_id) Return the first ChildPackPermission filtered by the group_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByPackId(int $pack_id) Return the first ChildPackPermission filtered by the pack_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildPackPermission requireOneByDeletedAt(string $deleted_at) Return the first ChildPackPermission filtered by the deleted_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByCreatedAt(string $created_at) Return the first ChildPackPermission filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildPackPermission requireOneByUpdatedAt(string $updated_at) Return the first ChildPackPermission filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -108,7 +104,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPackPermission[]|ObjectCollection findByUserId(int $user_id) Return ChildPackPermission objects filtered by the user_id column
  * @method     ChildPackPermission[]|ObjectCollection findByGroupId(int $group_id) Return ChildPackPermission objects filtered by the group_id column
  * @method     ChildPackPermission[]|ObjectCollection findByPackId(int $pack_id) Return ChildPackPermission objects filtered by the pack_id column
- * @method     ChildPackPermission[]|ObjectCollection findByDeletedAt(string $deleted_at) Return ChildPackPermission objects filtered by the deleted_at column
  * @method     ChildPackPermission[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildPackPermission objects filtered by the created_at column
  * @method     ChildPackPermission[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildPackPermission objects filtered by the updated_at column
  * @method     ChildPackPermission[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -203,7 +198,7 @@ abstract class PackPermissionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, value, user_id, group_id, pack_id, deleted_at, created_at, updated_at FROM pack_permission WHERE id = :p0';
+        $sql = 'SELECT id, value, user_id, group_id, pack_id, created_at, updated_at FROM pack_permission WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -490,49 +485,6 @@ abstract class PackPermissionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(PackPermissionTableMap::COL_PACK_ID, $packId, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildPackPermissionQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(PackPermissionTableMap::COL_DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(PackPermissionTableMap::COL_DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

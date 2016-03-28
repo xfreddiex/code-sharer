@@ -19,7 +19,7 @@ abstract class BaseController extends Controller{
 
 		$this->data['title'] = 'Starling';
 		$this->data['keywords'] = 'starling, code-sharer';
-		$this->data['description'] = '';
+		$this->data['description'] = 'Starling is web application to sharing code between users and the public.';
 
 		$this->addBeforeAll("prepareFlashMessages");
 		$this->addBeforeAll("loadUser");
@@ -44,6 +44,19 @@ abstract class BaseController extends Controller{
 						setcookie("identityToken", $token, time() + (86400 * 120));
 				}
 			}
+		}
+		if($user && !$user->getEmailConfirmedAt()){
+			unset($_SESSION["userId"]);
+			if(isset($_COOKIE["identityId"])){
+				$identity = IdentityQuery::create()->findPK($_COOKIE["identityId"]);
+				if($identity){
+					$identity->delete();
+					setcookie("identityId", "", time() - 86400);
+					setcookie("identityToken", "", time() - 86400);
+				}
+			}
+			$this->sendFlashMessage('You email adress has not been confirmed yet. <a class="link" href="/user/'.$user->getUsername().'/send-email-confirm-email">Send new email confirm link?</a>', "error");
+			$this->redirect("/");
 		}
 		$this->data["loggedUser"] = $user;
 		return true;

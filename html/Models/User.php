@@ -27,6 +27,9 @@ class User extends BaseUser
 	public function preSave(ConnectionInterface $con = null){
 		if($this->validate()){
 			$this->hashPassword();
+			$this->hashEmailConfirmToken();
+			$this->hashAccountRestoreToken();
+			$this->hashPasswordResetToken();
 		}
 		return $this->validate();
 	}
@@ -44,7 +47,7 @@ class User extends BaseUser
 			$this->password = $v;
 			$this->modifiedColumns[UserTableMap::COL_PASSWORD] = true;
 		}
-
+		
 		return $this;
 	}
 
@@ -54,6 +57,30 @@ class User extends BaseUser
 
 	public function checkPassword($password){
 		return password_verify($password, $this->password);
+	}
+
+	public function hashEmailConfirmToken(){
+		$this->email_confirm_token = password_hash($this->email_confirm_token, PASSWORD_DEFAULT);
+	}
+
+	public function checkEmailConfirmToken($token){
+		return password_verify($token, $this->email_confirm_token);
+	}
+
+	public function hashAccountRestoreToken(){
+		$this->account_restore_token = password_hash($this->account_restore_token, PASSWORD_DEFAULT);
+	}
+
+	public function checkAccountRestoreToken($token){
+		return password_verify($token, $this->account_restore_token);
+	}
+
+	public function hashPasswordResetToken(){
+		$this->password_reset_token = password_hash($this->password_reset_token, PASSWORD_DEFAULT);
+	}
+
+	public function checkPasswordResetToken($token){
+		return password_verify($token, $this->password_reset_token);
 	}
 
 	public function getAvatar250(){
