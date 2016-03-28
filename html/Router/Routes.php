@@ -48,6 +48,9 @@ return array(
 	array('uri' => '/pack/[id]/[name]/content', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'getFileContent'),
 	array('uri' => '/pack/[id]/[name]/delete', 'content_type' => 'application/json', 'request_method' => 'GET', 'controller' => 'Pack', 'method' => 'deleteFile'),
 	array('uri' => '/pack/[id]/[name]/update', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'updateFile'),
+	array('uri' => '/file/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'fileValidateOne'),
+	
+	array('uri' => '/comment/validate-one', 'content_type' => 'application/json', 'request_method' => 'POST', 'controller' => 'Pack', 'method' => 'commentValidateOne'),
 
 	//Errors
 	"error404" => array('uri' => '/404', 'content_type' => 'text/html', 'request_method' => 'GET', 'controller' => 'Error', 'method' => 'error404'),

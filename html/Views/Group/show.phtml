@@ -3,8 +3,10 @@
 		<div id="message-box">
 			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
 		</div>
-		<h1 id="name"><?=$group->getName()?></h1>
-		<input class="form-control" name="name" validation="ajax" validation-event="keyup" validation-type="name" value="<?=$group->getName()?>">
+		<div>
+			<h1 id="name"><?=$group->getName()?></h1>
+			<input class="form-control" name="name" validation="ajax" validation-event="keyup" validation-type="name" value="<?=$group->getName()?>">
+		</div>
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">
 				<div class="panel panel-default">
@@ -88,7 +90,15 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h2>Users</h2>
+				<div class="row">
+					<div class="col-xs-10">
+						<h2>Users</h2>
+					</div>
+					<div class="col-xs-2 text-right">
+						<i class="fa fa-user"></i>
+						<?=$group->getUsers()->count()?>
+					</div>
+				</div>
 			</div>
 			<div class="panel-body" id="users-list">
 				<?php $this->viewFile("Views/Group/usersList.phtml"); ?>

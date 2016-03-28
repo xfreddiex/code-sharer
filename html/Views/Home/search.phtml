@@ -62,11 +62,17 @@
 													<div class="col-xs-4 col-sm-12">
 														<a href="/pack/<?=$pack->getId()?>" class="link"><strong><?=$pack->getName()?></strong></a>
 													</div>
-													<div class="col-xs-4 col-sm-6" id="created">
+													<div class="col-xs-3 col-sm-12">
+														<a class="link text-muted" href="/user/<?=$pack->getOwner()->getUsername()?>">
+															<i class="fa fa-user"></i>
+															<?=$pack->getOwner()->getUsername()?>
+														</a>
+													</div>
+													<div class="col-xs-3 col-sm-6" id="created">
 														<i class="fa fa-share-square"></i>
 														<?=$pack->getCreatedAt("j M o")?>
 													</div>
-													<div class="col-xs-4 col-sm-6" id="updated">
+													<div class="col-xs-3 col-sm-6" id="updated">
 														<i class="fa fa-pencil-square"></i>
 														<?=$pack->getUpdatedAt("j M o")?>
 													</div>

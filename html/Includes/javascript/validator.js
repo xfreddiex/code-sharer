@@ -4,6 +4,7 @@ function Validator(form, url){
 	this.form = form;
 	this.url = url;
 	this.form.find('*[validation="ajax"][validation-event="keyup"]').keyup({validator : this}, validateByAjax);
+	this.form.find('*[validation="ajax"][validation-event="keyup"]').change({validator : this}, validateByAjax);
 	this.form.find('*[validation="ajax"][validation-event="change"]').change({validator : this}, validateByAjax);
 	this.form.find('*[validation="compare"][validation-event="keyup"]').keyup({validator : this},validateCompare);
 	this.form.submit({validator : this}, function(event){
@@ -17,6 +18,7 @@ validateByAjax = function(event){
 	var validator = event.data.validator;
 	var input = $(this);
 	if(input.val().length > 0){
+		validator.ok = false;
 		var data = {};
 		data[input.attr("validation-type")] = input.val();
 		$.ajax({
@@ -27,15 +29,14 @@ validateByAjax = function(event){
 			context: {input : input, validator : validator},
 			success: function(response){
 				var error = response["error"];
+				if(this.input.data("bs.popover"))
+					this.input.popover('destroy');
+				this.input.parent().removeClass("has-error");
+				this.validator.ok = true;
 				if(error){
-					this.input.popover({"template" : '<div class="popover alert alert-danger"><div class="arrow"></div><div class="popover-content"></div></div>', "trigger" : "manual", "placement" : "top", "content" : error["message"]}).popover('show');
+					this.input.popover({"animation" : false, "template" : '<div class="popover alert alert-danger"><div class="arrow"></div><div class="popover-content"></div></div>', "trigger" : "manual", "placement" : "top", "content" : error["message"]}).popover('show');
 					this.input.parent().addClass("has-error");
 					this.validator.ok = false;
-				}
-				else{
-					this.input.popover('hide').popover('destroy');
-					this.input.parent().removeClass("has-error");
-					this.validator.ok = true;
 				}
 			}
 		});

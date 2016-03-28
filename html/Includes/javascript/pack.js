@@ -53,7 +53,7 @@ $(document).ready(function(){
 
 	$('.pack-wrapper button[name="send-comment"]').click(function(){
 		var url = "/pack/" + $(this).attr("pack") + "/add-comment";
-		var data = $('textarea[name="comment"]').serialize();
+		var data = $('textarea[name="text"]').serialize();
 		$.ajax({
 			url: url,
 			type: 'POST',
@@ -63,7 +63,7 @@ $(document).ready(function(){
 			success: function(response){
 				if(response["status"] == "ok"){
 					$("#comment-form").collapse('hide');
-					$('textarea[name="comment"]').val("");
+					$('textarea[name="text"]').val("");
 					$("#comments").load("/pack/"+this.attr("pack")+"/get-comments");
 				};
 			}

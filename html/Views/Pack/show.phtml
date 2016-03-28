@@ -140,7 +140,7 @@
 			<?php if($loggedUser): ?>
 				<form class="collapse" id="comment-form">	
 					<div class="panel-body">
-						<textarea id="comment" rows="2" cols="50" class="form-control" name="comment" validation="ajax" validation-event="keyup" validation-type="comment" placeholder="Write a comment for this pack."></textarea>
+						<textarea id="comment" rows="2" cols="50" class="form-control" name="text" validation="ajax" validation-event="keyup" validation-type="text" placeholder="Write a comment for this pack."></textarea>
 					</div>
 					<div class="panel-footer text-right">
 						<button type="button" class="btn btn-success" name="send-comment" pack="<?=$pack->getId()?>"><i class="fa fa-send"></i> Send</button>

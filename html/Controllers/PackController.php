@@ -224,8 +224,8 @@ class PackController extends BaseController{
 
 		if(!$file->save()){
 			$failures = $file->getValidationFailures();
-			$this->setStatus("error");
 			if(count($failures) > 0){
+				$this->setStatus("error");
 				foreach($failures as $failure){
 					$this->sendFlashMessage("Pack data has not been changed. ".$failure->getMessage(), "error");
 				}
@@ -250,9 +250,9 @@ class PackController extends BaseController{
 		}
 		else{
 
-			if(isset($_POST["comment"])){
+			if(isset($_POST["text"])){
 				$comment = new Comment();
-				$comment->setText($_POST["comment"]);
+				$comment->setText($_POST["text"]);
 				$comment->setUser($this->data["loggedUser"]);
 				$comment->setPack($this->data["pack"]);
 
@@ -327,6 +327,53 @@ class PackController extends BaseController{
 		else
 			setHTTPStatusCode("400");
 	}
+	protected function fileValidateOne(){
+		setContentType("json");
+		$file = new File();
+		$given = array_keys($_POST);
+		$response["error"] = null;
+		if(count($given) == 1){
+			if($given[0] == "description"){
+				$file->setDescription($_POST["description"]);
+			}
+
+			if(!$file->validate()){
+				foreach($file->getValidationFailures() as $failure){
+					if($given[0] == $failure->getPropertyPath()){
+						$response["error"] = array(
+							"name" => $failure->getPropertyPath(),
+							"message" => $failure->getMessage()
+						);
+					}
+				}
+			}
+			$this->viewString(json_encode($response));
+		}
+	}
+
+	protected function commentValidateOne(){
+		setContentType("json");
+		$comment = new Comment();
+		$given = array_keys($_POST);
+		$response["error"] = null;
+		if(count($given) == 1){
+			if($given[0] == "text"){
+				$comment->setText($_POST["text"]);
+			}
+
+			if(!$comment->validate()){
+				foreach($comment->getValidationFailures() as $failure){
+					if($given[0] == $failure->getPropertyPath()){
+						$response["error"] = array(
+							"name" => $failure->getPropertyPath(),
+							"message" => $failure->getMessage()
+						);
+					}
+				}
+			}
+			$this->viewString(json_encode($response));
+		}
+	}
 
 	protected function update(){
 		setContentType("json");
@@ -344,8 +391,8 @@ class PackController extends BaseController{
 
 		if(!$pack->save()){
     		$failures = $pack->getValidationFailures();
-			$this->setStatus("error");
 			if(count($failures) > 0){
+				$this->setStatus("error");
 				foreach($failures as $failure){
 					$this->sendFlashMessage("Pack data has not been changed. ".$failure->getMessage(), "error");
 				}
