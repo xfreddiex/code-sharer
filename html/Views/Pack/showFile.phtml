@@ -63,6 +63,7 @@
 							<h2><?=$file->getName()?></h2>
 						</div>
 						<div class="col-xs-4 text-right">
+							<a class="btn btn-success" href="/pack/<?=$pack->getId()?>/<?=$file->getName()?>/content"><i class="fa fa-download"></i> Download</a>
 							<button class="btn btn-info" name="edit-code"><i class="fa fa-pencil-square-o"></i> Edit</button>
 							<button class="btn btn-success" name="save-code" pack="<?=$pack->getId()?>" file="<?=$file->getName()?>"><i class="fa fa-save"></i> Save</button>
 						</div>

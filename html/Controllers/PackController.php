@@ -240,8 +240,12 @@ class PackController extends BaseController{
 	}
 
 	protected function getFileContent(){
-		$this->setContentType($this->data["file"]->getType());
-		$this->viewString(htmlspecialchars($this->data["file"]->getContent()));
+		$content = $this->data["file"]->getContent();
+		header('Content-Disposition: attachment; filename="'.$this->data["file"]->getName().'"');
+		header('Content-Type: '.$this->data["file"]->getType());
+		header('Content-Length: ' . strlen($content));
+		header('Connection: close');
+		echo $content;
 	}
 
 	protected function addComment(){

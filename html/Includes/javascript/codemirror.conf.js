@@ -12,13 +12,14 @@ $(document).ready(function(){
         });
 
         var mode = "clike";
-        var spec = "clike";
+        var mime = "text/plain";
         var info = CodeMirror.findModeByExtension($("#code").attr("lang"));
         if(info){
           mode = info.mode;
-          spec = info.mime;
+          mime = info.mime;
         }
-        editor.setOption("mode", spec);
+        editor.setOption("mode", mime);
         CodeMirror.autoLoadMode(editor, mode);
+        $("#code").attr("mime-type", mime);
     });
 });
