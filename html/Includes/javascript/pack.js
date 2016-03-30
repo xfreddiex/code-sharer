@@ -64,7 +64,9 @@ $(document).ready(function(){
 				if(response["status"] == "ok"){
 					$("#comment-form").collapse('hide');
 					$('textarea[name="text"]').val("");
-					$("#comments").load("/pack/"+this.attr("pack")+"/get-comments");
+					$("#comments").load("/pack/"+this.attr("pack")+"/get-comments", function(){
+						bindCommentButtons();
+					});
 				};
 			}
 		});

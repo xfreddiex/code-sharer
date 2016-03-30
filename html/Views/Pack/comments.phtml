@@ -5,7 +5,7 @@
 				<a href="/user/<?=$comment->getUser()->getUsername()?>"><img src="<?=$comment->getUser()->getAvatar40()?>"></a>
 			</div>
 			<div class="row">
-				<div class="col-xs-4 col-sm-3 col-md-2">
+				<div class="col-xs-9 col-sm-3 col-md-2 overflow-name">
 					<div>
 						<strong><?=$comment->getCreatedAt("j M o")?></strong>
 					</div>
@@ -14,10 +14,13 @@
 					</div>
 				</div>
 				<?php if($permission == 3): ?>
-					<div class="col-xs-6 col-sm-8 col-md-9">
+					<div class="visible-xs col-xs-3 text-right">
+						<button class="btn btn-danger btn-sm" name="delete-comment" comment="<?=$comment->getId()?>"><i class="fa fa-trash"></i></button>
+					</div>
+					<div class="col-xs-12 col-sm-8 col-md-9">
 						<p class="comment"><?=htmlspecialchars($comment->getText())?></p>
 					</div>
-					<div class="col-xs-2 col-sm-1 text-right">
+					<div class="hidden-xs col-sm-1 text-right">
 						<button class="btn btn-danger btn-sm" name="delete-comment" comment="<?=$comment->getId()?>"><i class="fa fa-trash"></i></button>
 					</div>
 				<?php else: ?>

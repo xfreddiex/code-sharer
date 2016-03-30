@@ -1,16 +1,18 @@
 <div class="homepage-wrapper">
 	<div class="container">
-		<?php //phpinfo(); ?>
 		<div id="message-box">
 			<?php $this->viewFile('Views/miscellaneous/flash_message.phtml'); ?>
 		</div>
 		<div class="row">
-			<div class="col-xs-12 col-sm-6 col-sm-push-6 text-right welcome">
+			<div class="col-xs-12 col-sm-7 col-sm-push-5 text-right welcome">
 				<h1>Welcome</h1>
-				to <img src="Includes/images/starling_text.svg">
-				<h2>A place to share your code</h2>
+				<div id="second-row">
+					<span class="to">to</span>
+					<img src="Includes/images/starling_text.svg">
+				</div>
+				<h2 id="last-row">A place to share your code</h2>
 			</div>
-			<div class="col-xs-12 col-sm-6 col-sm-pull-6">
+			<div class="col-xs-12 col-sm-5 col-sm-pull-7">
 				<form action="/sign-up" method="post" id="sign-up-form">
 					<h2>Sign up</h2>
 					<div class="form-group" id="email-wrapper">

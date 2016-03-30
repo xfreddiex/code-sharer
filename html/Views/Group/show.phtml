@@ -91,12 +91,12 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="row">
-					<div class="col-xs-10">
+					<div class="col-xs-9">
 						<h2>Users</h2>
 					</div>
-					<div class="col-xs-2 text-right">
+					<div class="col-xs-3 text-right">
 						<i class="fa fa-user"></i>
-						<?=$group->getUsers()->count()?>
+						<span id="number-of-users"><?=$group->getUsers()->count()?></span>
 					</div>
 				</div>
 			</div>
@@ -118,12 +118,12 @@
 				<?php if($group->getPackPermissions()->count()): ?>
 					<?php foreach($group->getPackPermissions() as $index => $permission): ?>
 						<div class="row">
-							<div class="col-xs-5">
+							<div class="col-xs-5 overflow-name">
 								<a class="link" href="/pack/<?=$permission->getPack()->getId()?>">
 									<?=$permission->getPack()->getName()?>
 								</a>
 							</div>
-							<div class="col-xs-5">
+							<div class="col-xs-5 overflow-name">
 								<a class="link text-muted" href="/user/<?=$permission->getPack()->getOwner()->getUsername()?>">
 									<i class="fa fa-user"></i>
 									<?=$permission->getPack()->getOwner()->getUsername()?>

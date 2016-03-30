@@ -100,17 +100,17 @@ class UserController extends BaseController{
 				$user->setEmailConfirmToken($emailConfirmToken);
 				$user->save();
 
-				$body = '<p>You have changed your email address.</p><br /><p>Please virify your email address by clicking this link:</p><a href="http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
+				$body = '<p>You have changed your email address.</p><br /><p>Please virify your email address by clicking this link:</p><a href="'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
 
 				$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-				->setUsername('starling.code.sharer@gmail.com')
-				->setPassword('hcpunk1980');
+				->setUsername($this->emailAddress)
+				->setPassword($this->emailPassword);
 
 				$mailer = \Swift_Mailer::newInstance($transport);
 
 				$message = \Swift_Message::newInstance()
 				->setSubject('Email verification')
-				->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+				->setFrom(array($this->emailAddress => 'Starling admin'))
 				->setTo(array($user->getEmail() => $user->getUsername()))
 				->setBody($body, 'text/html');
 
@@ -159,17 +159,17 @@ class UserController extends BaseController{
 				$user->setAccountRestoreToken($accountRestoreToken);
 				$user->save();
 
-				$body = '<p>Restore your account by clicking this link:</p><a href="http://localhost/user/'.$user->getUsername().'/restore-account/'.urlencode($accountRestoreToken).'">http://localhost/user/'.$user->getUsername().'/restore-account/'.urlencode($accountRestoreToken).'</a>';
+				$body = '<p>Restore your account by clicking this link:</p><a href="'.$this->siteURL.'/user/'.$user->getUsername().'/restore-account/'.urlencode($accountRestoreToken).'">'.$this->siteURL.'/user/'.$user->getUsername().'/restore-account/'.urlencode($accountRestoreToken).'</a>';
 
 				$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-				->setUsername('starling.code.sharer@gmail.com')
-				->setPassword('hcpunk1980');
+				->setUsername($this->emailAddress)
+				->setPassword($this->emailPassword);
 
 				$mailer = \Swift_Mailer::newInstance($transport);
 
 				$message = \Swift_Message::newInstance()
 				->setSubject('Account restore')
-				->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+				->setFrom(array($this->emailAddress => 'Starling admin'))
 				->setTo(array($user->getEmail() => $user->getUsername()))
 				->setBody($body, 'text/html');
 
@@ -198,14 +198,14 @@ class UserController extends BaseController{
 				$body = '<p>New password for Starling account.</p><br />Username: '.$user->getUsername().'<br />Password: '.$newPassword;
 
 				$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-				->setUsername('starling.code.sharer@gmail.com')
-				->setPassword('hcpunk1980');
+				->setUsername($this->emailAddress)
+				->setPassword($this->emailPassword);
 
 				$mailer = \Swift_Mailer::newInstance($transport);
 
 				$message = \Swift_Message::newInstance()
 				->setSubject('Password reset')
-				->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+				->setFrom(array($this->emailAddress => 'Starling admin'))
 				->setTo(array($user->getEmail() => $user->getUsername()))
 				->setBody($body, 'text/html');
 
@@ -230,17 +230,17 @@ class UserController extends BaseController{
 			$user->setPasswordResetToken($passwordResetToken);
 			$user->save();
 
-			$body = '<p>Reset your password by clicking this link:</p><a href="http://localhost/user/'.$user->getUsername().'/reset-password/'.urlencode($passwordResetToken).'">http://localhost/user/'.$user->getUsername().'/reset-password/'.urlencode($passwordResetToken).'</a>';
+			$body = '<p>Reset your password by clicking this link:</p><a href="'.$this->siteURL.'/user/'.$user->getUsername().'/reset-password/'.urlencode($passwordResetToken).'">'.$this->siteURL.'/user/'.$user->getUsername().'/reset-password/'.urlencode($passwordResetToken).'</a>';
 
 			$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-			->setUsername('starling.code.sharer@gmail.com')
-			->setPassword('hcpunk1980');
+			->setUsername($this->emailAddress)
+			->setPassword($this->emailPassword);
 
 			$mailer = \Swift_Mailer::newInstance($transport);
 
 			$message = \Swift_Message::newInstance()
 			->setSubject('Password reset')
-			->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+			->setFrom(array($this->emailAddress => 'Starling admin'))
 			->setTo(array($user->getEmail() => $user->getUsername()))
 			->setBody($body, 'text/html');
 
@@ -287,17 +287,17 @@ class UserController extends BaseController{
 				$user->setEmailConfirmToken($emailConfirmToken);
 				$user->save();
 
-				$body = '<p>You have changed your email address.</p><br /><p>Please virify your new email address by clicking this link:</p><a href="http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
+				$body = '<p>You have changed your email address.</p><br /><p>Please virify your new email address by clicking this link:</p><a href="'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
 
 				$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-				->setUsername('starling.code.sharer@gmail.com')
-				->setPassword('hcpunk1980');
+				->setUsername($this->emailAddress)
+				->setPassword($this->emailPassword);
 
 				$mailer = \Swift_Mailer::newInstance($transport);
 
 				$message = \Swift_Message::newInstance()
 				->setSubject('Email verification')
-				->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+				->setFrom(array($this->emailAddress => 'Starling admin'))
 				->setTo(array($oldEmail => $user->getUsername()))
 				->setBody($body, 'text/html');
 
@@ -371,17 +371,17 @@ class UserController extends BaseController{
 			else{
 				$this->sendFlashMessage('You have been successfuly signed up. Please confirm your email address, we have send confirmation link. <a class="link" href="/user/'.$user->getUsername().'/send-email-confirm-email">Send new email confirm link?</a>', "success");
 
-				$body = '<p>You have created new account on Starling.</p><br /><p>Please virify your email address by clicking this url:</p><a href="http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">http://localhost/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
+				$body = '<p>You have created new account on Starling.</p><br /><p>Please virify your email address by clicking this url:</p><a href="'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'">'.$this->siteURL.'/user/'.$user->getUsername().'/email-confirm/'.urlencode($emailConfirmToken).'</a>';
 
 				$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl')
-				->setUsername('starling.code.sharer@gmail.com')
-				->setPassword('hcpunk1980');
+				->setUsername($this->emailAddress)
+				->setPassword($this->emailPassword);
 
 				$mailer = \Swift_Mailer::newInstance($transport);
 
 				$message = \Swift_Message::newInstance()
 				->setSubject('Email verification')
-				->setFrom(array('starling.code.sharer@gmail.com' => 'Starling admin'))
+				->setFrom(array($this->emailAddress => 'Starling admin'))
 				->setTo(array($user->getEmail() => $user->getUsername()))
 				->setBody($body, 'text/html');
 
@@ -416,7 +416,6 @@ class UserController extends BaseController{
 					$identity = new Identity();
 					$identity->setToken($token)
 						->setUser($user)
-						->setExpiresAt(time() + (86400 * 14))
 						->save();
 					setcookie("identityId", $identity->getId(), time() + (86400 * 120));
 					setcookie("identityToken", $token, time() + (86400 * 120));

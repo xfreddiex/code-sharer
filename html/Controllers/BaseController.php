@@ -25,6 +25,11 @@ abstract class BaseController extends Controller{
 		$this->addBeforeAll("loadUser");
 
 		$this->data["loggedUser"] = NULL;
+
+		$emailConf = require("conf/emailLocalConf.php");
+		$this->siteURL = $emailConf["siteURL"];
+		$this->emailAddress = $emailConf["emailAddress"];
+		$this->emailPassword = $emailConf["emailPassword"];
 	}
 
 	protected function loadUser(){

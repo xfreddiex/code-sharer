@@ -86,13 +86,6 @@ abstract class Identity implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the expires_at field.
-     *
-     * @var        \DateTime
-     */
-    protected $expires_at;
-
-    /**
      * The value for the created_at field.
      *
      * @var        \DateTime
@@ -375,26 +368,6 @@ abstract class Identity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [optionally formatted] temporal [expires_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getExpiresAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->expires_at;
-        } else {
-            return $this->expires_at instanceof \DateTime ? $this->expires_at->format($format) : null;
-        }
-    }
-
-    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -499,26 +472,6 @@ abstract class Identity implements ActiveRecordInterface
     } // setUserId()
 
     /**
-     * Sets the value of [expires_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Models\Identity The current object (for fluent API support)
-     */
-    public function setExpiresAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->expires_at !== null || $dt !== null) {
-            if ($this->expires_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->expires_at->format("Y-m-d H:i:s")) {
-                $this->expires_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[IdentityTableMap::COL_EXPIRES_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setExpiresAt()
-
-    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -603,19 +556,13 @@ abstract class Identity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : IdentityTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : IdentityTableMap::translateFieldName('ExpiresAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->expires_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : IdentityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : IdentityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : IdentityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : IdentityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -628,7 +575,7 @@ abstract class Identity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = IdentityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = IdentityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Models\\Identity'), 0, $e);
@@ -862,9 +809,6 @@ abstract class Identity implements ActiveRecordInterface
         if ($this->isColumnModified(IdentityTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(IdentityTableMap::COL_EXPIRES_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'expires_at';
-        }
         if ($this->isColumnModified(IdentityTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -890,9 +834,6 @@ abstract class Identity implements ActiveRecordInterface
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
-                        break;
-                    case 'expires_at':
-                        $stmt->bindValue($identifier, $this->expires_at ? $this->expires_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -972,12 +913,9 @@ abstract class Identity implements ActiveRecordInterface
                 return $this->getUserId();
                 break;
             case 3:
-                return $this->getExpiresAt();
-                break;
-            case 4:
                 return $this->getCreatedAt();
                 break;
-            case 5:
+            case 4:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1013,9 +951,8 @@ abstract class Identity implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getToken(),
             $keys[2] => $this->getUserId(),
-            $keys[3] => $this->getExpiresAt(),
-            $keys[4] => $this->getCreatedAt(),
-            $keys[5] => $this->getUpdatedAt(),
+            $keys[3] => $this->getCreatedAt(),
+            $keys[4] => $this->getUpdatedAt(),
         );
         if ($result[$keys[3]] instanceof \DateTime) {
             $result[$keys[3]] = $result[$keys[3]]->format('c');
@@ -1023,10 +960,6 @@ abstract class Identity implements ActiveRecordInterface
 
         if ($result[$keys[4]] instanceof \DateTime) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
-        }
-
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1094,12 +1027,9 @@ abstract class Identity implements ActiveRecordInterface
                 $this->setUserId($value);
                 break;
             case 3:
-                $this->setExpiresAt($value);
-                break;
-            case 4:
                 $this->setCreatedAt($value);
                 break;
-            case 5:
+            case 4:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1138,13 +1068,10 @@ abstract class Identity implements ActiveRecordInterface
             $this->setUserId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setExpiresAt($arr[$keys[3]]);
+            $this->setCreatedAt($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setCreatedAt($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setUpdatedAt($arr[$keys[5]]);
+            $this->setUpdatedAt($arr[$keys[4]]);
         }
     }
 
@@ -1195,9 +1122,6 @@ abstract class Identity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(IdentityTableMap::COL_USER_ID)) {
             $criteria->add(IdentityTableMap::COL_USER_ID, $this->user_id);
-        }
-        if ($this->isColumnModified(IdentityTableMap::COL_EXPIRES_AT)) {
-            $criteria->add(IdentityTableMap::COL_EXPIRES_AT, $this->expires_at);
         }
         if ($this->isColumnModified(IdentityTableMap::COL_CREATED_AT)) {
             $criteria->add(IdentityTableMap::COL_CREATED_AT, $this->created_at);
@@ -1293,7 +1217,6 @@ abstract class Identity implements ActiveRecordInterface
     {
         $copyObj->setToken($this->getToken());
         $copyObj->setUserId($this->getUserId());
-        $copyObj->setExpiresAt($this->getExpiresAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1388,7 +1311,6 @@ abstract class Identity implements ActiveRecordInterface
         $this->id = null;
         $this->token = null;
         $this->user_id = null;
-        $this->expires_at = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

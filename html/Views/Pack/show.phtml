@@ -6,7 +6,7 @@
 		<h1><?=$pack->getName()?></h1>
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">
-				<div class="panel panel-default">
+				<div class="panel panel-default" id="menu">
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-xs-5 col-sm-6">
@@ -131,7 +131,7 @@
 					</div>
 					<div class="col-xs-4 text-right">
 						<?php if($loggedUser): ?>
-							<button class="btn btn-info" data-toggle="collapse" data-target="#comment-form"><i class="fa fa-commenting"></i> Comment</button>
+							<button class="btn btn-info" data-toggle="collapse" data-target="#comment-form"><i class="fa fa-commenting"></i> <span class="hidden-xs">Comment</span></button>
 						<?php endif; ?>
 					</div>
 				</div>

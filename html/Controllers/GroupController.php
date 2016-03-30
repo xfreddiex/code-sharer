@@ -194,6 +194,15 @@ class GroupController extends BaseController{
 		if(count($given) == 1){
 			if($given[0] == "name"){
 				$group->setName($_POST["name"]);
+				$g = GroupQuery::create()->filterByOwner($this->data["loggedUser"])->filterByName($_POST["name"])->findOne();
+				if($g){
+					$response["error"] = array(
+						"name" => "name",
+						"message" => "You can not have two groups with the same name."
+					);
+					$this->viewString(json_encode($response));
+					return;
+				}
 			}
 			else if($given[0] == "description"){
 				$group->setDescription($_POST["description"]);
@@ -228,10 +237,6 @@ class GroupController extends BaseController{
 		if(!$this->data["group"]){
 			$this->sendFlashMessage("Group with ID ".$params["id"]." does not exist.", "error");
 			$this->redirect("/404");
-		}
-		else if($this->data["group"]->getDeletedAt()){
-			$this->sendFlashMessage("Group with ID ".$params["id"]." was deleted on ".$this->data["group"]->getDeletedAt("j M o").".", "error");
-			$this->redirect("/404");	
 		}
 		return true;
 	}

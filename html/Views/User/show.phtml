@@ -15,7 +15,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-xs-8 col-sm-12">
+						<div class="col-xs-8 col-sm-12" id="menu">
 							<div class="panel-body">
 								<?=($user->getName() || $user->getSurname() ? "<h3>".$user->getName().($user->getName() && $user->getSurname() ? " ": null).$user->getSurname()."</h3>": null)?>
 								<h3><?=$user->getUsername()?></h3>
@@ -34,7 +34,7 @@
 						<?php if($user->getPacks()->count()): ?>
 							<?php foreach($user->getPacks() as $index => $pack): ?>
 								<div class="row">
-									<div class="col-xs-9">
+									<div class="col-xs-9 overflow-name">
 										<a class="link" href="/pack/<?=$pack->getId()?>">
 											<?=$pack->getName()?>
 										</a>

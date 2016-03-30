@@ -1,7 +1,7 @@
 <?php if($pack->getFiles()->count()): ?>
 	<?php foreach($pack->getFiles() as $index => $file): ?>
 		<div class="row">
-			<div class="col-xs-6">
+			<div class="col-xs-6 overflow-name">
 				<a class="link" href="/pack/<?=$pack->getId()?>/<?=$file->getName()?>">
 					<?=$file->getName()?>
 				</a>

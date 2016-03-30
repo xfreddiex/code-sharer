@@ -20,7 +20,7 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
 }
 
 html{
-	min-width: 420px;
+	min-width: 300px;
 }
 section .container{
 	padding-top: 20px;
@@ -40,6 +40,8 @@ h1{
 	font-weight: bold;
 	margin-top: 0px;
 	margin-bottom: 15px;
+	word-wrap: break-word;
+	word-break: keep-all;
 }
 h2{
 	font-size: 22px;
@@ -72,6 +74,11 @@ a:hover{
 .link:hover{
 	color: #014450;
 	text-decoration: none;
+}
+.overflow-name{
+	overflow: hidden;
+	word-break: keep-all;
+	text-overflow: ellipsis;
 }
 hr{
 	border-top: 2px solid #f0f0f0;
@@ -641,12 +648,6 @@ footer{
 	background: black url('../images/background.png') center top no-repeat;
 	background-size: auto 846px;
 	min-height: 846px;
-	h2{
-		color: white;
-		font-size: 40px;
-		margin-bottom: 24px;
-		font-weight: normal;
-	}
 	h1{
 		color: white;
 		font-size: 100px;
@@ -659,19 +660,47 @@ footer{
 		color: white;
 	}
 	.welcome{
-		font-size: 40px;
-		display: inline-block;
-		vertical-align: middle;
-		@media screen and (max-width: 1199px){
-			h2{
-				font-size: 0.9 * 40px;
-			}	
+		#second-row{
+			height: 60px;
+			font-size: 40px;
+		}
+		img{
+			margin: 0px;
+			padding: 0px;
+			display: inline-block !important;
+		}
+		#last-row{
+			color: white;
+			font-size: 40px;
+			font-weight: normal;
+			margin: 0px;
+			height: 60px;
+			line-height: 60px;
 		}
 		@media screen and (max-width: 991px){
 			h1{
 				font-size: 0.7 * 100px;
+				margin-top: 20px; 
 			}	
-	}
+			#last-row{
+				font-size: 0.8 * 40px;
+			}	
+			margin-bottom: 30px;
+		}
+		@media screen and (max-width: 991px){	
+			h1{
+				font-size: 0.6 * 100px; 
+			}	
+			.to{
+				font-size: 0.8 * 40px;
+			}
+			img{
+				height: 40px !important;
+			}
+			#last-row{
+				font-size: 0.6 * 40px;
+			}	
+		}
 	}
 	.welcome img{
 		display: inline;
@@ -685,6 +714,12 @@ footer{
 	}
 	#sign-up-form{
 		width: 320px;
+		h2{
+			color: white;
+			font-size: 40px;
+			margin-bottom: 24px;
+			font-weight: normal;
+		}
 		@media screen and (max-width: 767px){
 				width: 100%;
 		}
@@ -721,8 +756,6 @@ footer{
 		border: 0px !important;
 	}
 	@media screen and (max-width: 767px){
-		#user-info{
-		}
 		#img-form-wrapper{
 			padding-top: 0px;
 			border-bottom: 0px;
@@ -731,6 +764,9 @@ footer{
 			}
 		}
 	}
+}
+#menu *{
+	word-wrap: break-word;
 }
 
 /*----*/
@@ -843,6 +879,15 @@ footer{
 	.code *{
 		font-family: "Ubuntu-monospace";
 	}
+	@media screen and (max-width: 767px){
+		.download-buttons{
+			width: 100%;
+			padding-top: 10px;
+		}
+		.panel-heading{
+			height: 60px;
+		}
+	}
 }
 
 /*----*/
@@ -873,6 +918,11 @@ footer{
 			border-right: 0px;
 			background: white;
 			color: #222222;
+		}
+		@media screen and (max-width: 767px){
+			#perms div{
+				padding-top: 5px;
+			}
 		}
 	}
 	button[name="new-permission-button"]{
@@ -953,22 +1003,21 @@ p.comment{
 		}
 	}
 	.pack-row{
-		p{
-			height: 40px;
+		p{	
+			overflow: hidden;
+			text-overflow: ellipsis;
+			/*height: 40px;
 			overflow: hidden;
     		text-overflow: ellipsis;
 			white-space: pre-line;
 			word-wrap: break-word;
-			margin: 0px;
-			@media screen and (max-width: 767px){
-				padding-top: 4px;
-			}
+			margin: 0px;*/
+			padding-top: 10px;
+			box-sizing: content-box;
+			height: 40px;
 		}
 		#created, #updated{
-			color: #666666;
-			@media screen and (max-width: 767px){
-				text-align: right;
-			}
+			color: #888888;
 		}
 	}
 }

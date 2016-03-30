@@ -62,7 +62,6 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="token" type="varchar" size="60" required="true"/>
         <column name="user_id" type="integer" required="true"/>
-        <column name="expires_at" type="timestamp" required="true"/>
         
         <behavior name="timestampable" />
         

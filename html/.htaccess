@@ -1,9 +1,6 @@
 Options -Indexes
-Options -MultiViews
 
 RewriteEngine On
-
-RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

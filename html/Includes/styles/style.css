@@ -9,7 +9,7 @@ http://paletton.com/#uid=b1Z3m0d0kvHqnlHxkrLv7-QlxIagj
   font-family: "Ubuntu-monospace";
   src: url("UbuntuMono-R.ttf"); }
 html {
-  min-width: 420px; }
+  min-width: 300px; }
 
 section .container {
   padding-top: 20px; }
@@ -27,7 +27,9 @@ h1 {
   font-size: 32px;
   font-weight: bold;
   margin-top: 0px;
-  margin-bottom: 15px; }
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  word-break: keep-all; }
 
 h2 {
   font-size: 22px;
@@ -60,6 +62,11 @@ a:hover {
 .link:hover {
   color: #014450;
   text-decoration: none; }
+
+.overflow-name {
+  overflow: hidden;
+  word-break: keep-all;
+  text-overflow: ellipsis; }
 
 hr {
   border-top: 2px solid #f0f0f0;
@@ -503,11 +510,6 @@ footer {
   background: black url("../images/background.png") center top no-repeat;
   background-size: auto 846px;
   min-height: 846px; }
-  .homepage-wrapper h2 {
-    color: white;
-    font-size: 40px;
-    margin-bottom: 24px;
-    font-weight: normal; }
   .homepage-wrapper h1 {
     color: white;
     font-size: 100px;
@@ -516,16 +518,37 @@ footer {
     color: white; }
   .homepage-wrapper div {
     color: white; }
-  .homepage-wrapper .welcome {
+  .homepage-wrapper .welcome #second-row {
+    height: 60px;
+    font-size: 40px; }
+  .homepage-wrapper .welcome img {
+    margin: 0px;
+    padding: 0px;
+    display: inline-block !important; }
+  .homepage-wrapper .welcome #last-row {
+    color: white;
     font-size: 40px;
-    display: inline-block;
-    vertical-align: middle; }
-    @media screen and (max-width: 1199px) {
-      .homepage-wrapper .welcome h2 {
-        font-size: 36px; } }
-    @media screen and (max-width: 991px) {
+    font-weight: normal;
+    margin: 0px;
+    height: 60px;
+    line-height: 60px; }
+  @media screen and (max-width: 991px) {
+    .homepage-wrapper .welcome {
+      margin-bottom: 30px; }
       .homepage-wrapper .welcome h1 {
-        font-size: 70px; } }
+        font-size: 70px;
+        margin-top: 20px; }
+      .homepage-wrapper .welcome #last-row {
+        font-size: 32px; } }
+  @media screen and (max-width: 991px) {
+    .homepage-wrapper .welcome h1 {
+      font-size: 60px; }
+    .homepage-wrapper .welcome .to {
+      font-size: 32px; }
+    .homepage-wrapper .welcome img {
+      height: 40px !important; }
+    .homepage-wrapper .welcome #last-row {
+      font-size: 24px; } }
   .homepage-wrapper .welcome img {
     display: inline;
     height: 44px;
@@ -536,6 +559,11 @@ footer {
     padding: 40px 15px; }
   .homepage-wrapper #sign-up-form {
     width: 320px; }
+    .homepage-wrapper #sign-up-form h2 {
+      color: white;
+      font-size: 40px;
+      margin-bottom: 24px;
+      font-weight: normal; }
     @media screen and (max-width: 767px) {
       .homepage-wrapper #sign-up-form {
         width: 100%; } }
@@ -567,6 +595,9 @@ footer {
     border-bottom: 0px; }
     .user-wrapper #img-form-wrapper .btn {
       margin-top: 10px; } }
+
+#menu * {
+  word-wrap: break-word; }
 
 /*----*/
 /*authorization-modal*/
@@ -630,6 +661,12 @@ footer {
   display: none; }
 .file-wrapper .code * {
   font-family: "Ubuntu-monospace"; }
+@media screen and (max-width: 767px) {
+  .file-wrapper .download-buttons {
+    width: 100%;
+    padding-top: 10px; }
+  .file-wrapper .panel-heading {
+    height: 60px; } }
 
 /*----*/
 /*pack-settings-wrapper*/
@@ -652,6 +689,9 @@ footer {
   border-right: 0px;
   background: white;
   color: #222222; }
+@media screen and (max-width: 767px) {
+  .pack-settings-wrapper #update-permissions-form #perms div {
+    padding-top: 5px; } }
 .pack-settings-wrapper button[name="new-permission-button"] {
   margin-right: 10px; }
 
@@ -701,19 +741,18 @@ p.comment {
   #results .user-row .user-avatar + .row {
     margin-left: 40px; }
 #results .pack-row p {
-  height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: pre-line;
-  word-wrap: break-word;
-  margin: 0px; }
-  @media screen and (max-width: 767px) {
-    #results .pack-row p {
-      padding-top: 4px; } }
+  			/*height: 40px;
+  			overflow: hidden;
+      		text-overflow: ellipsis;
+  			white-space: pre-line;
+  			word-wrap: break-word;
+  			margin: 0px;*/
+  padding-top: 10px;
+  box-sizing: content-box;
+  height: 40px; }
 #results .pack-row #created, #results .pack-row #updated {
-  color: #666666; }
-  @media screen and (max-width: 767px) {
-    #results .pack-row #created, #results .pack-row #updated {
-      text-align: right; } }
+  color: #888888; }
 
 /*# sourceMappingURL=style.css.map */

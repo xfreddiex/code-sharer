@@ -91,6 +91,11 @@ class PackController extends BaseController{
 
 	protected function create(){
 		if(isset($_POST["name"])){
+			$pack = PackQuery::create()->filterByOwner($this->data["loggedUser"])->filterByName($_POST["name"])->findOne();
+			if($pack){
+				$this->sendFlashMessage("Your pack has not been created. You already have pack with this name.", "error");
+				$this->redirect("/pack/new");
+			}
 			$pack = new Pack();
 			$pack->setName($_POST["name"]);
 			$pack->setOwner($this->data["loggedUser"]);
@@ -307,6 +312,15 @@ class PackController extends BaseController{
 		$response["error"] = null;
 		if(count($given) == 1){
 			if($given[0] == "name"){
+				$p = PackQuery::create()->filterByOwner($this->data["loggedUser"])->filterByName($_POST["name"])->findOne();
+				if($p){
+					$response["error"] = array(
+						"name" => "name",
+						"message" => "You can not have two packs with the same name."
+					);
+					$this->viewString(json_encode($response));
+					return;
+				}
 				$pack->setName($_POST["name"]);
 			}
 			else if($given[0] == "description"){
@@ -483,10 +497,6 @@ class PackController extends BaseController{
 			$this->sendFlashMessage("Pack with ID ".$params["id"]." does not exist.", "error");
 			$this->redirect("/404");
 		}
-		else if($this->data["pack"]->getDeletedAt()){
-			$this->sendFlashMessage("Pack with ID ".$params["id"]." was deleted on ".$this->data["pack"]->getDeletedAt("j M o").".", "error");
-			$this->redirect("/404");	
-		}
 		return true;
 	}
 
@@ -524,10 +534,6 @@ class PackController extends BaseController{
 		if(!$this->data["file"]){
 			$this->sendFlashMessage("File ".$params["name"]." does not exist in this pack.", "error");
 			$this->redirect("/404");
-		}
-		else if($this->data["file"]->getDeletedAt()){
-			$this->sendFlashMessage("File with ID ".$this->data["file"]->getId()." was deleted on ".$this->data["file"]->getDeletedAt("j M o").".", "error");
-			$this->redirect("/404");	
 		}
 		return true;
 	}
